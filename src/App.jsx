@@ -47,32 +47,38 @@ const frequencyScore = {
   rarely: 40
 }
 
-const serviceCategoryMap = {
-  Netflix: '動画配信',
-  'Amazon Prime': '動画配信',
-  'Disney+': '動画配信',
-  'U-NEXT': '動画配信',
-  Hulu: '動画配信',
-  Spotify: '音楽',
-  'Apple Music': '音楽',
-  'YouTube Premium': '音楽',
-  ChatGPT: 'AI',
-  Claude: 'AI',
-  Gemini: 'AI',
-  Canva: '仕事・ツール',
-  Notion: '仕事・ツール',
-  Adobe: '仕事・ツール',
-  'Google One': 'クラウド',
-  iCloud: 'クラウド',
-  Dropbox: 'クラウド',
-  'Nintendo Switch Online': 'ゲーム',
-  'PlayStation Plus': 'ゲーム',
-  ジム: '健康・ジム',
-  'オンライン英会話': '学習',
-  'Kindle Unlimited': '電子書籍',
-  楽天マガジン: '電子書籍'
+// 日本の主要サブスクのプリセット（料金は2026年5月時点・税込/月額）
+const servicePresets = {
+  // 動画配信
+  'Netflix':            { category: '動画配信', price: 1590 },
+  'Amazon Prime':       { category: '動画配信', price: 600 },
+  'Disney+':            { category: '動画配信', price: 1140 },
+  'U-NEXT':             { category: '動画配信', price: 2189 },
+  'Hulu':               { category: '動画配信', price: 1026 },
+  'DMM TV':             { category: '動画配信', price: 550 },
+  // 音楽
+  'Spotify':            { category: '音楽',     price: 1080 },
+  'Apple Music':        { category: '音楽',     price: 1080 },
+  'YouTube Premium':    { category: '音楽',     price: 1280 },
+  // AI
+  'ChatGPT':            { category: 'AI',       price: 3000 },  // 目安
+  'Claude':             { category: 'AI',       price: 3000 },  // 目安
+  'Gemini':             { category: 'AI',       price: 2900 },
+  // クラウド
+  'iCloud+':            { category: 'クラウド', price: 130 },
+  'Google One':         { category: 'クラウド', price: 250 },
+  'Dropbox':            { category: 'クラウド', price: 1500 },  // 目安
+  // 仕事・ツール
+  'Canva':              { category: '仕事・ツール', price: 1180 },
+  'Adobe':              { category: '仕事・ツール', price: 3280 }, // 目安
+  'Notion':             { category: '仕事・ツール', price: 1650 }, // 目安
+  // 電子書籍
+  'Kindle Unlimited':   { category: '電子書籍', price: 980 },
+  'Audible':            { category: '電子書籍', price: 1500 },
+  // ゲーム
+  'Nintendo Switch Online': { category: 'ゲーム', price: 306 },  // 目安
+  'PlayStation Plus':   { category: 'ゲーム',   price: 850 },    // 目安
 }
-
 const serviceIconMap = {
   Netflix: '🎬',
   'U-NEXT': '📺',
@@ -161,14 +167,17 @@ function App() {
   const handleInputChange = (e) => {
     const { name, value } = e.target
 
-    if (name === 'name') {
-      const suggestedCategory = serviceCategoryMap[value]
+        if (name === 'name') {
+      const preset = servicePresets[value]
       setFormData(prev => ({
         ...prev,
         name: value,
-        category: suggestedCategory && (!prev.category || prev.category === 'その他')
-          ? suggestedCategory
-          : prev.category
+        category: preset && (!prev.category || prev.category === 'その他')
+          ? preset.category
+          : prev.category,
+        monthlyPrice: preset && !prev.monthlyPrice
+          ? String(preset.price)
+          : prev.monthlyPrice
       }))
       return
     }
@@ -408,19 +417,15 @@ function App() {
     <div className={`app-container ${darkMode ? 'dark-mode' : ''}`}>
       {/* ダッシュボード */}
       <div className="dashboard">
-        <div className="dashboard-header">
-          <div>
-            <h1><span className="title-emoji">💸</span> やめどきAI Money <span className="title-accent">✨</span></h1>
-            <p className="sub-title">毎月の“なんとなく払い”を、いっしょに見直しましょう。</p>
-          </div>
-          <div className="dashboard-actions">
-            <button onClick={handleAddSampleData} className="btn-sample">サンプルを入れる</button>
-            <button onClick={toggleDarkMode} className="btn-toggle-mode">
-              {darkMode ? 'ライトモード' : 'ダークモード'}
-            </button>
-            <button className="btn-clear-all" onClick={handleClearAllData}>データをリセット</button>
-          </div>
-        </div>
+       <header className="app-header">
+  <div className="app-header__brand">
+    <h1 className="app-header__title">💸 やめどきAI Money</h1>
+    <p className="app-header__tagline">毎月の"なんとなく払い"を、いっしょに見直しましょう。</p>
+  </div>
+  <button onClick={toggleDarkMode} className="app-header__mode" aria-label="表示モード切り替え">
+    {darkMode ? '☀️' : '🌙'}
+  </button>
+</header> 
 
         {upcomingPayments.length > 0 && (
           <div className="upcoming-payments">
@@ -447,10 +452,10 @@ function App() {
                 onChange={handleInputChange}
               />
               <datalist id="serviceSuggestions">
-                {Object.keys(serviceCategoryMap).map((service) => (
+                {Object.keys(servicePresets).map((service) => (
                   <option key={service} value={service} />
                 ))}
-              </datalist>
+              </datalist> 
             </div>
 
             <div className="form-group">
@@ -665,14 +670,14 @@ function App() {
           </div>
         </div>
 
-        <div className="settings-footer">
-          <button
-            className="btn-clear-all"
-            onClick={handleClearAllData}
-          >
-            データをリセット
-          </button>
-        </div>
+      <div className="settings-footer">
+  <button className="btn-sample" onClick={handleAddSampleData}>
+    サンプルを入れる
+  </button>
+  <button className="btn-clear-all" onClick={handleClearAllData}>
+    データをリセット
+  </button>
+</div> 
       </div>
 
       {/* AIチャット */}
