@@ -224,16 +224,6 @@ body {
   border-color: #fbc8c8;
 }
 
-.dashboard h1 {
-  font-size: 44px;
-  color: #0f172a;
-  margin: 0;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  white-space: nowrap;
-}
-
 .sub-title {
   font-size: 16px;
   color: #334155;
@@ -331,14 +321,6 @@ body {
   transform: translateY(-1px);
 }
 
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .summary-cards {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
 .btn-primary {
   width: 100%;
   padding: 18px;
@@ -361,18 +343,6 @@ body {
   transform: translateY(0);
 }
 
-
-.stat-label {
-  font-size: 12px;
-  opacity: 0.9;
-  margin-bottom: 8px;
-}
-
-.stat-value {
-  font-size: 32px;
-  font-weight: 900;
-}
-
 /* カテゴリ別 */
 .category-section,
 .candidates-section,
@@ -390,6 +360,14 @@ body {
   border-radius: 24px;
   background: #f8fbff;
   border: 1px solid #dde6f1;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.settings-footer button {
+  flex: 1;
+  min-width: 140px;
 }
 
 .category-list {
@@ -534,16 +512,19 @@ body {
   font-weight: 700;
   font-size: 13px;
 }
+
 .candidate-score-badge.high {
   background: #fee2e2;
   color: #991b1b;
   border: 1px solid #fecaca;
 }
+
 .candidate-score-badge.medium {
   background: #fef3c7;
   color: #92400e;
   border: 1px solid #fcd34d;
 }
+
 .candidate-score-badge.low {
   background: #dcfce7;
   color: #166534;
@@ -556,18 +537,6 @@ body {
   gap: 10px;
   font-size: 13px;
   color: #475569;
-}.subscription-card {
-  position: relative;
-  display: grid;
-  gap: 16px;
-  padding: 24px;
-  border-radius: 28px;
-  background: #ffffff;
-  border: 1px solid #dde7f1;
-  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  max-width: 100%;
-  overflow: hidden;
 }
 
 .candidate-savings {
@@ -582,7 +551,7 @@ body {
   overflow-y: auto;
 }
 
-
+.subscription-card {
   position: relative;
   display: grid;
   gap: 16px;
@@ -592,6 +561,8 @@ body {
   border: 1px solid #dde7f1;
   box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .subscription-card::before {
@@ -632,6 +603,8 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  border-bottom: 1px solid #eef2ff;
+  padding-bottom: 12px;
 }
 
 .subscription-card-footer {
@@ -640,11 +613,6 @@ body {
   align-items: stretch;
   gap: 10px;
   padding-top: 10px;
-}
-
-.subscription-card-header {
-  border-bottom: 1px solid #eef2ff;
-  padding-bottom: 12px;
 }
 
 .service-title-row {
@@ -703,20 +671,6 @@ body {
   border: 1px solid rgba(249, 115, 22, 0.18);
 }
 
-@media (max-width: 768px) {
-  .card-row {
-    grid-template-columns: 1fr;
-  }
-
-  .subscription-card {
-    padding: 20px;
-  }
-
-  .subscription-card-header {
-    gap: 12px;
-  }
-}
-
 .card-item {
   display: flex;
   flex-direction: column;
@@ -753,17 +707,13 @@ body {
   color: #475569;
 }
 
-
-
-
-  padding-top: 10px;
-}
-
 .memo-cell {
   flex: 1 1 100%;
-  min-width: 160px;
+  min-width: 0;
+  width: 100%;
   color: #475569;
   font-size: 13px;
+  word-break: break-word;
 }
 
 .score-badge {
@@ -832,6 +782,7 @@ body {
   font-size: 12px;
   font-weight: 700;
 }
+
 .tag.recommendation {
   display: inline-flex;
   align-items: center;
@@ -841,16 +792,19 @@ body {
   font-size: 12px;
   font-weight: 700;
 }
+
 .tag.recommendation.high {
   background: #fee2e2;
   color: #991b1b;
   border: 1px solid #fecaca;
 }
+
 .tag.recommendation.medium {
   background: #fef3c7;
   color: #92400e;
   border: 1px solid #fcd34d;
 }
+
 .tag.recommendation.low {
   background: #dcfce7;
   color: #166534;
@@ -864,55 +818,6 @@ body {
 .subscription-card.category-blue .tag.category { background: #dbeafe; color: #1d4ed8; }
 .subscription-card.category-pink .tag.category { background: #fce7f3; color: #9d174d; }
 .subscription-card.category-default .tag.category { background: #e0f2fe; color: #0369a1; }
-
-.table-head,
-.table-row {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 0.9fr 0.9fr 0.9fr 1fr 1fr 1.5fr 90px;
-  gap: 12px;
-  align-items: center;
-  padding: 16px 18px;
-  border-radius: 16px;
-}
-
-.table-head {
-  background: #e0f2fe;
-  color: #0f172a;
-  font-weight: 700;
-}
-
-.table-row {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.04);
-}
-
-.table-row span,
-.table-row button {
-  font-size: 13px;
-}
-
-.memo-cell {
-  word-break: break-word;
-  color: #475569;
-}
-
-.btn-delete {
-  width: 100%;
-  padding: 10px 12px;
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
-  border-radius: 14px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.btn-delete:hover {
-  background: #b91c1c;
-  color: #fff;
-}
 
 .sub-category {
   background: #ecf0f1;
@@ -928,6 +833,7 @@ body {
   font-size: 12px;
   margin-bottom: 8px;
   color: #666;
+  flex-wrap: wrap;
 }
 
 .price {
@@ -1028,6 +934,10 @@ body {
   justify-content: flex-end;
 }
 
+.chat-message.user .message-avatar {
+  order: 2;
+}
+
 .message-text {
   max-width: 80%;
   padding: 16px 20px;
@@ -1062,6 +972,14 @@ body {
   border-radius: 50%;
 }
 
+.chat-input-area {
+  display: flex;
+  gap: 12px;
+  padding: 18px;
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+  background: #eef7ff;
+}
+
 .chat-input-area input {
   flex: 1;
   padding: 14px 18px;
@@ -1070,18 +988,34 @@ body {
   font-size: 15px;
   background: #ffffff;
   color: #0f172a;
+  font-family: inherit;
 }
 
 .chat-input-area input::placeholder {
   color: #94a3b8;
 }
 
+.chat-input-area input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
 .btn-send {
-  padding: 14px 18px;
-  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
-  color: #ffffff;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  color: #0f172a;
   border: none;
   border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-send:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.22);
 }
 
 .upcoming-payments {
@@ -1127,12 +1061,6 @@ body {
   padding: 4px 0;
 }
 
-.chat-message {
-  display: flex;
-  gap: 12px;
-  animation: slideIn 0.25s ease;
-}
-
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -1144,85 +1072,44 @@ body {
   }
 }
 
-.chat-message.user {
-  justify-content: flex-end;
-}
-
-.chat-message.user .message-avatar {
-  order: 2;
-}
-
-.chat-message.user .message-text {
-  background: #3b82f6;
-  color: #fff;
-}
-
-.chat-message.ai .message-text {
-  background: #f1f5f9;
-  color: #0f172a;
-}
-
-.message-avatar {
-  flex-shrink: 0;
-  font-size: 18px;
-  width: 34px;
-  height: 34px;
+/* 新ヘッダー */
+.app-header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  background: linear-gradient(90deg, #fff5ee, #eef6ff);
+  border-radius: 20px;
 }
 
-.message-text {
-  max-width: 80%;
-  padding: 16px 20px;
-  border-radius: 24px;
-  font-size: 14px;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
-}
-
-.chat-input-area {
-  display: flex;
-  gap: 12px;
-  padding: 18px;
-  border-top: 1px solid rgba(148, 163, 184, 0.16);
-  background: #eef7ff;
-}
-
-.chat-input-area input {
-  flex: 1;
-  padding: 12px 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 999px;
-  font-size: 14px;
-  font-family: inherit;
-}
-
-.chat-input-area input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
-}
-
-.btn-send {
-  padding: 14px 20px;
-  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
-  color: #0f172a;
-  border: none;
-  border-radius: 999px;
-  font-size: 14px;
+.app-header__title {
+  font-size: 24px;
   font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+  line-height: 1.4;
+}
+
+.app-header__tagline {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #475569;
+}
+
+.app-header__mode {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 18px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.btn-send:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.22);
-}
-
-/* レスポンシブ */
+/* レスポンシブ 1024px以下 */
 @media (max-width: 1024px) {
   .app-container {
     flex-direction: column;
@@ -1239,36 +1126,9 @@ body {
     border-top: 1px solid #e0e0e0;
   }
 
-  .form-row {
-  grid-template-columns: 1fr;
-}
-
-.summary-cards {
-  grid-template-columns: repeat(2, 1fr);
-}
-
   .summary-cards {
+    grid-template-columns: repeat(2, 1fr);
     margin-bottom: 16px;
-  }
-
-  .table-head,
-  .table-row {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .table-head {
-    display: none;
-  }
-
-  .table-row {
-    grid-template-columns: 1fr;
-    padding: 16px 14px;
-  }
-
-  .table-row span,
-  .table-row button {
-    width: 100%;
   }
 
   .candidate-item {
@@ -1314,220 +1174,6 @@ body {
   }
 }
 
-.dark-mode {
-  background: #0b1220;
-  color: #e2e8f0;
-}
-
-.dark-mode .dashboard,
-.dark-mode .chat-section,
-.dark-mode .form-section,
-.dark-mode .category-section,
-.dark-mode .candidates-section,
-.dark-mode .subscriptions-section,
-.dark-mode .stat-box,
-.dark-mode .subscription-card,
-.dark-mode .upcoming-payments,
-.dark-mode .settings-footer {
-  background: #111827;
-  color: #e2e8f0;
-}
-
-.dark-mode .dashboard {
-  border-color: #1f2937;
-}
-
-.dark-mode .form-group input,
-.dark-mode .form-group select,
-.dark-mode .chat-input-area input {
-  background: #111827;
-  color: #f8fafc;
-  border-color: #334155;
-}
-
-.dark-mode .form-group input::placeholder,
-.dark-mode .form-group select::placeholder,
-.dark-mode .chat-input-area input::placeholder {
-  color: #94a3b8;
-}
-
-.dark-mode .chat-section {
-  background: linear-gradient(180deg, #111827 0%, #111827 100%);
-  border-left: 1px solid rgba(148, 163, 184, 0.28);
-}
-
-.dark-mode .chat-header {
-  background: linear-gradient(180deg, #111827 0%, #111827 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.dark-mode .chat-header h2,
-.dark-mode .chat-subtitle,
-.dark-mode .chat-welcome,
-.dark-mode .upcoming-item,
-.dark-mode .category-legend-item span,
-.dark-mode .sub-title {
-  color: #f8fafc;
-}
-
-.dark-mode .chat-message.ai .message-text {
-  background: linear-gradient(135deg, #0f172a 0%, #111827 100%);
-  color: #f8fafc;
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-.dark-mode .chat-message.user .message-text {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  color: #ffffff;
-}
-
-.dark-mode .chat-input-area input {
-  background: #111827;
-  color: #f8fafc;
-  border-color: #334155;
-}
-
-.dark-mode .btn-send {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  color: #fff;
-}
-
-.dark-mode .btn-toggle-mode,
-.dark-mode .btn-clear-all {
-  background: #1f2937;
-  color: #e2e8f0;
-}
-
-.dark-mode .tag.recommendation.high,
-.dark-mode .candidate-score-badge.high {
-  background: rgba(254, 226, 226, 0.24);
-  color: #fecaca;
-  border-color: rgba(252, 165, 165, 0.35);
-}
-
-.dark-mode .tag.recommendation.medium,
-.dark-mode .candidate-score-badge.medium {
-  background: rgba(254, 243, 199, 0.18);
-  color: #f59e0b;
-  border-color: rgba(251, 191, 36, 0.35);
-}
-
-.dark-mode .tag.recommendation.low,
-.dark-mode .candidate-score-badge.low {
-  background: rgba(220, 252, 231, 0.16);
-  color: #4ade80;
-  border-color: rgba(134, 239, 172, 0.35);
-}
-
-.dark-mode .btn-toggle-mode:hover,
-.dark-mode .btn-clear-all:hover,
-.dark-mode .btn-primary:hover,
-.dark-mode .btn-send:hover {
-  opacity: 0.95;
-}
-
-.dark-mode .stat-box {
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
-  border: 1px solid #1f2937;
-}
-
-.dark-mode .category-item,
-.dark-mode .category-legend-item,
-.dark-mode .candidate-item,
-.dark-mode .subscription-card,
-.dark-mode .settings-footer {
-  border-color: #1f2937;
-}
-
-.dark-mode .sub-title,
-.dark-mode .form-help,
-.dark-mode .form-group label,
-.dark-mode .card-label,
-.dark-mode .memo-cell,
-.dark-mode .payment-soon-pill,
-.dark-mode .category-legend-item span,
-.dark-mode .candidate-meta,
-.dark-mode .subscription-card-header,
-.dark-mode .chat-welcome,
-.dark-mode .upcoming-item {
-  color: #cbd5e1;
-}
-
-.dark-mode .card-value,
-.dark-mode .stat-value,
-.dark-mode .sub-title,
-.dark-mode .dashboard h2,
-.dark-mode .dashboard h3,
-.dark-mode .chat-header h2,
-.dark-mode .message-text,
-.dark-mode .tag,
-.dark-mode .candidate-score-badge,
-.dark-mode .message-avatar {
-  color: #f8fafc;
-}
-
-.dark-mode .stat-box {
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
-}
-
-.dark-mode .category-item,
-.dark-mode .category-legend-item,
-.dark-mode .candidate-item,
-.dark-mode .subscription-card {
-  border-color: #374151;
-}
-
-.dark-mode .subscription-card::before {
-  opacity: 0.95;
-}
-
-.dark-mode .service-icon {
-  background: rgba(148, 163, 184, 0.2);
-  color: #f8fafc;
-}
-
-.dark-mode .subscription-card.category-red .service-icon { background: rgba(248, 113, 113, 0.18); color: #fee2e2; }
-.dark-mode .subscription-card.category-green .service-icon { background: rgba(34, 197, 94, 0.18); color: #dcfce7; }
-.dark-mode .subscription-card.category-purple .service-icon { background: rgba(168, 85, 247, 0.18); color: #ede9fe; }
-.dark-mode .subscription-card.category-orange .service-icon { background: rgba(251, 146, 60, 0.18); color: #ffedd5; }
-.dark-mode .subscription-card.category-blue .service-icon { background: rgba(59, 130, 246, 0.18); color: #dbeafe; }
-.dark-mode .subscription-card.category-pink .service-icon { background: rgba(236, 72, 153, 0.18); color: #fce7f3; }
-.dark-mode .subscription-card.category-default .service-icon { background: rgba(14, 165, 233, 0.18); color: #bae6fd; }
-
-.dark-mode .card-item {
-  background: #1f2937;
-}
-
-.dark-mode .card-value.monthly,
-.dark-mode .card-value.yearly,
-.dark-mode .card-value.frequency,
-.dark-mode .card-value {
-  color: #f8fafc;
-}
-
-.btn-sample {
-  padding: 10px 14px;
-  background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
-  color: #065f46;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 800;
-  white-space: nowrap;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.btn-sample:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 16px rgba(167, 243, 208, 0.3);
-}
-
-.dark-mode .btn-sample {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  color: #d1fae5;
-}
-
 /* モバイル対応 768px以下 */
 @media (max-width: 768px) {
   .app-container {
@@ -1542,36 +1188,6 @@ body {
     border-bottom: 1px solid #e2e8f0;
     padding: 16px;
     border-radius: 20px;
-  }
-
-  .dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 12px;
-    border-radius: 12px;
-  }
-
-  .dashboard h1 {
-    font-size: 24px;
-  }
-
-  .sub-title {
-    font-size: 14px;
-  }
-
-  .dashboard-actions {
-    width: 100%;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .btn-toggle-mode,
-  .btn-clear-all,
-  .btn-sample {
-    flex: 1;
-    min-width: 120px;
-    padding: 12px 10px;
-    font-size: 12px;
   }
 
   .form-section {
@@ -1610,13 +1226,18 @@ body {
   }
 
   .category-chart-block {
-    grid-template-columns: 160px 1fr;
+    grid-template-columns: 1fr;
     gap: 14px;
+    justify-items: center;
   }
 
   .category-pie {
     width: 160px;
     height: 160px;
+  }
+
+  .category-legend {
+    width: 100%;
   }
 
   .category-legend-item {
@@ -1676,10 +1297,7 @@ body {
     gap: 8px;
   }
 
-  
-    flex-direction: column;
-    align-items: stretch;
-  }  .subscription-card-footer {
+  .subscription-card-footer {
     flex-direction: column;
     align-items: stretch;
     width: 100%;
@@ -1696,6 +1314,7 @@ body {
   .btn-delete {
     padding: 12px;
     font-size: 12px;
+    width: 100%;
   }
 
   .candidate-item {
@@ -1797,6 +1416,169 @@ body {
   }
 }
 
+/* ダークモード */
+.dark-mode {
+  background: #0b1220;
+  color: #e2e8f0;
+}
+
+.dark-mode .dashboard,
+.dark-mode .chat-section,
+.dark-mode .form-section,
+.dark-mode .category-section,
+.dark-mode .candidates-section,
+.dark-mode .subscriptions-section,
+.dark-mode .stat-box,
+.dark-mode .subscription-card,
+.dark-mode .upcoming-payments,
+.dark-mode .settings-footer {
+  background: #111827;
+  color: #e2e8f0;
+}
+
+.dark-mode .dashboard {
+  border-color: #1f2937;
+}
+
+.dark-mode .form-group input,
+.dark-mode .form-group select,
+.dark-mode .chat-input-area input {
+  background: #111827;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+.dark-mode .form-group input::placeholder,
+.dark-mode .form-group select::placeholder,
+.dark-mode .chat-input-area input::placeholder {
+  color: #94a3b8;
+}
+
+.dark-mode .chat-section {
+  background: linear-gradient(180deg, #111827 0%, #111827 100%);
+  border-left: 1px solid rgba(148, 163, 184, 0.28);
+}
+
+.dark-mode .chat-header {
+  background: linear-gradient(180deg, #111827 0%, #111827 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dark-mode .chat-header h2,
+.dark-mode .chat-subtitle,
+.dark-mode .chat-welcome,
+.dark-mode .upcoming-item,
+.dark-mode .category-legend-item span,
+.dark-mode .sub-title {
+  color: #f8fafc;
+}
+
+.dark-mode .chat-message.ai .message-text {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+.dark-mode .chat-message.user .message-text {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.dark-mode .btn-send {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #fff;
+}
+
+.dark-mode .btn-toggle-mode,
+.dark-mode .btn-clear-all {
+  background: #1f2937;
+  color: #e2e8f0;
+}
+
+.dark-mode .tag.recommendation.high,
+.dark-mode .candidate-score-badge.high {
+  background: rgba(254, 226, 226, 0.24);
+  color: #fecaca;
+  border-color: rgba(252, 165, 165, 0.35);
+}
+
+.dark-mode .tag.recommendation.medium,
+.dark-mode .candidate-score-badge.medium {
+  background: rgba(254, 243, 199, 0.18);
+  color: #f59e0b;
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+.dark-mode .tag.recommendation.low,
+.dark-mode .candidate-score-badge.low {
+  background: rgba(220, 252, 231, 0.16);
+  color: #4ade80;
+  border-color: rgba(134, 239, 172, 0.35);
+}
+
+.dark-mode .stat-box {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+  border: 1px solid #1f2937;
+}
+
+.dark-mode .category-item,
+.dark-mode .category-legend-item,
+.dark-mode .candidate-item,
+.dark-mode .subscription-card,
+.dark-mode .settings-footer {
+  border-color: #1f2937;
+}
+
+.dark-mode .sub-title,
+.dark-mode .form-help,
+.dark-mode .form-group label,
+.dark-mode .card-label,
+.dark-mode .memo-cell,
+.dark-mode .payment-soon-pill,
+.dark-mode .candidate-meta,
+.dark-mode .chat-welcome,
+.dark-mode .upcoming-item {
+  color: #cbd5e1;
+}
+
+.dark-mode .card-value,
+.dark-mode .stat-value,
+.dark-mode .dashboard h2,
+.dark-mode .dashboard h3,
+.dark-mode .chat-header h2,
+.dark-mode .message-text,
+.dark-mode .tag,
+.dark-mode .candidate-score-badge,
+.dark-mode .message-avatar {
+  color: #f8fafc;
+}
+
+.dark-mode .subscription-card::before {
+  opacity: 0.95;
+}
+
+.dark-mode .service-icon {
+  background: rgba(148, 163, 184, 0.2);
+  color: #f8fafc;
+}
+
+.dark-mode .subscription-card.category-red .service-icon { background: rgba(248, 113, 113, 0.18); color: #fee2e2; }
+.dark-mode .subscription-card.category-green .service-icon { background: rgba(34, 197, 94, 0.18); color: #dcfce7; }
+.dark-mode .subscription-card.category-purple .service-icon { background: rgba(168, 85, 247, 0.18); color: #ede9fe; }
+.dark-mode .subscription-card.category-orange .service-icon { background: rgba(251, 146, 60, 0.18); color: #ffedd5; }
+.dark-mode .subscription-card.category-blue .service-icon { background: rgba(59, 130, 246, 0.18); color: #dbeafe; }
+.dark-mode .subscription-card.category-pink .service-icon { background: rgba(236, 72, 153, 0.18); color: #fce7f3; }
+.dark-mode .subscription-card.category-default .service-icon { background: rgba(14, 165, 233, 0.18); color: #bae6fd; }
+
+.dark-mode .card-item {
+  background: #1f2937;
+}
+
+.dark-mode .card-value.monthly,
+.dark-mode .card-value.yearly,
+.dark-mode .card-value.frequency {
+  color: #f8fafc;
+}
+
 .dark-mode .score-badge.score-high {
   background: rgba(254, 226, 226, 0.24);
   color: #fecaca;
@@ -1813,60 +1595,10 @@ body {
   opacity: 0.92;
 }
 
-.dark-mode .chat-message.ai .message-text {
-  background: #1e293b;
-  color: #e2e8f0;
-}
-
-.dark-mode .chat-message.user .message-text {
-  background: #2563eb;
-}
-
 .dark-mode .message-avatar {
   background: #1f2937;
 }
-/* === 新ヘッダー === */
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px 24px;
-  margin-bottom: 24px;
-  background: linear-gradient(90deg, #fff5ee, #eef6ff);
-  border-radius: 20px;
-}
-.app-header__title {
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #0f172a;
-  line-height: 1.4;
-}
-.app-header__tagline {
-  margin-top: 6px;
-  font-size: 14px;
-  color: #475569;
-}
-.app-header__mode {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.7);
-  font-size: 18px;
-  cursor: pointer;
-}
-.settings-footer {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.settings-footer button {
-  flex: 1;
-  min-width: 140px;
-}
+
 .dark-mode .app-header { background: #1e293b; }
 .dark-mode .app-header__title { color: #f8fafc; }
 .dark-mode .app-header__tagline { color: #cbd5e1; }
