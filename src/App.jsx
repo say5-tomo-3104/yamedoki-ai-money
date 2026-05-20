@@ -602,8 +602,6 @@ function App() {
             <div className="monster-grid">
               {subscriptions.map((sub) => {
                 const monster = getMonsterData(sub.category)
-                const attack = calcAttack(sub.monthlyPrice)
-                const defense = calcDefense(sub.frequency)
                 const rarity = calcRarity(sub.monthlyPrice)
                 return (
                   <div key={sub.id} className={`monster-card ${rarity.class}`}>
@@ -612,22 +610,11 @@ function App() {
                     <div className="monster-name">{monster.name}</div>
                     <div className="monster-sub-name">「{sub.name}」</div>
                     <div className="monster-type-badge">タイプ: {monster.type}</div>
-                    <div className="monster-stats">
-                      <div className="monster-stat">
-                        <span className="monster-stat-label">❤️ HP</span>
-                        <span className="monster-stat-value">{sub.monthlyPrice}</span>
-                      </div>
-                      <div className="monster-stat">
-                        <span className="monster-stat-label">⚔️ こうげき</span>
-                        <span className="monster-stat-value">{attack}</span>
-                      </div>
-                      <div className="monster-stat">
-                        <span className="monster-stat-label">🛡️ ぼうぎょ</span>
-                        <span className="monster-stat-value">{defense}</span>
-                      </div>
+                    <div className="monster-cost">
+                      💰 月額 ¥{sub.monthlyPrice.toLocaleString()}
                     </div>
                     <div className="monster-trait">
-                      ✨ 特性: {monster.trait}
+                      ✨ {monster.trait}
                     </div>
                   </div>
                 )

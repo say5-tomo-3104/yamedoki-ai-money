@@ -1912,3 +1912,21 @@ body {
     padding: 6px;
   }
 }
+
+/* モンスター月額表示（シンプル版） */
+.monster-cost {
+  background: rgba(255, 255, 255, 0.8);
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 900;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.dark-mode .monster-cost {
+  background: rgba(0, 0, 0, 0.3);
+  color: #f8fafc;
+  border-color: rgba(255, 255, 255, 0.1);
+}
