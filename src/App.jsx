@@ -47,38 +47,32 @@ const frequencyScore = {
   rarely: 40
 }
 
-// 日本の主要サブスクのプリセット（料金は2026年5月時点・税込/月額）
+// 日本の主要サブスクのプリセット
 const servicePresets = {
-  // 動画配信
   'Netflix':            { category: '動画配信', price: 1590 },
   'Amazon Prime':       { category: '動画配信', price: 600 },
   'Disney+':            { category: '動画配信', price: 1140 },
   'U-NEXT':             { category: '動画配信', price: 2189 },
   'Hulu':               { category: '動画配信', price: 1026 },
   'DMM TV':             { category: '動画配信', price: 550 },
-  // 音楽
   'Spotify':            { category: '音楽',     price: 1080 },
   'Apple Music':        { category: '音楽',     price: 1080 },
   'YouTube Premium':    { category: '音楽',     price: 1280 },
-  // AI
-  'ChatGPT':            { category: 'AI',       price: 3000 },  // 目安
-  'Claude':             { category: 'AI',       price: 3000 },  // 目安
+  'ChatGPT':            { category: 'AI',       price: 3000 },
+  'Claude':             { category: 'AI',       price: 3000 },
   'Gemini':             { category: 'AI',       price: 2900 },
-  // クラウド
   'iCloud+':            { category: 'クラウド', price: 130 },
   'Google One':         { category: 'クラウド', price: 250 },
-  'Dropbox':            { category: 'クラウド', price: 1500 },  // 目安
-  // 仕事・ツール
+  'Dropbox':            { category: 'クラウド', price: 1500 },
   'Canva':              { category: '仕事・ツール', price: 1180 },
-  'Adobe':              { category: '仕事・ツール', price: 3280 }, // 目安
-  'Notion':             { category: '仕事・ツール', price: 1650 }, // 目安
-  // 電子書籍
+  'Adobe':              { category: '仕事・ツール', price: 3280 },
+  'Notion':             { category: '仕事・ツール', price: 1650 },
   'Kindle Unlimited':   { category: '電子書籍', price: 980 },
   'Audible':            { category: '電子書籍', price: 1500 },
-  // ゲーム
-  'Nintendo Switch Online': { category: 'ゲーム', price: 306 },  // 目安
-  'PlayStation Plus':   { category: 'ゲーム',   price: 850 },    // 目安
+  'Nintendo Switch Online': { category: 'ゲーム', price: 306 },
+  'PlayStation Plus':   { category: 'ゲーム',   price: 850 },
 }
+
 const serviceIconMap = {
   Netflix: '🎬',
   'U-NEXT': '📺',
@@ -110,6 +104,48 @@ const categoryClassMap = {
   '通信': 'category-blue',
   '保険': 'category-orange',
   'その他': 'category-default'
+}
+
+// ===== モンスター機能 =====
+const monsterDataMap = {
+  '動画配信':     { emoji: '🎬⚡', name: 'ムビフレア',      type: 'ほのお',   trait: 'ストーリーで魅了する' },
+  '音楽':         { emoji: '🎵🐱', name: 'メロディキャット',  type: 'おと',     trait: '心地よい旋律で癒す' },
+  'AI':           { emoji: '🤖🔮', name: 'アイマジ',         type: 'でんき',   trait: '知恵で問題を解決' },
+  '電子書籍':     { emoji: '📚🦉', name: 'ホンフクロウ',     type: 'ちしき',   trait: '物語で導く' },
+  'クラウド':     { emoji: '☁️🐉', name: 'クラウドラゴン',   type: 'そら',     trait: '無限の記憶を守る' },
+  'ゲーム':       { emoji: '🎮👾', name: 'ゲーマイト',       type: 'デジタル', trait: '冒険心に火をつける' },
+  '仕事・ツール': { emoji: '🛠️🐺', name: 'ツールウルフ',     type: 'はがね',   trait: '仕事を加速させる' },
+  '健康・ジム':   { emoji: '💪🦁', name: 'マッスレオ',       type: 'かくとう', trait: '心身を鍛える' },
+  '美容':         { emoji: '💄🦋', name: 'ビューティチョウ', type: 'フェアリー', trait: '輝きを引き出す' },
+  '通信':         { emoji: '📡🦅', name: 'シグナルイーグル', type: 'でんき',   trait: '世界とつながる' },
+  '保険':         { emoji: '🛡️🐢', name: 'シールドタートル', type: 'ぼうぎょ', trait: '未来を守る' },
+  '学習':         { emoji: '📖🐘', name: 'スタディゾウ',     type: 'ちしき',   trait: '記憶力で支える' },
+  'ニュース':     { emoji: '📰🦜', name: 'ニュースパロット', type: 'かぜ',     trait: '世界を伝える' },
+  'その他':       { emoji: '⭐🐾', name: 'スターポー',       type: 'ノーマル', trait: '個性で魅せる' }
+}
+
+const getMonsterData = (category) => monsterDataMap[category] || monsterDataMap['その他']
+
+// HP = 月額（そのまま）
+// 攻撃力 = 月額に応じて自動計算（10〜200の範囲）
+const calcAttack = (monthlyPrice) => {
+  const base = Math.min(200, Math.max(10, Math.round(monthlyPrice / 30)))
+  return base
+}
+
+// 防御力 = 使用頻度に応じて（よく使うほど高い = 抜けにくい）
+const calcDefense = (frequency) => {
+  const defenseMap = { daily: 90, weekly: 70, monthly: 50, rarely: 30 }
+  return defenseMap[frequency] || 50
+}
+
+// レアリティ（月額が高いほどレア）
+const calcRarity = (monthlyPrice) => {
+  if (monthlyPrice >= 3000) return { label: '★★★★★ LEGEND', class: 'rarity-legend' }
+  if (monthlyPrice >= 2000) return { label: '★★★★ ULTRA', class: 'rarity-ultra' }
+  if (monthlyPrice >= 1000) return { label: '★★★ RARE', class: 'rarity-rare' }
+  if (monthlyPrice >= 500)  return { label: '★★ UNCOMMON', class: 'rarity-uncommon' }
+  return { label: '★ COMMON', class: 'rarity-common' }
 }
 
 const getServiceIcon = (name) => {
@@ -154,7 +190,6 @@ function App() {
 
   const toggleDarkMode = () => setDarkMode(prev => !prev)
 
-  // subscriptions が変更されたら localStorage に保存
   useEffect(() => {
     try {
       localStorage.setItem('subscriptions', JSON.stringify(subscriptions))
@@ -163,11 +198,10 @@ function App() {
     }
   }, [subscriptions])
 
-  // フォーム入力処理
   const handleInputChange = (e) => {
     const { name, value } = e.target
 
-        if (name === 'name') {
+    if (name === 'name') {
       const preset = servicePresets[value]
       setFormData(prev => ({
         ...prev,
@@ -188,20 +222,19 @@ function App() {
     }))
   }
 
-  // サブスク登録
   const handleAddSubscription = (e) => {
     e.preventDefault()
     if (!formData.name || !formData.category || !formData.monthlyPrice) {
       alert('必須項目（名前、カテゴリ、月額）を入力してください')
       return
     }
-    
+
     const newSub = {
       id: Date.now(),
       ...formData,
       monthlyPrice: parseFloat(formData.monthlyPrice)
     }
-    
+
     setSubscriptions([...subscriptions, newSub])
     setFormData({
       name: '',
@@ -213,12 +246,10 @@ function App() {
     })
   }
 
-  // サブスク削除
   const handleDeleteSubscription = (id) => {
     setSubscriptions(subscriptions.filter(sub => sub.id !== id))
   }
 
-  // サンプルデータを追加
   const handleAddSampleData = () => {
     const sampleData = [
       { name: 'Netflix', category: '動画配信', monthlyPrice: 1490, frequency: 'daily', paymentDay: '15', memo: 'シリーズ視聴' },
@@ -240,7 +271,6 @@ function App() {
     setChatMessages([])
   }
 
-  // 全データ削除
   const handleClearAllData = () => {
     if (window.confirm('本当に全データを削除しますか？')) {
       try {
@@ -253,7 +283,6 @@ function App() {
     }
   }
 
-  // 統計計算
   const calculateStats = () => {
     const total = subscriptions.reduce((sum, sub) => sum + sub.monthlyPrice, 0)
     const yearly = total * 12
@@ -333,7 +362,6 @@ function App() {
     return candidates.reduce((sum, item) => sum + item.yearlySavings, 0)
   }
 
-  // AIアドバイス生成
   const generateAdvice = (userMessage) => {
     const stats = calculateStats()
     const totalMonthly = stats.total
@@ -384,17 +412,20 @@ function App() {
       return '直近7日以内の支払い予定はありません。'
     }
 
+    if (normalized.includes('モンスター') || normalized.includes('図鑑')) {
+      return `現在${subscriptions.length}体のサブスクモンスターを所持しています。図鑑から確認してみてください！`
+    }
+
     return `現在${subscriptions.length}件のサブスクが登録されています。月額合計は${totalMonthly.toLocaleString()}円です。見直し候補を確認すると気軽に節約できます。`
   }
 
-  // チャット送信
   const handleSendChat = () => {
     if (!chatInput.trim()) return
-    
+
     const userMsg = { type: 'user', text: chatInput }
     const aiResponse = generateAdvice(chatInput)
     const aiMsg = { type: 'ai', text: aiResponse }
-    
+
     setChatMessages([...chatMessages, userMsg, aiMsg])
     setChatInput('')
   }
@@ -415,7 +446,6 @@ function App() {
 
   return (
     <div className={`app-container ${darkMode ? 'dark-mode' : ''}`}>
-      {/* ダッシュボード */}
       <div className="dashboard">
        <header className="app-header">
   <div className="app-header__brand">
@@ -425,7 +455,7 @@ function App() {
   <button onClick={toggleDarkMode} className="app-header__mode" aria-label="表示モード切り替え">
     {darkMode ? '☀️' : '🌙'}
   </button>
-</header> 
+</header>
 
         {upcomingPayments.length > 0 && (
           <div className="upcoming-payments">
@@ -437,7 +467,6 @@ function App() {
           </div>
         )}
 
-        {/* フォーム */}
         <div className="form-section">
           <h2>サブスクを追加する</h2>
           <form onSubmit={handleAddSubscription}>
@@ -455,7 +484,7 @@ function App() {
                 {Object.keys(servicePresets).map((service) => (
                   <option key={service} value={service} />
                 ))}
-              </datalist> 
+              </datalist>
             </div>
 
             <div className="form-group">
@@ -488,7 +517,7 @@ function App() {
               <input
                 type="number"
                 name="monthlyPrice"
-                placeholder="例：980"
+                placeholder="例:980"
                 value={formData.monthlyPrice}
                 onChange={handleInputChange}
               />
@@ -500,7 +529,7 @@ function App() {
               <input
                 type="number"
                 name="paymentDay"
-                placeholder="例：15"
+                placeholder="例:15"
                 max="31"
                 value={formData.paymentDay}
                 onChange={handleInputChange}
@@ -537,7 +566,6 @@ function App() {
           </form>
         </div>
 
-        {/* 集計カード */}
         <div className="summary-cards">
           <div className="stat-box">
             <div className="stat-label">今月合計</div>
@@ -561,7 +589,53 @@ function App() {
           </div>
         </div>
 
-        {/* カテゴリ別 */}
+        {/* ====== サブスクモンスター図鑑（新機能） ====== */}
+        {subscriptions.length > 0 && (
+          <div className="monster-section">
+            <div className="monster-section-header">
+              <h3>📖 マイモンスター図鑑</h3>
+              <span className="monster-count-badge">所持 {subscriptions.length}体</span>
+            </div>
+            <p className="monster-section-desc">
+              あなたのサブスクがモンスターに変身！月額が高いほどレアリティUP ✨
+            </p>
+            <div className="monster-grid">
+              {subscriptions.map((sub) => {
+                const monster = getMonsterData(sub.category)
+                const attack = calcAttack(sub.monthlyPrice)
+                const defense = calcDefense(sub.frequency)
+                const rarity = calcRarity(sub.monthlyPrice)
+                return (
+                  <div key={sub.id} className={`monster-card ${rarity.class}`}>
+                    <div className="monster-rarity">{rarity.label}</div>
+                    <div className="monster-emoji">{monster.emoji}</div>
+                    <div className="monster-name">{monster.name}</div>
+                    <div className="monster-sub-name">「{sub.name}」</div>
+                    <div className="monster-type-badge">タイプ: {monster.type}</div>
+                    <div className="monster-stats">
+                      <div className="monster-stat">
+                        <span className="monster-stat-label">❤️ HP</span>
+                        <span className="monster-stat-value">{sub.monthlyPrice}</span>
+                      </div>
+                      <div className="monster-stat">
+                        <span className="monster-stat-label">⚔️ こうげき</span>
+                        <span className="monster-stat-value">{attack}</span>
+                      </div>
+                      <div className="monster-stat">
+                        <span className="monster-stat-label">🛡️ ぼうぎょ</span>
+                        <span className="monster-stat-value">{defense}</span>
+                      </div>
+                    </div>
+                    <div className="monster-trait">
+                      ✨ 特性: {monster.trait}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+
         {Object.keys(stats.byCategory).length > 0 && (
           <div className="category-section">
             <h3>カテゴリ別支出</h3>
@@ -581,7 +655,6 @@ function App() {
           </div>
         )}
 
-        {/* 見直しおすすめ順 */}
         {stats.candidates.length > 0 && (
           <div className="candidates-section">
             <h3>見直しおすすめ順</h3>
@@ -609,7 +682,6 @@ function App() {
           </div>
         )}
 
-        {/* 登録一覧 */}
         <div className="subscriptions-section">
           <h3>💡 登録中のサブスク ({subscriptions.length})</h3>
           <div className="subscription-grid">
@@ -677,16 +749,15 @@ function App() {
   <button className="btn-clear-all" onClick={handleClearAllData}>
     データをリセット
   </button>
-</div> 
+</div>
       </div>
 
-      {/* AIチャット */}
       <div className="chat-section">
         <div className="chat-header">
           <h2>🤖 AI相談室</h2>
           <p className="chat-subtitle">固定費のこと、気軽に聞いてください ✨ 見直しのヒントを一緒に考えます。</p>
         </div>
-        
+
         <div className="chat-messages">
           {chatMessages.length === 0 ? (
             subscriptions.length > 0 ? (
@@ -716,7 +787,7 @@ function App() {
             ))
           )}
         </div>
-        
+
         <div className="chat-input-area">
           <input
             type="text"

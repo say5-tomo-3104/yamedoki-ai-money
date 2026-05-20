@@ -1603,3 +1603,312 @@ body {
 .dark-mode .app-header__title { color: #f8fafc; }
 .dark-mode .app-header__tagline { color: #cbd5e1; }
 .dark-mode .app-header__mode { background: #0f172a; }
+
+/* ===== サブスクモンスター図鑑 ===== */
+.monster-section {
+  background: linear-gradient(135deg, #fef3c7 0%, #ffedd5 100%);
+  padding: 24px;
+  border-radius: 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+  border: 2px solid #fcd34d;
+}
+
+.monster-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.monster-section-header h3 {
+  margin: 0;
+  color: #92400e;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.monster-count-badge {
+  background: #f59e0b;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.monster-section-desc {
+  color: #92400e;
+  font-size: 13px;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
+
+.monster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.monster-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 18px 14px;
+  text-align: center;
+  border: 3px solid #e5e7eb;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.monster-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.15);
+}
+
+/* レアリティ別の背景 */
+.monster-card.rarity-common {
+  border-color: #94a3b8;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.monster-card.rarity-uncommon {
+  border-color: #4ade80;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.monster-card.rarity-rare {
+  border-color: #60a5fa;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+.monster-card.rarity-ultra {
+  border-color: #c084fc;
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+}
+
+.monster-card.rarity-legend {
+  border-color: #fbbf24;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  animation: legendaryGlow 3s ease-in-out infinite;
+}
+
+@keyframes legendaryGlow {
+  0%, 100% { box-shadow: 0 8px 20px rgba(251, 191, 36, 0.3); }
+  50% { box-shadow: 0 12px 32px rgba(251, 191, 36, 0.6); }
+}
+
+.monster-rarity {
+  font-size: 10px;
+  font-weight: 900;
+  padding: 4px 8px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  display: inline-block;
+  letter-spacing: 0.05em;
+}
+
+.monster-card.rarity-common .monster-rarity {
+  background: #94a3b8;
+  color: #fff;
+}
+
+.monster-card.rarity-uncommon .monster-rarity {
+  background: #22c55e;
+  color: #fff;
+}
+
+.monster-card.rarity-rare .monster-rarity {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.monster-card.rarity-ultra .monster-rarity {
+  background: #a855f7;
+  color: #fff;
+}
+
+.monster-card.rarity-legend .monster-rarity {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  color: #fff;
+}
+
+.monster-emoji {
+  font-size: 48px;
+  line-height: 1;
+  margin: 12px 0;
+}
+
+.monster-name {
+  font-size: 16px;
+  font-weight: 900;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.monster-sub-name {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.monster-type-badge {
+  display: inline-block;
+  background: rgba(15, 23, 42, 0.08);
+  color: #475569;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.monster-stats {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+}
+
+.monster-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.monster-stat-label {
+  color: #4b5563;
+  font-weight: 700;
+}
+
+.monster-stat-value {
+  color: #1f2937;
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.monster-trait {
+  font-size: 11px;
+  color: #6b7280;
+  background: rgba(15, 23, 42, 0.04);
+  padding: 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* ダークモード対応 */
+.dark-mode .monster-section {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border-color: #f59e0b;
+}
+
+.dark-mode .monster-section-header h3,
+.dark-mode .monster-section-desc {
+  color: #fcd34d;
+}
+
+.dark-mode .monster-card {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.dark-mode .monster-card.rarity-common {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+.dark-mode .monster-card.rarity-uncommon {
+  background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+}
+
+.dark-mode .monster-card.rarity-rare {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
+}
+
+.dark-mode .monster-card.rarity-ultra {
+  background: linear-gradient(135deg, #581c87 0%, #1e1b4b 100%);
+}
+
+.dark-mode .monster-card.rarity-legend {
+  background: linear-gradient(135deg, #78350f 0%, #422006 100%);
+}
+
+.dark-mode .monster-name {
+  color: #f8fafc;
+}
+
+.dark-mode .monster-sub-name {
+  color: #cbd5e1;
+}
+
+.dark-mode .monster-type-badge {
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+.dark-mode .monster-stats {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .monster-stat-label {
+  color: #cbd5e1;
+}
+
+.dark-mode .monster-stat-value {
+  color: #f8fafc;
+}
+
+.dark-mode .monster-trait {
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .monster-section {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .monster-section-header h3 {
+    font-size: 18px;
+  }
+
+  .monster-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .monster-card {
+    padding: 14px 10px;
+  }
+
+  .monster-emoji {
+    font-size: 36px;
+  }
+
+  .monster-name {
+    font-size: 14px;
+  }
+
+  .monster-sub-name {
+    font-size: 11px;
+  }
+
+  .monster-stat {
+    font-size: 11px;
+  }
+
+  .monster-trait {
+    font-size: 10px;
+    padding: 6px;
+  }
+}
