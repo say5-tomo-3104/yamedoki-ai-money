@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>間違い探偵と黒柴の探偵犬 - 一次方程式編（解答・解説）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '$', right: '$', display: false}], throwOnError: false}); document.body.dataset.mathReady = '1';"></script>
+<style>
+  @page { size: A4 portrait; margin: 0; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", "IPAGothic", "Noto Sans CJK JP", sans-serif;
+    color: #222; margin: 0; padding: 0; background: #555;
+  }
+  .page {
+    width: 210mm; height: 297mm; margin: 10px auto; background: #fff;
+    padding: 14mm 16mm; position: relative; overflow: hidden;
+    break-after: page; page-break-after: always;
+    display: flex; flex-direction: column; justify-content: space-between;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  .page:last-child { break-after: auto; page-break-after: auto; }
+  @media print { body { background: transparent; } .page { margin: 0; box-shadow: none; } }
+  .katex { font-size: 1.05em; }
+
+  /* ヘッダー */
+  .header-table {
+    width: 100%; border-bottom: 2px solid #333; padding-bottom: 6px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+  .series-title { font-size: 11px; font-weight: bold; color: #666; letter-spacing: 1px; }
+  .file-num { font-size: 26px; font-weight: 900; line-height: 1; margin-top: 4px; }
+  .case-title { font-size: 18px; font-weight: bold; margin-left: 8px; }
+  .badge-area { display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
+  .diff-badge { background: #eee; border: 1px solid #333; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: bold; }
+  .point-badge { background: #333; color: #fff; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: bold; }
+  .answer-badge { background: #c53030; color: #fff; border-radius: 4px; padding: 3px 10px; font-size: 12px; font-weight: bold; letter-spacing: 2px; }
+
+  /* 問題の再掲 */
+  .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+  .memo-box { border: 2px solid #333; border-radius: 6px; background: #fffdf5; padding: 12px 10px 10px; position: relative; }
+  .memo-box.correct { border-color: #c53030; background: #fff5f5; }
+  .memo-label {
+    position: absolute; top: -10px; left: 10px; background: #333; color: #fff;
+    font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 3px;
+  }
+  .memo-box.correct .memo-label { background: #c53030; }
+  .math-orig { font-size: 14px; font-weight: bold; text-align: center; margin: 4px 0 6px; padding-bottom: 4px; border-bottom: 1px dashed #ccc; }
+  .math-step {
+    font-size: 13px; line-height: 1.8; font-weight: bold;
+    font-family: "Courier New", Courier, "DejaVu Sans Mono", "IPAGothic", monospace;
+  }
+  .bad { background: #fde68a; border-bottom: 2px wavy #c53030; }
+  .note { font-size: 10px; color: #c53030; font-family: "IPAGothic", sans-serif; font-weight: bold; }
+
+  /* 解答 */
+  .section-title {
+    font-size: 13px; font-weight: bold; color: #fff; background: #1e3a8a;
+    border-radius: 4px; padding: 3px 10px; margin-top: 14px; display: inline-block;
+  }
+  .ans-table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 12px; }
+  .ans-table th, .ans-table td { border: 1px solid #bbb; padding: 6px 8px; vertical-align: top; line-height: 1.6; }
+  .ans-table th { background: #eef2ff; color: #1e3a8a; width: 150px; text-align: left; }
+  .ans { color: #c53030; font-weight: bold; }
+  .box { border: 1px solid #bbb; border-radius: 5px; padding: 8px 10px; margin-top: 6px; font-size: 12px; line-height: 1.7; }
+  .box ul { margin: 0; padding-left: 18px; }
+  .score td:last-child { text-align: right; width: 70px; font-weight: bold; }
+  .teacher {
+    border: 1px solid #d97706; background: #fffbeb; border-radius: 6px;
+    padding: 8px 12px; margin-top: 12px; font-size: 11px; line-height: 1.7;
+  }
+  .teacher b { color: #92400e; }
+
+  .footer-bar {
+    font-size: 10px; color: #888; display: flex; justify-content: space-between;
+    border-top: 1px solid #eee; padding-top: 4px; margin-top: 4px;
+  }
+
+  /* 表紙・一覧 */
+  .cover-title { font-size: 26px; font-weight: 900; margin: 30mm 0 4mm; text-align: center; }
+  .cover-sub { font-size: 16px; text-align: center; color: #555; }
+  .cover-badge { text-align: center; margin-top: 8mm; }
+  .cover-badge span { font-size: 18px; padding: 6px 24px; }
+  .summary { width: 100%; border-collapse: collapse; margin-top: 16mm; font-size: 13px; }
+  .summary th, .summary td { border: 1px solid #999; padding: 8px 10px; text-align: center; }
+  .summary th { background: #333; color: #fff; }
+  .summary th, .summary td { white-space: nowrap; font-size: 12px; padding: 8px 6px; }
+  .summary td.l { text-align: left; white-space: normal; }
+</style>
+</head>
+<body>
+
+<!-- ==========================================
+     表紙：解答一覧
+     ========================================== -->
+<div class="page">
+  <div>
+    <div class="series-title" style="text-align:center;">間違い探偵と黒柴の探偵犬 / 中学1年一次方程式編</div>
+    <div class="cover-title">捜査ファイル 解答・解説</div>
+    <div class="cover-sub">― 先生・保護者用 ―</div>
+    <div class="cover-badge"><span class="answer-badge">解答編</span></div>
+
+    <table class="summary">
+      <tr><th>ファイル</th><th>事件名</th><th>判定</th><th>現場</th><th>手口</th><th>真相</th><th>得点</th></tr>
+      <tr><td>01</td><td class="l">消えたプラスマイナス事件</td><td class="ans">クロ</td><td class="ans">①</td><td class="ans">イ</td><td class="ans">$x = 5$</td><td>10 pt</td></tr>
+      <tr><td>02</td><td class="l">仲間外れの数字事件</td><td class="ans">クロ</td><td class="ans">①</td><td class="ans">ア</td><td class="ans">$x = 11$</td><td>20 pt</td></tr>
+      <tr><td>03</td><td class="l">かっこの奥の手がかり</td><td class="ans">シロ</td><td class="ans">なし</td><td class="ans">エ</td><td class="ans">$x = 5$（正しい）</td><td>30 pt</td></tr>
+      <tr><td>04</td><td class="l">自分の答案を捜査せよ！</td><td colspan="4" class="ans">$x = -5$（左辺・右辺とも $-22$）</td><td>最大 30 pt</td></tr>
+      <tr><td>05</td><td class="l">ボス事件：図書室の消えた8枚</td><td class="ans">クロ</td><td class="ans">①</td><td class="ans">移項の符号</td><td class="ans">$x = 5$（A・Bとも31枚）</td><td>50 pt</td></tr>
+      <tr><th colspan="6" style="text-align:right;">合計</th><th>140 pt</th></tr>
+    </table>
+
+    <div class="teacher" style="margin-top:12mm;">
+      <b>■ このシリーズのねらい</b><br>
+      答えが合っているかを「代入ルーペ（代入して確かめる）」で判定し、まちがいの場所を「変形チェッカー（1行ずつ等式のきまりを確かめる）」で突き止める力を育てます。<br>
+      <b>■ 採点について</b><br>
+      各ページの「採点の目安」は一例です。答えの数値だけでなく、<b>どの行で・なぜ</b>まちがえたかを言葉で説明できているかを重視してください。<br>
+      <b>■ ファイル03について</b><br>
+      あえて「ミスのない答案」を入れています。「必ず間違いがある」と思い込まず、証拠（代入の結果）で判断できたかを確認してください。
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>間違い探偵と黒柴の探偵犬 / 一次方程式編 解答・解説</span>
+    <span>解答一覧</span>
+  </div>
+</div>
+
+<!-- ==========================================
+     解答 01
+     ========================================== -->
+<div class="page">
+  <div>
+    <div class="header-table">
+      <div>
+        <div class="series-title">間違い探偵と黒柴の探偵犬 / 中学1年一次方程式編</div>
+        <div style="display:flex; align-items:baseline;">
+          <span class="file-num">01</span>
+          <span class="case-title">消えたプラスマイナス事件</span>
+        </div>
+      </div>
+      <div class="badge-area">
+        <span class="diff-badge">難易度：★☆☆</span>
+        <span class="point-badge">10 pt</span>
+        <span class="answer-badge">解答</span>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="memo-box">
+        <span class="memo-label">ポポの計算（ミスの場所）</span>
+        <div class="math-orig">◎ 4x - 6 = x + 9</div>
+        <div class="math-step">
+          ① 4x - x = 9 <span class="bad">- 6</span> <span class="note">← +6 のはず</span><br>
+          ② 3x = 3<br>
+          ③ x = 1
+        </div>
+      </div>
+      <div class="memo-box correct">
+        <span class="memo-label">正しい解き方</span>
+        <div class="math-orig">◎ 4x - 6 = x + 9</div>
+        <div class="math-step">
+          ① 4x - x = 9 + 6<br>
+          ② 3x = 15<br>
+          ③ x = 5
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">解答</div>
+    <table class="ans-table">
+      <tr><th>① 代入ルーペ</th><td>左辺：$4 \times 1 - 6 =$ <span class="ans">$-2$</span> ／ 右辺：$1 + 9 =$ <span class="ans">$10$</span><br>判定：<span class="ans">一致しない（クロ）</span></td></tr>
+      <tr><th>② 現場</th><td><span class="ans">①</span> 行目への変形</td></tr>
+      <tr><th>③ 手口</th><td><span class="ans">(イ)</span>　$-6$ を右辺に移項するとき、符号を変えずに $-6$ のままにしている。</td></tr>
+      <tr><th>④ 真相</th><td><span class="ans">$4x - x = 9 + 6$、$3x = 15$、$x = 5$</span><br>確かめ：左辺 $4 \times 5 - 6 = 14$、右辺 $5 + 9 = 14$　一致 ○</td></tr>
+    </table>
+
+    <div class="section-title">解説</div>
+    <div class="box">
+      移項とは「項を等号の反対側へ移すとき、<b>符号を変える</b>」ことです。$-6$ を右辺へ移すと $+6$ になります。<br>
+      これは「両辺に $6$ を足す」のと同じ操作です。$4x - 6 + 6 = x + 9 + 6$ と書いてみると、なぜ符号が変わるのかがよく分かります。
+    </div>
+
+    <div class="section-title">採点の目安（10 pt）</div>
+    <table class="ans-table score">
+      <tr><td>① 代入の計算（$-2$ と $10$）と判定「クロ」</td><td>3 pt</td></tr>
+      <tr><td>② 現場「①」・③ 手口「イ」</td><td>3 pt</td></tr>
+      <tr><td>④ 正しい解き直しで $x = 5$ を導けている</td><td>4 pt</td></tr>
+    </table>
+
+    <div class="teacher">
+      <b>■ 指導のヒント</b>　「橋を渡ると変装する（符号が変わる）」というたとえで、移項のきまりを印象づけましょう。
+      左辺の $-x$（$x$ を左へ移したもの）は正しく符号を変えている点にも注目させると、「片方だけ忘れた」ことがはっきりします。
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>間違い探偵と黒柴の探偵犬 / 一次方程式編 解答・解説</span>
+    <span>解答 01/05</span>
+  </div>
+</div>
+
+<!-- ==========================================
+     解答 02
+     ========================================== -->
+<div class="page">
+  <div>
+    <div class="header-table">
+      <div>
+        <div class="series-title">間違い探偵と黒柴の探偵犬 / 中学1年一次方程式編</div>
+        <div style="display:flex; align-items:baseline;">
+          <span class="file-num">02</span>
+          <span class="case-title">仲間外れの数字事件</span>
+        </div>
+      </div>
+      <div class="badge-area">
+        <span class="diff-badge">難易度：★★☆</span>
+        <span class="point-badge">20 pt</span>
+        <span class="answer-badge">解答</span>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="memo-box">
+        <span class="memo-label">ポポの計算（ミスの場所）</span>
+        <div class="math-orig">◎ $\dfrac{x - 3}{4} + 1 = 3$</div>
+        <div class="math-step">
+          ① (x - 3) <span class="bad">+ 1</span> = 12 <span class="note">← +4 のはず</span><br>
+          ② x - 2 = 12<br>
+          ③ x = 14
+        </div>
+      </div>
+      <div class="memo-box correct">
+        <span class="memo-label">正しい解き方</span>
+        <div class="math-orig">◎ $\dfrac{x - 3}{4} + 1 = 3$</div>
+        <div class="math-step">
+          ① (x - 3) + 4 = 12<br>
+          ② x + 1 = 12<br>
+          ③ x = 11
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">解答</div>
+    <table class="ans-table">
+      <tr><th>① 代入ルーペ</th><td>左辺：$\dfrac{14 - 3}{4} + 1 = \dfrac{11}{4} + 1 =$ <span class="ans">$\dfrac{15}{4}$</span>（$3\frac{3}{4}$）／ 右辺：$3$<br>判定：<span class="ans">一致しない（クロ）</span></td></tr>
+      <tr><th>② 現場</th><td><span class="ans">①</span> 行目への変形</td></tr>
+      <tr><th>③ 手口</th><td><span class="ans">(ア)</span>　両辺を4倍するとき、左辺の「$+1$」に4を掛け忘れている。</td></tr>
+      <tr><th>④ 真相</th><td><span class="ans">$(x - 3) + 4 = 12$、$x + 1 = 12$、$x = 11$</span><br>確かめ：左辺 $\dfrac{11 - 3}{4} + 1 = 2 + 1 = 3$、右辺 $3$　一致 ○</td></tr>
+    </table>
+
+    <div class="section-title">解説</div>
+    <div class="box">
+      分母をはらうときは、両辺の<b>すべての項</b>に同じ数（ここでは $4$）を掛けます。<br>
+      $\dfrac{x - 3}{4} \times 4 + 1 \times 4 = 3 \times 4$ と1項ずつ書くと、「$+1$」にも $4$ が掛かることが分かります。
+      (イ) の「右辺の3に4を掛けて12」は正しい操作です。(ウ) の $-3 + 1 = -2$ も計算としては正しいので、犯人ではありません。
+    </div>
+
+    <div class="section-title">採点の目安（20 pt）</div>
+    <table class="ans-table score">
+      <tr><td>① 代入の計算（$\dfrac{15}{4}$）と判定「クロ」</td><td>6 pt</td></tr>
+      <tr><td>② 現場「①」・③ 手口「ア」</td><td>6 pt</td></tr>
+      <tr><td>④ 正しい解き直しで $x = 11$ を導けている</td><td>8 pt</td></tr>
+    </table>
+
+    <div class="teacher">
+      <b>■ 指導のヒント</b>　「天秤の両方のお皿に乗っているものを、ぜんぶ4倍する」イメージで。
+      分数の項だけに目が行き、整数の項を忘れるのは分数方程式で最も多いミスです。掛ける数を各項の上に小さく書かせる習慣も効果的です。
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>間違い探偵と黒柴の探偵犬 / 一次方程式編 解答・解説</span>
+    <span>解答 02/05</span>
+  </div>
+</div>
+
+<!-- ==========================================
+     解答 03
+     ========================================== -->
+<div class="page">
+  <div>
+    <div class="header-table">
+      <div>
+        <div class="series-title">間違い探偵と黒柴の探偵犬 / 中学1年一次方程式編</div>
+        <div style="display:flex; align-items:baseline;">
+          <span class="file-num">03</span>
+          <span class="case-title">かっこの奥の手がかり</span>
+        </div>
+      </div>
+      <div class="badge-area">
+        <span class="diff-badge" style="background:#fee2e2; border-color:#ef4444; color:#b91c1c;">難易度：★★★</span>
+        <span class="point-badge" style="background:#b91c1c;">30 pt</span>
+        <span class="answer-badge">解答</span>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="memo-box correct">
+        <span class="memo-label">ポポの計算（ミスなし）</span>
+        <div class="math-orig">◎ 3(2x - 4) = 5x - 7</div>
+        <div class="math-step">
+          ① 6x - 12 = 5x - 7 <span class="note">○ 分配法則</span><br>
+          ② 6x - 5x = -7 + 12 <span class="note">○ 移項</span><br>
+          ③ x = 5 <span class="note">○</span>
+        </div>
+      </div>
+      <div class="memo-box" style="background:#f0f7ff; border-color:#1e3a8a;">
+        <span class="memo-label" style="background:#1e3a8a;">代入ルーペの証拠</span>
+        <div class="math-step" style="font-family:inherit; margin-top:6px;">
+          左辺：$3(2 \times 5 - 4) = 3 \times 6 = 18$<br>
+          右辺：$5 \times 5 - 7 = 18$<br>
+          → 一致する（シロ）
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">解答</div>
+    <table class="ans-table">
+      <tr><th>① 代入ルーペ</th><td>左辺：<span class="ans">$18$</span> ／ 右辺：<span class="ans">$18$</span><br>判定：<span class="ans">一致する（シロ）</span></td></tr>
+      <tr><th>② 現場</th><td><span class="ans">なし</span></td></tr>
+      <tr><th>③ 手口</th><td><span class="ans">(エ)</span>　ミスはない。（完全無欠！ポポは完璧に解けている）</td></tr>
+      <tr><th>④ 報告<br>（理由の例）</th><td>
+        <span class="ans">①は、分配法則で $3 \times 2x = 6x$、$3 \times (-4) = -12$ と、かっこの中のすべての項に3を掛けているので正しい。</span><br>
+        <span class="ans">②は、$5x$ を左辺へ移して $-5x$、$-12$ を右辺へ移して $+12$ と、移項した項の符号をきちんと変えているので正しい。</span><br>
+        <span class="ans">さらに $x = 5$ を代入すると両辺とも $18$ になり、答えも正しいと確かめられる。</span>
+      </td></tr>
+    </table>
+
+    <div class="section-title">解説</div>
+    <div class="box">
+      このファイルは「ミスがない答案」です。間違い探しが続くと「どこかに必ずミスがある」と思い込みがちですが、名探偵は<b>証拠</b>で判断します。<br>
+      代入した結果が一致した（シロ）なら、答えは正しいと分かります。あとは1行ずつ等式のきまりを確かめて、ミスがないと言い切れればOKです。
+    </div>
+
+    <div class="section-title">採点の目安（30 pt）</div>
+    <table class="ans-table score">
+      <tr><td>① 代入の計算（両辺 $18$）と判定「シロ」</td><td>8 pt</td></tr>
+      <tr><td>② 「なし」・③ 「エ」を選べている</td><td>8 pt</td></tr>
+      <tr><td>④ ①（分配法則）と②（移項の符号）が正しい理由を説明できている</td><td>14 pt</td></tr>
+    </table>
+
+    <div class="teacher">
+      <b>■ 指導のヒント</b>　(ア)〜(ウ) を選んだ生徒には「その行を代入ルーペで確かめるとどうなる？」と聞き返し、自分で思い込みに気づかせましょう。
+      「正しいことを説明する」のは「間違いを指摘する」よりも難しい、高いレベルの力です。理由が1つでも書けていれば積極的に認めてください。
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>間違い探偵と黒柴の探偵犬 / 一次方程式編 解答・解説</span>
+    <span>解答 03/05</span>
+  </div>
+</div>
+
+<!-- ==========================================
+     解答 04
+     ========================================== -->
+<div class="page">
+  <div>
+    <div class="header-table">
+      <div>
+        <div class="series-title">間違い探偵と黒柴の探偵犬 / 中学1年一次方程式編</div>
+        <div style="display:flex; align-items:baseline;">
+          <span class="file-num">04</span>
+          <span class="case-title">自分の答案を捜査せよ！</span>
+        </div>
+      </div>
+      <div class="badge-area">
+        <span class="diff-badge">特命捜査</span>
+        <span class="point-badge">最大 30 pt</span>
+        <span class="answer-badge">解答</span>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="memo-box correct" style="grid-column: 1 / span 2;">
+        <span class="memo-label">模範解答</span>
+        <div class="math-orig">◎ 5x + 3 = 2(x - 6)</div>
+        <div class="math-step" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0 20px;">
+          <div>
+            ① 5x + 3 = 2x - 12<br>
+            ② 5x - 2x = -12 - 3<br>
+            ③ 3x = -15<br>
+            ④ x = -5
+          </div>
+          <div style="font-family:'IPAGothic',sans-serif; font-size:11px; font-weight:normal; line-height:2.0;">
+            ← 分配法則で、かっこを外す<br>
+            ← $2x$ を左辺へ、$3$ を右辺へ移項<br>
+            ← 同類項をまとめる<br>
+            ← 両辺を $3$ でわる
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">解答</div>
+    <table class="ans-table">
+      <tr><th>① 最初の答え</th><td><span class="ans">$x = -5$</span></td></tr>
+      <tr><th>② 代入ルーペ</th><td>左辺：$5 \times ($<span class="ans">$-5$</span>$) + 3 =$ <span class="ans">$-22$</span><br>右辺：$2 \times ($<span class="ans">$-5$</span>$\mathbin{-} 6) = 2 \times (-11) =$ <span class="ans">$-22$</span><br>判定：<span class="ans">一致した（無罪放免！）</span></td></tr>
+      <tr><th>③ 見直した跡</th><td>一発で一致した場合：<span class="ans">「確認完了！」</span><br>修正した場合の例：<span class="ans">「①で $2 \times (-6)$ を $-6$ と書いていたので、$-12$ に直した」</span></td></tr>
+    </table>
+
+    <div class="section-title">よくあるミスと代入ルーペの結果</div>
+    <table class="ans-table">
+      <tr><th>かっこの $-6$ に2を掛け忘れ<br>$5x + 3 = 2x - 6$</th><td>$x = -3$ になる → 左辺 $-12$、右辺 $-18$ で不一致</td></tr>
+      <tr><th>移項で $3$ の符号を変え忘れ<br>$3x = -12 + 3$</th><td>$x = -3$ になる → 同じく不一致</td></tr>
+      <tr><th>負の数の割り算ミス<br>$3x = -15 \to x = 5$</th><td>左辺 $28$、右辺 $-2$ で不一致</td></tr>
+    </table>
+
+    <div class="section-title">採点の目安（最大 30 pt）</div>
+    <table class="ans-table score">
+      <tr><td>途中式をていねいに書いて、最終的に $x = -5$ にたどり着いた</td><td>10 pt</td></tr>
+      <tr><td>自分の答えを左辺・右辺に正しく代入して計算し、判定できた</td><td>10 pt</td></tr>
+      <tr><td>見直した跡（修正箇所の説明、または「確認完了！」）を残せた</td><td>10 pt</td></tr>
+    </table>
+
+    <div class="teacher">
+      <b>■ 指導のヒント</b>　最初の答えが間違っていても、代入ルーペで自分で気づき、直せれば満点にしてかまいません。
+      「一発で正解」よりも「自分のミスを自分で見つけられる」ことを高く評価すると、見直しの習慣が育ちます。
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>間違い探偵と黒柴の探偵犬 / 一次方程式編 解答・解説</span>
+    <span>解答 04/05</span>
+  </div>
+</div>
+
+<!-- ==========================================
+     解答 05
+     ========================================== -->
+<div class="page">
+  <div>
+    <div class="header-table">
+      <div>
+        <div class="series-title">間違い探偵と黒柴の探偵犬 / 中学1年一次方程式編</div>
+        <div style="display:flex; align-items:baseline;">
+          <span class="file-num">05</span>
+          <span class="case-title">ボス事件：図書室の消えた8枚</span>
+        </div>
+      </div>
+      <div class="badge-area">
+        <span class="diff-badge" style="background:#fef3c7; border-color:#d97706; color:#92400e;">ボス事件</span>
+        <span class="point-badge" style="background:#b45309;">50 pt</span>
+        <span class="answer-badge">解答</span>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="memo-box">
+        <span class="memo-label">ポポのメモ（ミスの場所）</span>
+        <div class="math-orig">◎ 7x - 4 = 3x + 16</div>
+        <div class="math-step">
+          ① 7x - 3x = 16 <span class="bad">- 4</span> <span class="note">← +4 のはず</span><br>
+          ② 4x = 12<br>
+          ③ x = 3
+        </div>
+      </div>
+      <div class="memo-box correct">
+        <span class="memo-label">正しい解き方</span>
+        <div class="math-orig">◎ 7x - 4 = 3x + 16</div>
+        <div class="math-step">
+          ① 7x - 3x = 16 + 4<br>
+          ② 4x = 20<br>
+          ③ x = 5
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">解答</div>
+    <table class="ans-table">
+      <tr><th>① ほころび</th><td>最初のミスは <span class="ans">①</span> 行目への変形。<br>説明の例：<span class="ans">左辺の $-4$ を右辺に移項するとき、符号を変えて $+4$ にしなければいけないのに、$-4$ のままにしている。</span></td></tr>
+      <tr><th>② 真相</th><td>
+        正しい途中式：<span class="ans">$7x - 3x = 16 + 4$、$4x = 20$、$x = 5$</span><br>
+        ・1袋のしおりは <span class="ans">5</span> 枚<br>
+        ・Aの箱は $7 \times 5 - 4 =$ <span class="ans">31</span> 枚、Bの箱は $3 \times 5 + 16 =$ <span class="ans">31</span> 枚<br>
+        ・8枚を追加する必要は <span class="ans">ない（見かけの計算ミス）</span>
+      </td></tr>
+    </table>
+
+    <div class="section-title">解説：「消えた8枚」の正体</div>
+    <div class="box">
+      ポポは $x = 3$ で計算したため、A $= 7 \times 3 - 4 = 17$ 枚、B $= 3 \times 3 + 16 = 25$ 枚となり、「8枚の差」が生まれました。<br>
+      しかし先生は「両方とも同じ枚数」だと確かめています。つまり $x = 3$ は<b>問題の条件（等式）を満たしていない</b>のです。代入ルーペで $17 \neq 25$ と分かった時点で、ポポの答えは「クロ」でした。<br>
+      正しく $x = 5$ とすると、AもBも31枚でぴったり等しくなります。しおりは1枚も消えていません。<b>消えたのはしおりではなく、移項のときの「符号」</b>でした。
+    </div>
+
+    <div class="section-title">採点の目安（50 pt）</div>
+    <table class="ans-table score">
+      <tr><td>① ミスの行「①」を特定できた</td><td>10 pt</td></tr>
+      <tr><td>① ミスの内容（移項で符号を変えていない）を説明できた</td><td>10 pt</td></tr>
+      <tr><td>② 正しい途中式で $x = 5$ を導けた</td><td>15 pt</td></tr>
+      <tr><td>② A・B の枚数（31枚・31枚）と「追加の必要はない」を答えられた</td><td>15 pt</td></tr>
+    </table>
+
+    <div class="teacher">
+      <b>■ 指導のヒント</b>　ファイル01と同じ手口（移項の符号ミス）が、文章題の中にかくれています。「01の事件と似ていない？」と声をかけると、学びのつながりに気づかせられます。
+      方程式の解は「文章の条件を満たす数」だということ、そして答えを元の場面に当てはめて確かめる大切さを確認しましょう。
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>間違い探偵と黒柴の探偵犬 / 一次方程式編 解答・解説</span>
+    <span>解答 05/05（完）</span>
+  </div>
+</div>
+
+</body>
+</html>
