@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>間違い探偵と黒柴の探偵犬 - 一次方程式編（製品版）</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '$', right: '$', display: false}], throwOnError: false}); document.body.dataset.mathReady = '1';"></script>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+  * {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", "IPAGothic", "Noto Sans CJK JP", sans-serif;
+    color: #222;
+    margin: 0;
+    padding: 0;
+    background: #555;
+  }
+  .page {
+    width: 210mm;
+    height: 297mm;
+    margin: 10px auto;
+    background: #fff;
+    padding: 14mm 16mm;
+    position: relative;
+    page-break-after: always;
+    break-after: page;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  .page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+  @media print {
+    body { background: transparent; }
+    .page {
+      margin: 0;
+      box-shadow: none;
+    }
+  }
+  .katex { font-size: 1.05em; }
+
+  /* ヘッダー */
+  .header-table {
+    width: 100%;
+    border-bottom: 2px solid #333;
+    padding-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .series-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: #666;
+    letter-spacing: 1px;
+  }
+  .badge-area {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .diff-badge {
+    background: #eee;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .point-badge {
+    background: #333;
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .file-num {
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 1;
+    margin-top: 4px;
+  }
+  .case-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 8px;
+  }
+  .user-info {
+    font-size: 12px;
+    display: flex;
+    gap: 15px;
+  }
+  .underline-field {
+    border-bottom: 1px solid #333;
+    padding: 0 20px 2px 5px;
+    min-width: 90px;
+    display: inline-block;
+  }
+
+  /* 捜査の道具バー */
+  .tool-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    margin-top: 8px;
+    background: #f9f9f9;
+    border: 1px dashed #aaa;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 11px;
+    align-items: center;
+  }
+  .tool-tag {
+    background: #e2e8f0;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid #cbd5e1;
+  }
+
+  /* メインコンテンツ枠 */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 14px;
+    margin-top: 10px;
+  }
+
+  /* 容疑者メモ枠 */
+  .memo-box {
+    border: 2px solid #333;
+    border-radius: 6px;
+    background: #fffdf5;
+    padding: 10px;
+    position: relative;
+  }
+  .memo-label {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: #333;
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .math-orig {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    margin: 8px 0 6px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed #ccc;
+  }
+  .math-step {
+    font-size: 13px;
+    line-height: 1.8;
+    font-family: "Courier New", Courier, "DejaVu Sans Mono", "IPAGothic", monospace;
+    font-weight: bold;
+  }
+
+  /* イラスト枠 */
+  .illus-panel {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    text-align: center;
+  }
+  .illus-caption {
+    font-size: 10px;
+    color: #666;
+    margin-top: 4px;
+  }
+
+  /* 解答欄ステップ */
+  .report-area {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .step-card {
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    padding: 6px 10px;
+    background: #fff;
+  }
+  .step-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #1e3a8a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .step-body {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .choice-list {
+    margin: 4px 0 2px 0;
+    padding-left: 14px;
+    font-size: 11px;
+    line-height: 1.6;
+    list-style: none;
+  }
+  .fill-line {
+    border-bottom: 1px solid #444;
+    padding: 0 10px;
+    display: inline-block;
+    min-width: 50px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  /* 逆さヒント枠 */
+  .dog-hint-area {
+    border-top: 1px dashed #888;
+    padding-top: 6px;
+    margin-top: 8px;
+    transform: rotate(180deg);
+    text-align: center;
+    background: #fdfdfd;
+  }
+  .dog-hint-text {
+    font-size: 10px;
+    color: #444;
+    line-height: 1.4;
+    display: inline-block;
+    border: 1px solid #aaa;
+    border-radius: 12px;
+    padding: 4px 12px;
+    background: #fff;
+  }
+
+  /* ページ番号 */
+  .footer-bar {
+    font-size: 10px;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #eee;
+    padding-top: 4px;
+    margin-top: 4px;
+  }
+
+  /* SVGアイコン用スタイル */
+  svg {
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<!-- ==========================================
+     PAGE 1: ファイル01 (★☆☆ 10pt)
+     ========================================== -->
+<div class="page">
+  <div>
+    <div class="header-table">
+      <div>
+        <div class="series-title">間違い探偵と黒柴の探偵犬 / 中学1年一次方程式編</div>
+        <div style="display:flex; align-items:baseline;">
+          <span class="file-num">01</span>
+          <span class="case-title">消えたプラスマイナス事件</span>
+        </div>
+      </div>
+      <div>
+        <div class="badge-area">
+          <span class="diff-badge">難易度：★☆☆</span>
+          <span class="point-badge">獲得：10 pt</span>
+        </div>
+        <div class="user-info" style="margin-top:6px;">
+          <span>捜査日: <span class="underline-field"> 月 日</span></span>
+          <span>名前: <span class="underline-field"></span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-bar">
+      <span class="tool-tag">道具① 代入ルーペ</span> 答えを最初の式に入れ、左辺と右辺が一致するか調べる。
+      <span class="tool-tag" style="margin-left:10px;">道具② 変形チェッカー</span> 行と行の間で、等式のルールが守られたか調べる。
+    </div>
+
+    <div class="main-grid">
+      <!-- メモ枠 -->
+      <div class="memo-box">
+        <span class="memo-label">容疑者 ポポの計算</span>
+        <div class="math-orig">◎ 4x - 6 = x + 9</div>
+        <div class="math-step">
+          ① 4x - x = 9 - 6<br>
+          ② 3x = 3<br>
+          ③ x = 1
+        </div>
+      </div>
+
+      <!-- イラスト枠 -->
+      <div class="illus-panel">
+        <!-- SVGカット絵: 探偵と黒柴が計算メモを前に思案 -->
+        <svg width="140" height="75" viewBox="0 0 200 110">
+          <!-- 探偵 -->
+          <circle cx="60" cy="40" r="18" fill="#fbd38d"/>
+          <path d="M40 32 Q60 16 82 28 Q88 38 60 38 Z" fill="#4a5568"/>
+          <rect x="52" y="24" width="28" height="4" fill="#2d3748"/>
+          <circle cx="68" cy="38" r="2" fill="#222"/>
+          <path d="M42 58 L78 58 L72 95 L48 95 Z" fill="#718096"/>
+          <!-- 虫眼鏡 -->
+          <circle cx="85" cy="50" r="12" fill="none" stroke="#2b6cb0" stroke-width="3"/>
+          <line x1="94" y1="59" x2="105" y2="70" stroke="#744210" stroke-width="4"/>
+          <!-- 黒柴犬 -->
+          <ellipse cx="145" cy="65" rx="22" ry="16" fill="#1a202c"/>
+          <circle cx="160" cy="50" r="14" fill="#1a202c"/>
+          <!-- 白斑・耳 -->
+          <polygon points="152,38 158,26 163,38" fill="#1a202c"/>
+          <polygon points="165,38 171,28 174,40" fill="#1a202c"/>
+          <ellipse cx="166" cy="55" rx="7" ry="5" fill="#f7fafc"/>
+          <circle cx="167" cy="53" r="2" fill="#000"/>
+          <circle cx="156" cy="46" r="2" fill="#fbd38d"/>
+          <!-- 巻き尾 -->
+          <path d="M125 62 Q120 48 132 50 Q135 55 127 60" fill="#1a202c"/>
+          <!-- スカーフ -->
+          <path d="M148 58 L158 64 L154 70 Z" fill="#e53e3e"/>
+        </svg>
+        <div class="illus-caption">「変形チェッカー」で1行ずつ現場検証だ！</div>
+      </div>
+    </div>
+
+    <!-- 解答ステップ -->
+    <div class="report-area">
+      <div class="step-card">
+        <div class="step-title">① 代入ルーペで答えを調べる</div>
+        <div class="step-body">
+          ポポの答え $x = 1$ を最初の式に代入しよう。<br>
+          左辺：$4 \times 1 - 6 =$ <span class="fill-line"></span> ／ 右辺：$1 + 9 =$ <span class="fill-line"></span><br>
+          判定：［ □ 一致する（シロ）  □ 一致しない（クロ） ］
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-title">② 現場を見つける</div>
+        <div class="step-body">
+          最初に計算のルールが破られたのは［ <span class="fill-line" style="min-width:30px;"></span> ］行目への変形。（ミスがなければ「なし」）
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-title">③ 犯人の手口を選ぶ</div>
+        <div class="step-body">
+          <ul class="choice-list">
+            <li>(ア) 文字の項と数の項を、そのまま足してしまっている。</li>
+            <li>(イ) $-6$ を右辺に移項するとき、符号を変えずに $-6$ のままにしている。</li>
+            <li>(ウ) 両辺を3で割るところで、3を掛けてしまっている。</li>
+            <li>(エ) ミスはない。（完全無欠）</li>
+          </ul>
+          選んだ記号：［ <span class="fill-line" style="min-width:30px;"></span> ］
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-title">④ 真相を書く（正しい解き直し）</div>
+        <div class="step-body" style="height: 52px; border: 1px dashed #ccc; border-radius: 4px; padding: 4px;">
+          <!-- 自由記入欄 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 逆さヒント -->
+  <div>
+    <div class="dog-hint-area">
+      <div class="dog-hint-text">
+        🐾【相棒の犬のヒント】くんくん…！ ①の行、左辺から右辺へ引っ越した「-6」から怪しい匂いがするぞ。橋を渡るとき、変装（符号変え）を忘れていないか？
+      </div>
+    </div>
+    <div class="footer-bar">
+      <span>間違い探偵と黒柴の探偵犬 / 一次方程式編</span>
+      <span>捜査ファイル 01/05</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     PAGE 2: ファイル02 (★★☆ 20pt)
+     ========================================== -->
+<div class="page">
+  <div>
+    <div class="header-table">
+      <div>
+        <div class="series-title">間違い探偵と黒柴の探偵犬 / 中学1年一次方程式編</div>
+        <div style="display:flex; align-items:baseline;">
+          <span class="file-num">02</span>
+          <span class="case-title">仲間外れの数字事件</span>
+        </div>
+      </div>
+      <div>
+        <div class="badge-area">
+          <span class="diff-badge">難易度：★★☆</span>
+          <span class="point-badge">獲得：20 pt</span>
+        </div>
+        <div class="user-info" style="margin-top:6px;">
+          <span>捜査日: <span class="underline-field"> 月 日</span></span>
+          <span>名前: <span class="underline-field"></span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-bar">
+      <span class="tool-tag">捜査の急所</span> 分数の方程式は「両辺のすべての項」に同じ数を掛ける。天秤のバランスは崩れていないか？
+    </div>
+
+    <div class="main-grid">
+      <div class="memo-box">
+        <span class="memo-label">容疑者 ポポの計算</span>
+        <div class="math-orig">◎ $\dfrac{x - 3}{4} + 1 = 3$</div>
+        <div class="math-step">
+          ① (x - 3) + 1 = 12<br>
+          ② x - 2 = 12<br>
+          ③ x = 14
+        </div>
+      </div>
+
+      <div class="illus-panel">
+        <svg width="140" height="75" viewBox="0 0 200 110">
+          <!-- ロボット ポポ -->
+          <rect x="40" y="30" width="36" height="28" rx="4" fill="#cbd5e0" stroke="#4a5568" stroke-width="2"/>
+          <circle cx="50" cy="42" r="3" fill="#3182ce"/>
+          <circle cx="66" cy="42" r="3" fill="#3182ce"/>
+          <line x1="58" y1="20" x2="58" y2="30" stroke="#4a5568" stroke-width="2"/>
+          <circle cx="58" cy="18" r="3" fill="#e53e3e"/>
+          <line x1="48" y1="50" x2="68" y2="50" stroke="#4a5568" stroke-width="2"/>
+          <!-- 黒柴が吠える -->
+          <ellipse cx="140" cy="65" rx="20" ry="15" fill="#1a202c"/>
+          <circle cx="155" cy="50" r="13" fill="#1a202c"/>
+          <polygon points="148,38 153,26 158,38" fill="#1a202c"/>
+          <polygon points="160,38 165,28 168,40" fill="#1a202c"/>
+          <ellipse cx="162" cy="55" rx="6" ry="4" fill="#f7fafc"/>
+          <circle cx="163" cy="54" r="2" fill="#000"/>
+          <!-- 吹き出し -->
+          <path d="M120 40 Q110 30 125 25 Q135 25 130 35 Z" fill="#edf2f7" stroke="#718096"/>
+          <text x="122" y="32" font-size="9" font-weight="bold">ワン!</text>
+        </svg>
+        <div class="illus-caption">「あいつだけご馳走を貰ってないワン！」</div>
+      </div>
+    </div>
+
+    <div class="report-area">
+      <div class="step-card">
+        <div class="step-title">① 代入ルーペで答えを調べる</div>
+        <div class="step-body">
+          ポポの答え $x = 14$ を最初の式に代入しよう。<br>
+          左辺：$\dfrac{14 - 3}{4} + 1 = \dfrac{11}{4} + 1 =$ <span class="fill-line"></span> ／ 右辺：<span class="fill-line">3</span><br>
+          判定：［ □ 一致する（シロ）  □ 一致しない（クロ） ］
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-title">② 現場を見つける</div>
+        <div class="step-body">
+          最初にルールが破られたのは［ <span class="fill-line" style="min-width:30px;"></span> ］行目への変形。（ミスがなければ「なし」）
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-title">③ 犯人の手口を選ぶ</div>
+        <div class="step-body">
+          <ul class="choice-list">
+            <li>(ア) 両辺を4倍するとき、左辺の「+1」に4を掛け忘れている。</li>
+            <li>(イ) 右辺の3に4を掛けて12にしたのが間違い。</li>
+            <li>(ウ) $-3 + 1 = -2$ の計算を間違えている。</li>
+            <li>(エ) ミスはない。（完全無欠）</li>
+          </ul>
+          選んだ記号：［ <span class="fill-line" style="min-width:30px;"></span> ］
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-title">④ 真相を書く（正しい解き直し）</div>
+        <div class="step-body" style="height: 52px; border: 1px dashed #ccc; border-radius: 4px; padding: 4px;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="dog-hint-area">
+      <div class="dog-hint-text">
+        🐾【相棒の犬のヒント】ウゥー…！ ①の行を見てごらん。分母の4を払うとき、カッコの外にいた「+1」はお腹を空かせたまま（掛け算なし）じゃないか？ 天秤のルールを思い出そう！
+      </div>
+    </div>
+    <div class="footer-bar">
+      <span>間違い探偵と黒柴の探偵犬 / 一次方程式編</span>
+      <span>捜査ファイル 02/05</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     PAGE 3: ファイル03 (★★★ 30pt)
+     ========================================== -->
+<div class="page">
+  <div>
+    <div class="header-table">
+      <div>
+        <div class="series-title">間違い探偵と黒柴の探偵犬 / 中学1年一次方程式編</div>
+        <div style="display:flex; align-items:baseline;">
+          <span class="file-num">03</span>
+          <span class="case-title">かっこの奥の手がかり</span>
+        </div>
+      </div>
+      <div>
+        <div class="badge-area">
+          <span class="diff-badge" style="background:#fee2e2; border-color:#ef4444; color:#b91c1c;">難易度：★★★</span>
+          <span class="point-badge" style="background:#b91c1c;">獲得：30 pt</span>
+        </div>
+        <div class="user-info" style="margin-top:6px;">
+          <span>捜査日: <span class="underline-field"> 月 日</span></span>
+          <span>名前: <span class="underline-field"></span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-bar">
+      <span class="tool-tag" style="background:#fee2e2;">名探偵への戒め</span> 「必ず間違いがあるはず」という先入観を捨てよ。証拠（計算の筋道）だけを信じるべし。
+    </div>
+
+    <div class="main-grid">
+      <div class="memo-box">
+        <span class="memo-label">容疑者 ポポの計算</span>
+        <div class="math-orig">◎ 3(2x - 4) = 5x - 7</div>
+        <div class="math-step">
+          ① 6x - 12 = 5x - 7<br>
+          ② 6x - 5x = -7 + 12<br>
+          ③ x = 5
+        </div>
+      </div>
+
+      <div class="illus-panel">
+        <svg width="140" height="75" viewBox="0 0 200 110">
+          <!-- 探偵が腕組み -->
+          <circle cx="70" cy="40" r="16" fill="#fbd38d"/>
+          <path d="M52 32 Q70 18 90 28 Q95 38 70 38 Z" fill="#4a5568"/>
+          <!-- 悩む表情 -->
+          <circle cx="76" cy="38" r="2" fill="#222"/>
+          <path d="M72 46 Q78 43 82 46" stroke="#222" stroke-width="1.5" fill="none"/>
+          <!-- 黒柴が首をかしげる -->
+          <ellipse cx="140" cy="65" rx="20" ry="15" fill="#1a202c"/>
+          <circle cx="152" cy="48" r="13" fill="#1a202c"/>
+          <polygon points="143,36 146,24 153,34" fill="#1a202c"/>
+          <polygon points="156,36 163,26 165,38" fill="#1a202c"/>
+          <!-- はてなマーク -->
+          <text x="170" y="45" font-size="18" font-weight="bold" fill="#dd6b20">？</text>
+        </svg>
+        <div class="illus-caption">「くんくん…？ 怪しい匂いがどこからも…？」</div>
+      </div>
+    </div>
+
+    <div class="report-area">
+      <div class="step-card">
+        <div class="step-title">① 代入ルーペで答えを調べる</div>
+        <div class="step-body">
+          ポポの答え $x = 5$ を最初の式に代入しよう。<br>
+          左辺：$3(2 \times 5 - 4) = 3 \times 6 =$ <span class="fill-line"></span> ／ 右辺：$5 \times 5 - 7 =$ <span class="fill-line"></span><br>
+          判定：［ □ 一致する（シロ）  □ 一致しない（クロ） ］
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-title">② 現場を見つける</div>
+        <div class="step-body">
+          最初にルールが破られたのは［ <span class="fill-line" style="min-width:30px;"></span> ］行目への変形。（ミスがなければ「なし」）
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-title">③ 犯人の手口を選ぶ</div>
+        <div class="step-body">
+          <ul class="choice-list">
+            <li>(ア) かっこを外すとき、$-4$ に3を掛け忘れている。</li>
+            <li>(イ) 移項するときの符号を間違えている。</li>
+            <li>(ウ) $-7 + 12$ の計算を間違えている。</li>
+            <li>(エ) ミスはない。（完全無欠！ポポは完璧に解けている）</li>
+          </ul>
+          選んだ記号：［ <span class="fill-line" style="min-width:30px;"></span> ］
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-title">④ 証拠をそえて報告せよ</div>
+        <div class="step-body" style="height: 52px; border: 1px dashed #ccc; border-radius: 4px; padding: 4px; font-size:11px;">
+          ※ミスがあれば正しく直し、ミスがない場合は「なぜ①と②の変形が正しいと言えるのか」理由を説明しよう。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="dog-hint-area">
+      <div class="dog-hint-text">
+        🐾【相棒の犬のヒント】くんくん…？ おかしいな。分配法則も移項も、怪しい匂いがどこからもしてこないぞ。探偵、思い込みで犯人に仕立て上げちゃいけないワン！ 代入ルーペの数字はどうなった？
+      </div>
+    </div>
+    <div class="footer-bar">
+      <span>間違い探偵と黒柴の探偵犬 / 一次方程式編</span>
+      <span>捜査ファイル 03/05</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     PAGE 4: ファイル04 (特命捜査 最大30pt)
+     ========================================== -->
+<div class="page">
+  <div>
+    <div class="header-table">
+      <div>
+        <div class="series-title">間違い探偵と黒柴の探偵犬 / 中学1年一次方程式編</div>
+        <div style="display:flex; align-items:baseline;">
+          <span class="file-num">04</span>
+          <span class="case-title">自分の答案を捜査せよ！</span>
+        </div>
+      </div>
+      <div>
+        <div class="badge-area">
+          <span class="diff-badge">特命捜査</span>
+          <span class="point-badge">最大：30 pt</span>
+        </div>
+        <div class="user-info" style="margin-top:6px;">
+          <span>捜査日: <span class="underline-field"> 月 日</span></span>
+          <span>名前: <span class="underline-field"></span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-bar">
+      <span class="tool-tag">特命捜査指令</span> 本物の名探偵は、他人のミスだけでなく「自分の仕事」にこそ厳しい目を光らせるものだ。
+    </div>
+
+    <div style="margin-top:10px; border:2px solid #1e3a8a; border-radius:6px; padding:10px; background:#f0f7ff;">
+      <div style="font-weight:bold; font-size:13px; color:#1e3a8a; margin-bottom:4px;">【特命事件：次の方程式を解け】</div>
+      <div style="text-align:center; font-size:16px; font-weight:bold;">5x + 3 = 2(x - 6)</div>
+    </div>
+
+    <!-- 自分の計算スペース -->
+    <div style="margin-top:10px;">
+      <div style="font-size:12px; font-weight:bold;">① まずは自分の手で解く（途中式をていねいに書こう）</div>
+      <div style="height:140px; border:1px solid #777; border-radius:5px; margin-top:4px; padding:8px; background:#fff;">
+        <span style="font-size:11px; color:#888;">［ 捜査ノート ］</span>
+      </div>
+      <div style="text-align:right; margin-top:4px; font-size:12px; font-weight:bold;">
+        君が出した最初の答え： x = <span class="fill-line" style="min-width:60px;"></span>
+      </div>
+    </div>
+
+    <!-- 代入ルーペ捜査 -->
+    <div class="report-area" style="margin-top:8px;">
+      <div class="step-card">
+        <div class="step-title">② 代入ルーペで自分の答案を取り調べよ！</div>
+        <div class="step-body">
+          君が出した答えを、最初の式の左辺と右辺にそれぞれ代入して計算してみよう。<br>
+          左辺：$5 \times ($ <span class="fill-line" style="min-width:30px;"></span> $) + 3 =$ <span class="fill-line"></span><br>
+          右辺：$2 \times ($ <span class="fill-line" style="min-width:30px;"></span> $\mathbin{-} 6) =$ <span class="fill-line"></span><br>
+          判定：［ □ 一致した（無罪放免！）  □ 一致しない（事件発生！途中の式を見直せ） ］
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-title">③ 見直した跡（捜査の軌跡）を残す</div>
+        <div class="step-body" style="height:46px;">
+          ミスを発見して修正した場合は、どこを直したか書こう。（一発で一致した場合は「確認完了！」と書こう）
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="footer-bar">
+      <span>間違い探偵と黒柴の探偵犬 / 一次方程式編</span>
+      <span>捜査ファイル 04/05</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     PAGE 5: ファイル05 (ボス事件 50pt)
+     ========================================== -->
+<div class="page">
+  <div>
+    <div class="header-table">
+      <div>
+        <div class="series-title">間違い探偵と黒柴の探偵犬 / 中学1年一次方程式編</div>
+        <div style="display:flex; align-items:baseline;">
+          <span class="file-num">05</span>
+          <span class="case-title">ボス事件：図書室の消えた8枚</span>
+        </div>
+      </div>
+      <div>
+        <div class="badge-area">
+          <span class="diff-badge" style="background:#fef3c7; border-color:#d97706; color:#92400e;">ボス事件</span>
+          <span class="point-badge" style="background:#b45309;">獲得：50 pt</span>
+        </div>
+        <div class="user-info" style="margin-top:6px;">
+          <span>捜査日: <span class="underline-field"> 月 日</span></span>
+          <span>名前: <span class="underline-field"></span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ストーリー枠 -->
+    <div style="font-size:11px; line-height:1.55; margin-top:8px; border:1px solid #aaa; border-radius:6px; padding:8px 10px; background:#fafafa;">
+      雨の放課後。図書室でポポが両手を広げて叫んでいた。「大変だ！明日の読書会のしおりが8枚足りない！」<br>
+      机の上には、先生がリボンを結んだAとBの箱。「さっき私が数えたときは、両方とも同じ枚数だったのよ」と先生。<br>
+      しおりは同じ枚数ずつの袋に入っていた。先生は<b>Aの箱に7袋分を入れ、見本用に4枚取り出した（$7x - 4$）</b>。<b>Bの箱には3袋分を入れ、別に作った16枚を加えた（$3x + 16$）</b>。枚数がぴったり等しいことを確かめてリボンを結んだという。<br>
+      ポポは得意げにメモを見せた。「1袋は3枚。だからAは17枚、Bは25枚。ほら、Aが8枚足りない！」<br>
+      黒柴がメモに鼻を寄せ、探偵は微笑んだ。「待って。先生の記憶と君の計算が食い違っている。8枚は本当に消えたのかな？」
+    </div>
+
+    <div class="main-grid" style="margin-top:8px;">
+      <div class="memo-box">
+        <span class="memo-label">ポポのメモ</span>
+        <div class="math-orig">◎ 7x - 4 = 3x + 16</div>
+        <div class="math-step">
+          ① 7x - 3x = 16 - 4<br>
+          ② 4x = 12<br>
+          ③ x = 3
+        </div>
+      </div>
+
+      <div class="illus-panel">
+        <svg width="150" height="75" viewBox="0 0 220 110">
+          <!-- 探偵、黒柴、ロボットが箱を囲む -->
+          <rect x="30" y="65" width="35" height="25" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+          <line x1="47" y1="65" x2="47" y2="90" stroke="#b45309" stroke-width="2"/>
+          <text x="42" y="80" font-size="10" font-weight="bold">A</text>
+          <rect x="75" y="65" width="35" height="25" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+          <line x1="92" y1="65" x2="92" y2="90" stroke="#b45309" stroke-width="2"/>
+          <text x="87" y="80" font-size="10" font-weight="bold">B</text>
+          <!-- 黒柴が箱を指差す -->
+          <ellipse cx="145" cy="70" rx="18" ry="14" fill="#1a202c"/>
+          <circle cx="158" cy="55" r="12" fill="#1a202c"/>
+          <polygon points="152,44 156,33 161,44" fill="#1a202c"/>
+          <polygon points="163,44 167,35 170,46" fill="#1a202c"/>
+          <!-- 虫眼鏡の探偵 -->
+          <circle cx="195" cy="45" r="14" fill="#fbd38d"/>
+          <path d="M180 38 Q195 24 212 34 Z" fill="#4a5568"/>
+        </svg>
+        <div class="illus-caption">「消えた8枚」の正体を暴け！</div>
+      </div>
+    </div>
+
+    <!-- ボス事件 解答欄 -->
+    <div class="report-area" style="margin-top:6px;">
+      <div class="step-card">
+        <div class="step-title">① 計算メモのほころびを見つける</div>
+        <div class="step-body">
+          最初のミスは［ <span class="fill-line" style="min-width:30px;"></span> ］行目への変形。<br>
+          どんなミスか説明しよう：［ <span class="fill-line" style="min-width:250px;"></span> ］
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-title">② 「消えた8枚」の真相を暴く</div>
+        <div class="step-body">
+          正しい途中式を解いて、本当の真相を明らかにせよ。<br>
+          <div style="height:36px; border:1px dashed #ccc; margin:3px 0; border-radius:3px;"></div>
+          ・1袋のしおりは［ <span class="fill-line" style="min-width:30px;"></span> ］枚。<br>
+          ・Aの箱は［ <span class="fill-line" style="min-width:30px;"></span> ］枚、Bの箱は［ <span class="fill-line" style="min-width:30px;"></span> ］枚。<br>
+          ・8枚を追加する必要はあるか？：［ □ ある  □ ない（見かけの計算ミス） ］
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="footer-bar">
+      <span>間違い探偵と黒柴の探偵犬 / 一次方程式編</span>
+      <span>捜査ファイル 05/05（完）</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
