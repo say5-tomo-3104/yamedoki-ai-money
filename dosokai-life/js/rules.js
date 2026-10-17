@@ -132,9 +132,13 @@
         const neq = m[2] === '!=';
         let get = null;
         let allowed = null;
-        if (key === 'キャリア') {
+        if (key === 'キャリア' || key === '最初の仕事') {
           allowed = CAREERS;
-          get = (s) => s.career;
+          get = key === 'キャリア' ? (s) => s.career : (s) => (s.jobHistory.length ? s.jobHistory[0].result : '');
+        } else if (key === '働き方') {
+          // キャリアシートの「区分」（会社員・公務員・非正規・自営業・無職・再雇用・引退・学生）
+          allowed = [...new Set(Object.values(careers).map((c) => c.kind).filter(Boolean))];
+          get = (s) => (careers[s.career] || {}).kind;
         } else if (KEYS[key]) {
           allowed = KEYS[key][1];
           if (key === '会社の運命' && fortuneNames.size) allowed = [...fortuneNames];

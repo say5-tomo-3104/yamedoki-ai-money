@@ -31,13 +31,15 @@
     crashChance: 0.04, // 大不況が割り込む確率（1〜2年続く）
     exam: { 県外: 0.65, 地元: 0.85, retryBonus: 0.1 },
     skillFactor: 0.004, // （手応え − 50）× 0.004
+    // 就職：仕事ごとの合格率・景気の影響・大卒／高卒の割合は、イベント表の「キャリア」シートに書く
     job: {
-      base: { 商社: 0.25, メーカー: 0.6, 市役所: 0.5 },
-      mult: {
-        商社: { 好況: 1.3, ふつう: 1.0, 不況: 0.6, 大不況: 0.4 },
-        メーカー: { 好況: 1.3, ふつう: 1.0, 不況: 0.6, 大不況: 0.4 },
-        市役所: { 好況: 1.2, ふつう: 1.0, 不況: 0.8, 大不況: 0.7 },
+      // 景気の影響（キャリアシートの「景気の影響」列） → 好況・ふつう・不況・大不況の倍率
+      econ: {
+        大きい: { 好況: 1.3, ふつう: 1.0, 不況: 0.6, 大不況: 0.4 },
+        ふつう: { 好況: 1.2, ふつう: 1.0, 不況: 0.8, 大不況: 0.7 },
+        小さい: { 好況: 1.05, ふつう: 1.0, 不況: 0.95, 大不況: 0.9 },
       },
+      offers: { 大学: 6, 高卒: 5 }, // その年に届く求人の数
       min: 0.03,
       max: 0.9,
       secondFactor: 0.8,
@@ -252,40 +254,74 @@
       return ok;
     }
 
+    const econMult = (profile, e) => (CONFIG.job.econ[profile] || CONFIG.job.econ.ふつう)[e];
     function jobRate(s, name) {
-      const j = CONFIG.job;
-      return clamp(j.base[name] * j.mult[name][econ(s)] + skill(s), j.min, j.max);
+      const c = C.careers[name] || {};
+      const base = typeof c.pass === 'number' ? c.pass : 0.5;
+      return clamp(base * econMult(c.econ, econ(s)) + skill(s), CONFIG.job.min, CONFIG.job.max);
+    }
+    const difficulty = (p) => (p < 0.35 ? '狭き門' : p < 0.6 ? 'ふつう' : '入りやすい');
+
+    // その年に届く求人を、実際の就職先の割合でくじ引きする。求人は会社単位なので、同じ業種が何件も届くことがある
+    // （高卒なら製造業が多い）。重みは「割合 ÷ 合格率」（合格のしやすさで偏らないように）
+    function drawOffers(s, highSchool) {
+      const key = highSchool ? 'shareHigh' : 'shareUni';
+      const pool = Object.values(C.careers).filter((c) => typeof c[key] === 'number' && c[key] > 0 && !(highSchool && c.uniOnly));
+      const out = [];
+      const used = new Set();
+      const n = CONFIG.job.offers[highSchool ? '高卒' : '大学'];
+      for (let i = 0; i < n && pool.length; i++) {
+        const c = s.rng.weighted(pool.map((x) => [x, x[key] / (typeof x.pass === 'number' ? x.pass : 0.5)]));
+        const left = (c.examples || []).filter((x) => !used.has(`${c.heading || c.name}（${x}）`));
+        const head = c.heading || c.name; // 求人の見出し（「公務員（県庁）」のように）
+        const label = left.length ? `${head}（${s.rng.pick(left)}）` : `${head}（${i + 1}社目）`;
+        used.add(label);
+        out.push({ career: c, label });
+      }
+      return out;
     }
 
     function* jobHunt(s, entry, highSchool, retry) {
-      const options = ['商社', 'メーカー', '市役所'].map((name) => ({
-        name,
-        enabled: !(highSchool && name === '商社'),
-        note: highSchool && name === '商社' ? '高卒では選べません' : '',
-      }));
+      const offers = drawOffers(s, highSchool);
+      const careerOf = {};
+      const options = offers.map((o) => {
+        careerOf[o.label] = o.career.name;
+        return { name: o.label, enabled: true, note: `${o.career.industry || ''}${o.career.industry ? '・' : ''}${difficulty(jobRate(s, o.career.name))}` };
+      });
+      if (highSchool) {
+        // 大卒向けの求人も1つ、選べない形で見せる（選べなかったことも体験の一部）
+        const uni = Object.values(C.careers).filter((c) => c.uniOnly && c.shareUni > 0);
+        if (uni.length) {
+          const c = s.rng.weighted(uni.map((x) => [x, x.shareUni]));
+          const label = `${c.heading || c.name}（${(c.examples || [])[0] || '大卒の求人'}）`;
+          options.push({ name: label, enabled: false, note: `${c.industry || ''}・大卒以上の求人です` });
+        }
+      }
       const enabled = options.filter((o) => o.enabled).map((o) => o.name);
-      let pick = yield { kind: 'pick', title: retry ? 'もう一度、志望を選ぶ' : '志望を選ぶ', options, count: 2, economy: econ(s) };
+      let pick = yield { kind: 'pick', title: retry ? 'もう一度、志望を選ぶ' : '届いた求人から、志望を選ぶ', options, count: 2, economy: econ(s) };
       if (!Array.isArray(pick)) pick = [];
       pick = pick.filter((n, i) => enabled.includes(n) && pick.indexOf(n) === i);
       for (const n of enabled) if (pick.length < 2 && !pick.includes(n)) pick.push(n);
-      const [first, second] = pick;
-      entry.notes.push(`第一志望：${first}　第二志望：${second}`);
+      const [firstLabel, secondLabel] = pick;
+      const first = careerOf[firstLabel];
+      const second = careerOf[secondLabel];
+      entry.notes.push(`第一志望：${firstLabel}　第二志望：${secondLabel}`);
 
       let result = null;
       let stage = 'first';
       if (s.rng.chance(jobRate(s, first))) {
-        yield* envelope(s, entry, `第一志望　${first}`, '内定', true);
+        yield* envelope(s, entry, `第一志望　${firstLabel}`, '内定', true);
         result = first;
       } else {
-        yield* envelope(s, entry, `第一志望　${first}`, '不採用', false);
+        yield* envelope(s, entry, `第一志望　${firstLabel}`, '不採用', false);
         if (!retry) setFlag(s, '第一志望不合格');
         if (s.rng.chance(jobRate(s, second) * CONFIG.job.secondFactor)) {
-          yield* envelope(s, entry, `第二志望　${second}`, '内定', true);
+          yield* envelope(s, entry, `第二志望　${secondLabel}`, '内定', true);
           result = second;
           stage = 'second';
         } else {
           stage = 'none';
-          yield* envelope(s, entry, `第二志望　${second}`, '不採用', false);
+          yield* envelope(s, entry, `第二志望　${secondLabel}`, '不採用', false);
           const bad = ['不況', '大不況'].includes(econ(s));
           result = s.rng.chance(bad ? CONFIG.job.irregularBad : CONFIG.job.irregular) ? '非正規' : '地元企業';
           yield* envelope(s, entry, 'それから', result === '非正規' ? '非正規の仕事に就いた' : '地元の会社に拾われた', null);
@@ -299,7 +335,7 @@
     function* change(s, entry, name) {
       const cfg = CONFIG.change[name];
       let p = cfg.p;
-      if (cfg.econ) p *= CONFIG.job.mult['メーカー'][econ(s)];
+      if (cfg.econ) p *= econMult('大きい', econ(s));
       const ok = s.rng.chance(p);
       const title = name === '転職判定(登用)' ? '登用試験' : '転職活動';
       yield* envelope(s, entry, title, ok ? (name === '転職判定(登用)' ? '合格' : '内定') : '見送り', ok);
@@ -340,7 +376,7 @@
       '再就職判定': function* (s, entry) {
         if (!['無職', '引退', '学生'].includes(s.career)) { yield* change(s, entry, '転職判定'); return; }
         const cfg = CONFIG.reemploy;
-        const ok = s.rng.chance(cfg.p * (cfg.econ ? CONFIG.job.mult['メーカー'][econ(s)] : 1));
+        const ok = s.rng.chance(cfg.p * (cfg.econ ? econMult('大きい', econ(s)) : 1));
         const job = s.rng.weighted(cfg.jobs);
         yield* envelope(s, entry, '仕事探し', ok ? `${job}で働くことになった` : 'まだ決まらない', ok);
         if (ok) { setCareer(s, job); setFlag(s, '転職経験'); }
@@ -365,6 +401,7 @@
           share: share ? share.value : '分け合う',
         };
         s.partners.push(s.partner);
+        s.flags.delete('結婚を保留'); // 新しい相手とは、また最初から
         setFlag(s, '出会い直後');
         if (entry) entry.notes.push(`出会い：${s.partner.meet}`);
       },

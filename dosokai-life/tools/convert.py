@@ -154,6 +154,16 @@ def convert_careers(wb):
             'strong': text(d.get('得意な数値')),
             'weak': text(d.get('削れやすい数値')),
             'fortunes': text(d.get('会社の運命（仮の確率）')),
+            'kind': text(d.get('区分')),
+            'industry': text(d.get('業種')),
+            'shareUni': num(d.get('大卒の割合')),
+            'shareHigh': num(d.get('高卒の割合')),
+            'uniOnly': text(d.get('大卒のみ')) in ('○', '〇', '1'),
+            'pass': num(d.get('合格率')),
+            'econ': text(d.get('景気の影響')),
+            'heading': text(d.get('求人の見出し')),
+            'examples': [x.strip() for x in text(d.get('会社の例')).replace('、', ',').split(',') if x.strip()],
+            'source': text(d.get('出典')),
         })
     return out
 

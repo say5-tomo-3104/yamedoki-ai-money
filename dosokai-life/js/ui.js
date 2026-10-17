@@ -345,7 +345,7 @@
     const card = el('div', { class: 'card pick' },
       el('div', { class: 'kind', text: '選択' }),
       el('h2', { text: scene.title }),
-      el('p', { class: 'hint', text: `今年の景気：${scene.economy}。合否は、運が決める。` }),
+      el('p', { class: 'hint', text: `今年あなたに届いた求人です（実際の就職先の割合で届きます）。今年の景気：${scene.economy}。合否は、運が決める。` }),
       step, box);
     feed().append(card);
     scrollTo(card, 'start');
