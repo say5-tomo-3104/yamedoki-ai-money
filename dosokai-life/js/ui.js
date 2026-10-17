@@ -409,11 +409,12 @@
     setSeason('winter');
     const screen = $('#ending-screen');
     screen.textContent = '';
+    // ページを読み込み直さずに始め直す（公開ページではアドレスの ?seed= が使えないため）
     const restart = (seed) => {
-      const p = new URLSearchParams(location.search);
-      if (seed) p.set('seed', seed); else p.delete('seed');
-      p.set('go', '1');
-      location.search = p.toString();
+      if (seed) { start(seed); return; }
+      $('#seed-input').value = DL.randomSeed();
+      show('title-screen');
+      window.scrollTo(0, 0);
     };
     const share = el('textarea', { class: 'share-text', rows: 3, readonly: true });
     share.value = e.share;
@@ -459,7 +460,8 @@
         el('p', { class: 'hint', text: 'この番号を入れると、同じ運命で遊べます。' }),
         el('div', { class: 'row' },
           el('button', { class: 'next', type: 'button', onclick: () => restart(e.seed), text: '同じ運命で、もう一度' }),
-          el('button', { class: 'next', type: 'button', onclick: () => restart(null), text: '新しい運命で' }))),
+          el('button', { class: 'next', type: 'button', onclick: () => restart(null), text: '新しい運命で' })),
+        el('p', { class: 'hint', text: `リンクの最後に #${e.seed} を付けて送ると、相手の画面にこの番号が入った状態で始まります。` })),
       section('8', 'シェア用の文章', share, copyBtn),
     );
     show('ending-screen');
@@ -515,6 +517,7 @@
       $('#title-screen').append(el('p', { class: 'hint', style: 'color:var(--bad)', text: 'data/events.js が見つかりません。python3 tools/convert.py を実行してください。' }));
       return;
     }
+    setSeason('winter');
     compiled = DL.compileData(window.GAME_DATA);
     game = DL.createGame(compiled);
     refreshWarnings();
@@ -526,14 +529,15 @@
       b.addEventListener('click', () => { speed = b.dataset.speed; store('dosokai-speed', speed); buildHud(); updateHud(); });
     }
     const input = $('#seed-input');
-    input.value = /^\d{6}$/.test(params.get('seed') || '') ? params.get('seed') : DL.randomSeed();
+    // 運命の番号は #123456（公開ページ用）か ?seed=123456（手元で開くとき）で渡せる
+    const given = [location.hash.slice(1), params.get('seed') || ''].find((x) => /^\d{6}$/.test(x));
+    input.value = given || DL.randomSeed();
     $('#start-form').addEventListener('submit', (ev) => {
       ev.preventDefault();
       if (!/^\d{6}$/.test(input.value)) { input.focus(); return; }
       start(input.value);
     });
     if (params.get('debug')) buildDebug();
-    if (params.get('go') && /^\d{6}$/.test(params.get('seed') || '')) start(params.get('seed'));
   }
 
   init();
