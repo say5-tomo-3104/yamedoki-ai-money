@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>同窓会ライフ</title>
+  <meta name="description" content="人生の大きな出来事は、自分では選べない。同級生たちもまた、それぞれ同じくじを引いている。">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="season-winter">
+  <header id="hud" hidden>
+    <div class="hud-top">
+      <div class="age"><span id="hud-age">18</span><small>歳</small></div>
+      <div class="economy" id="hud-economy">今年の景気：ふつう</div>
+      <div class="speed" role="group" aria-label="進む速さ">
+        <button type="button" data-speed="slow">ゆっくり</button>
+        <button type="button" data-speed="normal">ふつう</button>
+        <button type="button" data-speed="fast">はやい</button>
+      </div>
+    </div>
+    <div class="bars" id="hud-bars"></div>
+  </header>
+
+  <main id="app">
+    <section id="title-screen" class="screen">
+      <h1>同窓会ライフ</h1>
+      <p class="tagline">人生の大きな出来事は、自分では選べない。<br>選べるのは「何を目指すか」と<br>「起きたことにどう向き合うか」だけ。<br>そして、同級生たちもまた、<br>それぞれ同じくじを引いている。</p>
+      <form id="start-form">
+        <label for="seed-input">運命の番号（6桁）</label>
+        <input id="seed-input" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off" required>
+        <p class="hint">同じ番号なら、同じ運命。友達と同じ番号で遊ぶと「同じ運命で違う選択」を比べられます。</p>
+        <button type="submit" class="primary">人生を始める</button>
+      </form>
+      <p class="hint">やり直しはできません。1回のプレイが、1つの人生です。</p>
+    </section>
+
+    <section id="play-screen" class="screen" hidden>
+      <div id="feed" aria-live="polite"></div>
+    </section>
+
+    <section id="reunion-screen" class="screen" hidden></section>
+    <section id="ending-screen" class="screen" hidden></section>
+  </main>
+
+  <aside id="warnings" hidden>
+    <button type="button" id="warnings-toggle">表の読み取りの注意 <span id="warnings-count"></span></button>
+    <ul id="warnings-list"></ul>
+  </aside>
+  <aside id="debug" hidden></aside>
+
+  <script src="data/events.js"></script>
+  <script src="js/rng.js"></script>
+  <script src="js/rules.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>

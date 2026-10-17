@@ -1,0 +1,12 @@
+{
+  "name": "dosokai-life",
+  "private": true,
+  "version": "0.1.0",
+  "description": "同窓会ライフ（仮題）試作品 v0.1",
+  "type": "commonjs",
+  "scripts": {
+    "convert": "python3 tools/convert.py",
+    "test": "node tests/run.js",
+    "test:browser": "node tests/browser.js"
+  }
+}
