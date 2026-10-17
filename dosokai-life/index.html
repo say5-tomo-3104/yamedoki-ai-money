@@ -13,12 +13,9 @@
     <div class="hud-top">
       <div class="age"><span id="hud-age">18</span><small>歳</small></div>
       <div class="economy" id="hud-economy">今年の景気：ふつう</div>
-      <div class="speed" role="group" aria-label="進む速さ">
-        <button type="button" data-speed="slow">ゆっくり</button>
-        <button type="button" data-speed="normal">ふつう</button>
-        <button type="button" data-speed="fast">はやい</button>
-      </div>
+      <label class="speed"><span>速さ</span><select id="speed-select" aria-label="進む速さ"></select></label>
     </div>
+    <div class="life" id="hud-life"></div>
     <div class="bars" id="hud-bars"></div>
   </header>
 
@@ -33,6 +30,8 @@
         <button type="submit" class="primary">人生を始める</button>
       </form>
       <p class="hint">やり直しはできません。1回のプレイが、1つの人生です。</p>
+      <p class="hint notice">この人生では、病気や別れ、死も起こります。</p>
+      <button type="button" class="next" id="zukan-open">人生図鑑</button>
     </section>
 
     <section id="play-screen" class="screen" hidden>
@@ -41,8 +40,10 @@
 
     <section id="reunion-screen" class="screen" hidden></section>
     <section id="ending-screen" class="screen" hidden></section>
+    <section id="zukan-screen" class="screen" hidden></section>
   </main>
 
+  <div id="cutin" hidden aria-live="polite"></div>
   <aside id="warnings" hidden>
     <button type="button" id="warnings-toggle">表の読み取りの注意 <span id="warnings-count"></span></button>
     <ul id="warnings-list"></ul>

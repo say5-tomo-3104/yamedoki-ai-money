@@ -61,7 +61,7 @@ sameCounts.sort((a, b) => a - b);
 console.log(`${N}人分の人生（選び方はランダム）\n`);
 console.log('■ 人生の形');
 for (const [k, v] of Object.entries(shapes).sort((a, b) => b[1] - a[1])) console.log(`  ${k.padEnd(12, '　')} ${pct(v, N)}`);
-console.log('■ 数値の伸び（はじめ→35歳）の平均');
+console.log('■ 数値の伸び（はじめ→最後）の平均');
 console.log('  ' + DL.STATS.map((k) => `${k} ${(growthSum[k] / N).toFixed(1)}`).join(' / '));
 const base = Object.fromEntries(DL.STATS.map((k) => {
   const m = growthSum[k] / N;

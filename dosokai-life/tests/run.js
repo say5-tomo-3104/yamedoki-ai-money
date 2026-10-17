@@ -36,10 +36,16 @@ check('1. 同じ運命の番号・同じ選択なら、同じ人生になる', (
   }
   // 選択を変えても、最初から決まっていたこと（生まれ・体質・出会い運・景気・同級生）は変わらない
   const seed = '314159';
-  const a = playThrough(game, seed, makePolicy(DL, 1)).ending.hidden;
-  const b = playThrough(game, seed, makePolicy(DL, 2)).ending.hidden;
-  for (const k of ['birth', 'body', 'love', 'economy', 'classmates']) assert.deepStrictEqual(a[k], b[k], k);
-  return '  30通りの番号 × 2回ずつ、年表・数値・隠れた運命がすべて一致。選択を変えても隠れた運命は同じ';
+  const ra = playThrough(game, seed, makePolicy(DL, 1));
+  const rb = playThrough(game, seed, makePolicy(DL, 2));
+  const a = ra.ending.hidden;
+  const b = rb.ending.hidden;
+  for (const k of ['birth', 'body', 'love', 'disaster', 'classmates']) assert.deepStrictEqual(a[k], b[k], k);
+  // 景気の並び・同級生の寿命・祖父母の寿命は、最初に全部決まっている（振り返りの景気は生きた年までに切るので、元の並びで比べる）
+  assert.deepStrictEqual(ra.state.economy, rb.state.economy, '景気');
+  assert.deepStrictEqual(ra.state.hidden.classmateDeath, rb.state.hidden.classmateDeath, '同級生の寿命');
+  assert.deepStrictEqual(ra.state.hidden.grandparentDeaths, rb.state.hidden.grandparentDeaths, '祖父母の寿命');
+  return '  30通りの番号 × 2回ずつ、年表・数値・隠れた運命がすべて一致。選択を変えても隠れた運命（景気・同級生と祖父母の寿命など）は同じ';
 });
 
 check('2. 運命の番号を変えて10回遊ぶと、景気・会社の運命・同級生のパターンがばらける', () => {
@@ -104,6 +110,7 @@ check('4. 健康が15未満になると、その年に E090「倒れる」が必
     const r = playThrough(game, String(400000 + i), makePolicy(DL, i), {
       onScene(sc, s) { if (sc.kind === 'year' && sc.age === age) s.stats['健康'] = 10; },
     });
+    if (r.state.dead && r.state.deathAge <= age) continue; // その年までに亡くなった人生は数えない
     assert.ok(r.state.log.some((e) => e.id === 'E090' && e.age === age), `番号 ${400000 + i}、${age}歳で E090 が起きなかった`);
     n++;
   }
@@ -113,6 +120,7 @@ check('4. 健康が15未満になると、その年に E090「倒れる」が必
     const r = playThrough(game, String(450000 + i), makePolicy(DL, i), {
       onScene(sc, s) { if (sc.kind === 'year' && sc.age === age) s.stats['余白'] = 10; },
     });
+    if (r.state.dead && r.state.deathAge <= age) continue;
     assert.ok(r.state.log.some((e) => e.id === 'E091' && e.age === age), `${age}歳で E091 が起きなかった`);
   }
   return `  18〜35歳のいろいろな年に健康を10にした ${n} 回すべてで E090 が起きた（余白10 → E091 も100回すべて）`;
@@ -133,9 +141,9 @@ def add(values):
     r = ws.max_row + 1
     for k, v in values.items():
         ws.cell(r, head.index(k) + 1, v)
-add({'ID': 'E200', '種類': '一行', '年齢(から)': 23, '年齢(まで)': 35, '条件': '!キャリア=学生', '確率': 1, '一度だけ': '○',
+add({'ID': 'E990', '種類': '一行', '年齢(から)': 23, '年齢(まで)': 35, '条件': '!キャリア=学生', '確率': 1, '一度だけ': '○',
      'タイトル': 'テスト用の一行', '本文': '市民課の窓口に、小学生が一人で住民票を取りに来た。', '効果(選択肢なし)': 'つながり+2 余白+1'})
-add({'ID': 'E201', '種類': '一行', '年齢(から)': 18, '年齢(まで)': 35, '条件': 'お金>==40', '確率': 1,
+add({'ID': 'E991', '種類': '一行', '年齢(から)': 18, '年齢(まで)': 35, '条件': 'お金>==40', '確率': 1,
      'タイトル': '書き間違いの行', '本文': 'この行は条件が読めないので起きない', '効果(選択肢なし)': 'お金+1'})
 wb.save(p)
 `;
@@ -143,30 +151,39 @@ wb.save(p)
   execFileSync('python3', [path.join(ROOT, 'tools', 'convert.py'), xlsx, js]);
   const t = load(js);
   const r = playThrough(t.game, '555555', makePolicy(t.DL, 5));
-  const hit = r.state.log.find((e) => e.id === 'E200');
-  assert.ok(hit, '足した E200 がゲームに出てこない');
-  assert.ok(t.compiled.warnings.some((w) => w.startsWith('E201 の条件が読めません')), '読めない行の注意が出ない');
-  assert.ok(!r.state.log.some((e) => e.id === 'E201'));
-  assert.ok(!load().compiled.events.some((e) => e.id === 'E200'), '元の表は変わっていないはず');
+  const hit = r.state.log.find((e) => e.id === 'E990');
+  assert.ok(hit, '足した E990 がゲームに出てこない');
+  assert.ok(t.compiled.warnings.some((w) => w.startsWith('E991 の条件が読めません')), '読めない行の注意が出ない');
+  assert.ok(!r.state.log.some((e) => e.id === 'E991'));
+  assert.ok(!load().compiled.events.some((e) => e.id === 'E990'), '元の表は変わっていないはず');
   fs.rmSync(tmp, { recursive: true, force: true });
-  return `  足した E200 が ${hit.age}歳に起きた。書き間違いの E201 は止まらずに「${t.compiled.warnings[0]}」と出た`;
+  return `  足した E990 が ${hit.age}歳に起きた。書き間違いの E991 は止まらずに「${t.compiled.warnings[0]}」と出た`;
 });
 
-check('6. 35歳まで進めると、エンディングの8項目がすべてそろう', () => {
-  for (let i = 0; i < 200; i++) {
-    const e = playThrough(game, String(600000 + i), makePolicy(DL, i)).ending;
-    assert.strictEqual(e.timeline.length, 18); // 1. 年表（18〜35歳）
-    assert.strictEqual(e.series.length, 19); // 2. 数値の移り変わり（はじめ＋18年）
-    assert.ok(e.top5.length >= 1 && e.top5.length <= 5); // 3. TOP5
-    assert.strictEqual(e.hidden.economy.length, 18); // 4. 最初から決まっていたこと
-    assert.ok(e.hidden.body && e.hidden.love && e.hidden.classmates.length === 3);
+check('6. 最後まで進めると、エンディングの項目がすべてそろう（v0.2：65歳まで、または亡くなった年まで）', () => {
+  let died = 0;
+  for (let i = 0; i < 300; i++) {
+    const r = playThrough(game, String(600000 + i), makePolicy(DL, i));
+    const e = r.ending;
+    const years = e.deathAge ? e.deathAge - 17 : 48;
+    if (e.deathAge) died++;
+    assert.strictEqual(e.timeline.length, years); // 1. 年表
+    assert.strictEqual(e.series.length, years + 1); // 2. 数値の移り変わり（はじめ＋年数）
+    assert.ok(e.top5.length <= 5); // 3. TOP5
+    assert.strictEqual(e.hidden.economy.length, years); // 4. 最初から決まっていたこと
+    assert.ok(e.hidden.body && e.hidden.love && e.hidden.disaster && e.hidden.classmates.length === 3);
     assert.ok(e.chosen >= 1 && e.fatePercent >= 0 && e.fatePercent <= 100); // 5.
     assert.ok(e.shape.endsWith('人生')); // 6.
     assert.match(e.seed, /^\d{6}$/); // 7.
     assert.ok(e.share.includes(e.shape) && e.share.includes('#同窓会ライフ')); // 8.
+    assert.ok(Array.isArray(e.rareHits)); // 9. 人生のくじ
     for (const v of Object.values(e.finalStats)) assert.ok(v >= 0 && v <= 100);
+    // 最後は必ず65歳の同窓会（亡くなった人生でも、同級生たちの同窓会がある）
+    const reunions = r.scenes.filter((x) => x.kind === 'reunion').map((x) => x.age);
+    assert.strictEqual(reunions[reunions.length - 1], 65);
+    if (e.deathAge) assert.ok(r.scenes.some((x) => x.kind === 'passing') && r.scenes.find((x) => x.kind === 'reunion' && x.age === 65).memorial);
   }
-  return '  200通りの人生で、8項目すべてがそろった（画面での表示は tests/browser.js で確認）';
+  return `  300通りの人生（うち${died}人は65歳より前に亡くなった）で、9項目すべてがそろい、最後は65歳の同窓会になった`;
 });
 
 check('おまけ. 2000通りの人生を最後まで通しても止まらない', () => {

@@ -37,9 +37,9 @@ function makePolicy(DL, policySeed) {
 }
 
 // 1回分の人生を最後まで進める。hooks.onScene(scene, state) で途中に手を入れられる
-function playThrough(game, seed, policy, hooks = {}) {
+function playThrough(game, seed, policy, hooks = {}, gameHooks = {}) {
   const s = game.newLife(seed);
-  const gen = game.play(s);
+  const gen = game.play(s, gameHooks);
   const scenes = [];
   let answer;
   for (;;) {

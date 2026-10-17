@@ -41,7 +41,9 @@ def num(v, default=None):
 
 
 def sheet_rows(wb, name):
-    """1行目を見出しとして、見出し名 → 値 の辞書を行ごとに返す（列の順番に依存しない）。"""
+    """1行目を見出しとして、見出し名 → 値 の辞書を行ごとに返す（列の順番に依存しない）。シートがなければ空。"""
+    if name not in wb.sheetnames:
+        return []
     ws = wb[name]
     rows = list(ws.iter_rows(values_only=True))
     head = [text(h) for h in rows[0]]
@@ -53,11 +55,11 @@ def sheet_rows(wb, name):
     return out
 
 
-def convert_events(wb):
+def convert_events(wb, sheet='イベント'):
     events = []
-    for d in sheet_rows(wb, 'イベント'):
+    for d in sheet_rows(wb, sheet):
         eid = text(d.get('ID'))
-        if not eid:
+        if not eid or eid == 'メモ':
             continue
         choices = []
         for n in (1, 2, 3):
@@ -82,7 +84,17 @@ def convert_events(wb):
             'choices': choices,
             'effect': text(d.get('効果(選択肢なし)')),
             'probMod': text(d.get('確率の補正')),
+            'staging': text(d.get('演出')),
+            'category': text(d.get('分類')),
         })
+        if sheet == 'くじ':
+            events[-1].update({
+                'group': text(d.get('グループ')),
+                'rarity': num(d.get('レア度'), 0),
+                'lifetime': text(d.get('一生で')),
+                'confidence': text(d.get('確度')),
+                'basis': text(d.get('根拠')),
+            })
     return events
 
 
@@ -98,6 +110,7 @@ def convert_reunion(wb):
             'scene': text(d.get('場面')),
             'cond': text(d.get('条件')),
             'text': text(d.get('本文')),
+            'staging': text(d.get('演出')),
         })
     return out
 
@@ -119,6 +132,11 @@ def convert_classmates(wb):
             'at35': text(d.get('35歳の様子')),
             'job25': text(d.get('25歳の仕事')),
             'job35': text(d.get('35歳の仕事')),
+            'at50': text(d.get('50歳の様子')),
+            'at65': text(d.get('65歳の様子')),
+            'job50': text(d.get('50歳の仕事')),
+            'job65': text(d.get('65歳の仕事')),
+            'mortality': num(d.get('亡くなりやすさ'), 1),
         })
     return list(out.values())
 
@@ -140,6 +158,30 @@ def convert_careers(wb):
     return out
 
 
+def convert_simple(wb, sheet, columns):
+    """見出し → キー の対応で、そのまま行を写す（数値は数値に）。"""
+    out = []
+    for d in sheet_rows(wb, sheet):
+        if not any(text(d.get(h)) for h in columns):
+            continue
+        row = {'row': d['_row']}
+        for head, (key, kind) in columns.items():
+            row[key] = num(d.get(head)) if kind == 'num' else text(d.get(head))
+        out.append(row)
+    return out
+
+
+def list_assets():
+    """assets フォルダにある絵の一覧（画面は、ここにある絵だけを使う。ない絵は読みに行かない）。"""
+    base = os.path.join(ROOT, 'assets')
+    out = []
+    for d, _, files in os.walk(base):
+        for f in files:
+            if f.lower().endswith(('.webp', '.png', '.jpg', '.jpeg', '.svg')):
+                out.append(os.path.relpath(os.path.join(d, f), ROOT).replace(os.sep, '/'))
+    return sorted(out)
+
+
 def main():
     src = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'data', 'events.xlsx')
     dst = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, 'data', 'events.js')
@@ -150,6 +192,20 @@ def main():
         'reunion': convert_reunion(wb),
         'classmates': convert_classmates(wb),
         'careers': convert_careers(wb),
+        'tables': convert_simple(wb, '確率表', {
+            '名前': ('name', 'text'), '基準': ('basis', 'text'), 'から': ('from', 'num'),
+            'まで': ('to', 'num'), '年率': ('rate', 'num'), '出典': ('source', 'text')}),
+        'stats': convert_simple(wb, '統計', {
+            '指標': ('name', 'text'), '測り方': ('measure', 'text'), '現実の値': ('real', 'num'),
+            '下限': ('low', 'num'), '上限': ('high', 'num'), '出典': ('source', 'text')}),
+        'partner': convert_simple(wb, '配偶者', {
+            '属性': ('attr', 'text'), '候補': ('value', 'text'), '割合': ('weight', 'num'),
+            '条件': ('cond', 'text'), '値': ('num', 'num'), '文章': ('text', 'text'), '出典': ('source', 'text')}),
+        'people': convert_simple(wb, '人物', {
+            '人物': ('id', 'text'), '表示名': ('label', 'text'), 'ファイル名の形': ('file', 'text'),
+            '年代': ('ages', 'text'), '表情': ('expressions', 'text'), '絵の説明': ('description', 'text')}),
+        'rare': convert_events(wb, 'くじ'),
+        'assets': list_assets(),
     }
     body = json.dumps(data, ensure_ascii=False, indent=1)
     with open(os.path.splitext(dst)[0] + '.json', 'w', encoding='utf-8') as f:
@@ -157,8 +213,9 @@ def main():
     with open(dst, 'w', encoding='utf-8') as f:
         f.write('// tools/convert.py が events.xlsx から作ったファイルです。手で編集しないでください。\n')
         f.write('window.GAME_DATA = ' + body + ';\n')
-    print(f"変換しました: イベント {len(data['events'])} 件 / 同窓会 {len(data['reunion'])} 件 / "
-          f"同級生 {len(data['classmates'])} 人 / キャリア {len(data['careers'])} 種 → {dst}")
+    print(f"変換しました: イベント {len(data['events'])} 件 / くじ {len(data['rare'])} 件 / "
+          f"同窓会 {len(data['reunion'])} 件 / 同級生 {len(data['classmates'])} 人 / "
+          f"キャリア {len(data['careers'])} 種 / 確率表 {len(data['tables'])} 行 / 統計 {len(data['stats'])} 件 / 絵 {len(data['assets'])} 枚 → {dst}")
 
 
 if __name__ == '__main__':
