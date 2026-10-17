@@ -28,7 +28,7 @@
     exam: { 県外: 0.65, 地元: 0.85, retryBonus: 0.1 },
     skillFactor: 0.004, // （手応え − 50）× 0.004
     job: {
-      base: { 商社: 0.15, メーカー: 0.45, 市役所: 0.35 },
+      base: { 商社: 0.25, メーカー: 0.6, 市役所: 0.5 }, // v0.1 の 0.15 / 0.45 / 0.35 から上げた
       mult: {
         商社: { 好況: 1.3, ふつう: 1.0, 不況: 0.6, 大不況: 0.4 },
         メーカー: { 好況: 1.3, ふつう: 1.0, 不況: 0.6, 大不況: 0.4 },
@@ -50,6 +50,16 @@
     lastAge: 35,
     agingFrom: 30,
     maxOneLiners: 2,
+    oneLinerCooldown: 3, // 同じ一行の出来事は、出てから3年は出さない
+    // 人生の形の判定に使う「ふつうの人生」の伸び（はじめ→35歳）の平均と散らばり。
+    // 表や確率を変えたら node tests/balance.js で測り直して、ここを書き換える
+    shapeBaseline: {
+      お金: { mean: 8.9, sd: 20.4 },
+      健康: { mean: -7, sd: 6.7 },
+      手応え: { mean: 24.3, sd: 11.5 },
+      つながり: { mean: 25.6, sd: 17.9 },
+      余白: { mean: -5.3, sd: 10.8 },
+    },
   };
 
   const BIG = ['選択', '運命'];
@@ -90,7 +100,7 @@
       const s = {
         seed, age: CONFIG.firstAge, stats, flags: new Set(), career: '学生', path: '',
         birth, hidden, economy, company: null, companyHistory: [],
-        jobHuntAge: null, pending: [], used: {}, firedThisYear: new Set(),
+        jobHuntAge: null, pending: [], used: {}, firedThisYear: new Set(), jobHistory: [], lastSeen: {},
         log: [], years: [], forceQueue: [],
         companyRng: DL.makeRng(seed, 'company'),
       };
@@ -211,6 +221,7 @@
       entry.notes.push(`第一志望：${first}　第二志望：${second}`);
 
       let result = null;
+      let stage = 'first';
       if (s.rng.chance(jobRate(s, first))) {
         yield* envelope(s, entry, `第一志望　${first}`, '内定', true);
         result = first;
@@ -220,7 +231,9 @@
         if (s.rng.chance(jobRate(s, second) * CONFIG.job.secondFactor)) {
           yield* envelope(s, entry, `第二志望　${second}`, '内定', true);
           result = second;
+          stage = 'second';
         } else {
+          stage = 'none';
           yield* envelope(s, entry, `第二志望　${second}`, '不採用', false);
           const bad = ['不況', '大不況'].includes(econ(s));
           result = s.rng.chance(bad ? CONFIG.job.irregularBad : CONFIG.job.irregular) ? '非正規' : '地元企業';
@@ -229,6 +242,7 @@
       }
       setCareer(s, result);
       s.flags.add('就職済');
+      s.jobHistory.push({ age: s.age, first, second, result, stage, economy: econ(s), highSchool, retry });
     }
 
     function* change(s, entry, name) {
@@ -302,6 +316,7 @@
 
     function* runEvent(s, ev) {
       s.used[ev.id] = (s.used[ev.id] || 0) + 1;
+      s.lastSeen[ev.id] = s.age;
       s.firedThisYear.add(ev.id);
       const entry = newEntry(s, ev);
       const text = ev.textFn(s);
@@ -351,7 +366,8 @@
 
     function* oneLiners(s) {
       const n = yield* certainEvents(s, ['一行'], CONFIG.maxOneLiners);
-      const hits = C.events.filter((e) => e.type === '一行' && eligible(s, e) && s.rng.chance(DL.effectiveProb(e, s)));
+      const rested = (e) => !(s.lastSeen[e.id] > s.age - CONFIG.oneLinerCooldown);
+      const hits = C.events.filter((e) => e.type === '一行' && eligible(s, e) && rested(e) && s.rng.chance(DL.effectiveProb(e, s)));
       for (let i = n; i < CONFIG.maxOneLiners && hits.length; i++) {
         yield* runEvent(s, hits.splice(s.rng.int(hits.length), 1)[0]);
       }
@@ -418,9 +434,11 @@
       const allImpact = big.reduce((a, e) => a + absSum(e.deltas), 0);
       const fatePercent = allImpact ? Math.round((fateImpact / allImpact) * 100) : 0;
 
+      // 人生の形：ふつうの人生と比べて、いちばんよく伸びた数値（伸び方の平均と散らばりは数値ごとに違うため）
       const growth = DL.STATS.map((k) => [k, s.stats[k] - s.startStats[k]]);
-      growth.sort((a, b) => b[1] - a[1]);
-      const shape = SHAPES[growth[0][0]];
+      const score = ([k, g]) => (g - CONFIG.shapeBaseline[k].mean) / CONFIG.shapeBaseline[k].sd;
+      const [shapeStat, shapeGrowth] = growth.reduce((best, x) => (score(x) > score(best) ? x : best));
+      const shape = SHAPES[shapeStat];
 
       const classmates = C.classmates.map((c) => {
         const key = s.hidden.classmates[c.name];
@@ -450,6 +468,9 @@
         fatePercent,
         shape,
         growth,
+        shapeStat,
+        shapeGrowth,
+        shapeTypical: CONFIG.shapeBaseline[shapeStat].mean,
         finalStats: { ...s.stats },
         share: `私の人生の形は『${shape}』。運命の割合は${fatePercent}％でした。#同窓会ライフ`,
       };

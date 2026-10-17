@@ -320,6 +320,8 @@
     return el('section', { class: 'end-sec', 'data-section': no }, el('h2', {}, el('span', { class: 'no', text: no }), title), ...children);
   }
 
+  const sign = (n) => (n > 0 ? '+' : '') + n;
+
   function deltaText(d) {
     return DL.STATS.filter((k) => d[k]).map((k) => `${STAT_LABEL[k]}${d[k] > 0 ? '+' : ''}${d[k]}`).join(' ');
   }
@@ -452,7 +454,7 @@
         el('p', {}, '運命の割合 ', el('span', { class: 'big-number', text: `${e.fatePercent}％` })),
         el('p', { class: 'hint', text: '大きな出来事による数値の変化のうち、「運命」の出来事によるものの割合' })),
       section('6', '人生の形', el('p', { class: 'shape', text: `『${e.shape}』` }),
-        el('p', { class: 'hint', text: `いちばん伸びた数値：${STAT_LABEL[e.growth[0][0]]}（${e.growth[0][1] >= 0 ? '+' : ''}${e.growth[0][1]}）。順位ではなく、形です。` })),
+        el('p', { class: 'hint', text: `ふつうの人生と比べて、いちばん伸びた数値：${STAT_LABEL[e.shapeStat]}（${sign(e.shapeGrowth)}。ふつうは${sign(Math.round(e.shapeTypical))}）。順位ではなく、形です。` })),
       section('7', '運命の番号', el('div', { class: 'seed-number', text: e.seed }),
         el('p', { class: 'hint', text: 'この番号を入れると、同じ運命で遊べます。' }),
         el('div', { class: 'row' },
