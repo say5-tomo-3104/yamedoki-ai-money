@@ -62,7 +62,7 @@ def convert_events(wb, sheet='イベント'):
         if not eid or eid == 'メモ':
             continue
         choices = []
-        for n in (1, 2, 3):
+        for n in range(1, 9):  # 選択肢は8つまで
             label = text(d.get(f'選択肢{n}'))
             if label:
                 choices.append({
@@ -86,6 +86,8 @@ def convert_events(wb, sheet='イベント'):
             'probMod': text(d.get('確率の補正')),
             'staging': text(d.get('演出')),
             'category': text(d.get('分類')),
+            # 現実でそれぞれの選択肢を選ぶ人の割合（照合に使う。空なら「ふつうの選び方」）
+            'weights': [float(x) for x in text(d.get('選ばれやすさ')).replace('、', ',').split(',') if x.strip()],
         })
         if sheet == 'くじ':
             events[-1].update({
@@ -162,6 +164,7 @@ def convert_careers(wb):
             'pass': num(d.get('合格率')),
             'econ': text(d.get('景気の影響')),
             'heading': text(d.get('求人の見出し')),
+            'faculties': text(d.get('学部')),
             'examples': [x.strip() for x in text(d.get('会社の例')).replace('、', ',').split(',') if x.strip()],
             'source': text(d.get('出典')),
         })

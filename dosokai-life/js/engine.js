@@ -29,7 +29,15 @@
       大不況: [['ふつう', 0.4], ['不況', 0.6]],
     },
     crashChance: 0.04, // 大不況が割り込む確率（1〜2年続く）
-    exam: { 県外: 0.65, 地元: 0.85, retryBonus: 0.1 },
+    exam: {
+      県外: 0.65, 地元: 0.85, retryBonus: 0.1,
+      // 学部ごとの入りにくさ（合格率にかける）。医学部・歯学部は特に難しい（推計）
+      faculty: { 医学部: 0.45, 歯学部: 0.6, 薬学部: 0.85 },
+    },
+    facultyYears: { 医学部: 6, 歯学部: 6, 薬学部: 6 }, // ほかは4年
+    generalFaculties: ['文系', '理系', '教育学部'], // キャリアシートの「学部」が空の仕事に、求人が届く学部
+    // 会社名の頭（架空）。求人は「あさひシステムズ」のような名前で届く
+    companyPrefixes: ['あさひ', 'みなと', '北浜', '中央', 'ひかり', 'さくら', '東和', '青葉', '若葉', '光陽', '丸山', 'やまびこ', '千鳥', '松葉', '白樺', '港南', '朝凪', '緑丘', '大和田', 'つばさ'],
     skillFactor: 0.004, // （手応え − 50）× 0.004
     // 就職：仕事ごとの合格率・景気の影響・大卒／高卒の割合は、イベント表の「キャリア」シートに書く
     job: {
@@ -191,27 +199,48 @@
       s.flagAge[name] = s.age;
     }
 
+    // 会社の例「表示=名前の語尾」から、架空の会社名を作る（語尾がなければ、表示をそのまま名前にする：県庁など）
+    function parseExamples(c) {
+      return (c && c.examples ? c.examples : []).map((x) => {
+        const [shown, suffix] = x.split('=').map((y) => (y || '').trim());
+        return { shown, suffix };
+      });
+    }
+    function companyName(s, careerName, taken) {
+      const ex = parseExamples(C.careers[careerName]);
+      if (!ex.length) return { name: careerName, shown: '' };
+      for (let i = 0; i < 20; i++) {
+        const e = s.rng.pick(ex);
+        const name = e.suffix ? s.rng.pick(CONFIG.companyPrefixes) + e.suffix : e.shown;
+        if (!taken || !taken.has(name)) return { name, shown: e.shown };
+      }
+      return { name: careerName + '（もう一社）', shown: '' };
+    }
+
     function drawCompany(s) {
       const career = C.careers[s.career];
       const fortunes = career ? career.fortunes : [];
       if (s.career === '学生') { s.company = null; return; }
       const fortune = fortunes.length ? s.companyRng.weighted(fortunes) : 'なし';
-      s.company = { career: s.career, fortune, age: s.age };
+      s.company = { career: s.career, fortune, age: s.age, label: s.jobLabel };
       const last = s.companyHistory[s.companyHistory.length - 1];
       if (last && last.age === s.age && last.career === s.career) s.companyHistory.pop(); // 同じ年の引き直しは1つにまとめる
       s.companyHistory.push(s.company);
     }
 
-    function setCareer(s, name) {
-      if (name === s.career) return;
+    function setCareer(s, name, label) {
+      if (name === s.career && !label) return;
       s.career = name;
+      s.jobLabel = label || (['自営業'].includes(name) ? '自分の店' : companyName(s, name).name);
       drawCompany(s);
     }
 
     function setPath(s, name) {
       s.path = name;
       if (name === '大学' && s.jobHuntAge == null) {
-        s.jobHuntAge = Math.min(s.age + 3 + (s.flags.has('休学') ? 1 : 0), 22);
+        // 4年制なら3年後（21歳）、6年制なら5年後に就職活動（国家試験と就職先選び）
+        const years = CONFIG.facultyYears[s.faculty] || 4;
+        s.jobHuntAge = s.age + years - 1 + (s.flags.has('休学') ? 1 : 0);
       }
     }
 
@@ -222,11 +251,12 @@
           setFlag(s, op.name);
           // 休学したら、就職活動は1年遅れる（SPEC 7章。22歳まで）
           if (op.name === '休学' && s.jobHuntAge != null && s.jobHuntAge >= s.age && !s.flags.has('就職済')) {
-            s.jobHuntAge = Math.min(s.jobHuntAge + 1, 22);
+            s.jobHuntAge += 1;
           }
         } else if (op.op === 'unflag') s.flags.delete(op.name);
         else if (op.op === 'career') setCareer(s, op.name);
         else if (op.op === 'path') setPath(s, op.name);
+        else if (op.op === 'faculty') s.faculty = op.name;
         else if (op.op === 'home') s.home = op.name;
         else if (op.op === 'region') s.region = op.name;
         else if (op.op === 'loan') s.loan = op.years;
@@ -242,9 +272,10 @@
 
     function* exam(s, entry, retry) {
       const base = s.flags.has('県外志望') ? CONFIG.exam.県外 : CONFIG.exam.地元;
-      const p = clamp(base + (retry ? CONFIG.exam.retryBonus : 0) + skill(s), 0, 1);
+      const fm = CONFIG.exam.faculty[s.faculty] || 1;
+      const p = clamp((base + (retry ? CONFIG.exam.retryBonus : 0) + skill(s)) * fm, 0, 1);
       const ok = s.rng.chance(p);
-      const where = s.flags.has('県外志望') ? '県外の大学' : '地元の大学';
+      const where = (s.flags.has('県外志望') ? '県外の大学' : '地元の大学') + (s.faculty ? `（${s.faculty}）` : '');
       yield* envelope(s, entry, `${where}　合否`, ok ? '合格' : '不合格', ok);
       if (ok) {
         s.flags.delete('入試不合格');
@@ -266,17 +297,26 @@
     // （高卒なら製造業が多い）。重みは「割合 ÷ 合格率」（合格のしやすさで偏らないように）
     function drawOffers(s, highSchool) {
       const key = highSchool ? 'shareHigh' : 'shareUni';
-      const pool = Object.values(C.careers).filter((c) => typeof c[key] === 'number' && c[key] > 0 && !(highSchool && c.uniOnly));
+      const fac = s.faculty || '文系';
+      // キャリアシートの「学部」：空なら一般の学部（文系・理系・教育学部）に届く。「教育学部×6」は、その学部なら6倍届きやすい
+      const boost = (c) => {
+        if (highSchool) return 1;
+        const list = (c.faculties || '').split(/[,、]/).map((x) => x.trim()).filter(Boolean);
+        if (!list.length) return CONFIG.generalFaculties.includes(fac) ? 1 : 0;
+        const hit = list.find((x) => x.replace(/×.*$/, '') === fac);
+        if (!hit) return 0;
+        const m = hit.match(/×([\d.]+)/);
+        return m ? Number(m[1]) : 1;
+      };
+      const pool = Object.values(C.careers).filter((c) => typeof c[key] === 'number' && c[key] > 0 && !(highSchool && c.uniOnly) && boost(c) > 0);
       const out = [];
-      const used = new Set();
+      const taken = new Set();
       const n = CONFIG.job.offers[highSchool ? '高卒' : '大学'];
       for (let i = 0; i < n && pool.length; i++) {
-        const c = s.rng.weighted(pool.map((x) => [x, x[key] / (typeof x.pass === 'number' ? x.pass : 0.5)]));
-        const left = (c.examples || []).filter((x) => !used.has(`${c.heading || c.name}（${x}）`));
-        const head = c.heading || c.name; // 求人の見出し（「公務員（県庁）」のように）
-        const label = left.length ? `${head}（${s.rng.pick(left)}）` : `${head}（${i + 1}社目）`;
-        used.add(label);
-        out.push({ career: c, label });
+        const c = s.rng.weighted(pool.map((x) => [x, (x[key] * boost(x)) / (typeof x.pass === 'number' ? x.pass : 0.5)]));
+        const co = companyName(s, c.name, taken);
+        taken.add(co.name);
+        out.push({ career: c, label: co.name, shown: co.shown });
       }
       return out;
     }
@@ -286,15 +326,16 @@
       const careerOf = {};
       const options = offers.map((o) => {
         careerOf[o.label] = o.career.name;
-        return { name: o.label, enabled: true, note: `${o.career.industry || ''}${o.career.industry ? '・' : ''}${difficulty(jobRate(s, o.career.name))}` };
+        const what = [o.career.heading || o.career.name, o.label !== o.shown ? o.shown : ''].filter(Boolean).join('・');
+        return { name: o.label, enabled: true, note: `${what}・${difficulty(jobRate(s, o.career.name))}` };
       });
       if (highSchool) {
         // 大卒向けの求人も1つ、選べない形で見せる（選べなかったことも体験の一部）
         const uni = Object.values(C.careers).filter((c) => c.uniOnly && c.shareUni > 0);
         if (uni.length) {
           const c = s.rng.weighted(uni.map((x) => [x, x.shareUni]));
-          const label = `${c.heading || c.name}（${(c.examples || [])[0] || '大卒の求人'}）`;
-          options.push({ name: label, enabled: false, note: `${c.industry || ''}・大卒以上の求人です` });
+          const co = companyName(s, c.name, new Set(options.map((o) => o.name)));
+          options.push({ name: co.name, enabled: false, note: `${c.heading || c.name}・${co.shown}・大卒以上の求人です` });
         }
       }
       const enabled = options.filter((o) => o.enabled).map((o) => o.name);
@@ -309,6 +350,7 @@
 
       let result = null;
       let stage = 'first';
+      let otherLabel = null;
       if (s.rng.chance(jobRate(s, first))) {
         yield* envelope(s, entry, `第一志望　${firstLabel}`, '内定', true);
         result = first;
@@ -320,14 +362,27 @@
           result = second;
           stage = 'second';
         } else {
-          stage = 'none';
           yield* envelope(s, entry, `第二志望　${secondLabel}`, '不採用', false);
-          const bad = ['不況', '大不況'].includes(econ(s));
-          result = s.rng.chance(bad ? CONFIG.job.irregularBad : CONFIG.job.irregular) ? '非正規' : '地元企業';
-          yield* envelope(s, entry, 'それから', result === '非正規' ? '非正規の仕事に就いた' : '地元の会社に拾われた', null);
+          // ほかに届いていた求人を順に当たる（現実には、第一・第二志望以外から内定をもらう人も多い）
+          let other = null;
+          for (const o of options.filter((x) => x.enabled && x.name !== firstLabel && x.name !== secondLabel)) {
+            if (s.rng.chance(jobRate(s, careerOf[o.name]) * CONFIG.job.secondFactor)) { other = o.name; break; }
+          }
+          if (other) {
+            stage = 'other';
+            result = careerOf[other];
+            otherLabel = other;
+            yield* envelope(s, entry, 'それから', `ほかに受けていた「${other}」から内定`, true);
+          } else {
+            stage = 'none';
+            const bad = ['不況', '大不況'].includes(econ(s));
+            result = s.rng.chance(bad ? CONFIG.job.irregularBad : CONFIG.job.irregular) ? '非正規' : '地元企業';
+            yield* envelope(s, entry, 'それから', result === '非正規' ? '非正規の仕事に就いた' : '地元の会社に拾われた', null);
+          }
         }
       }
-      setCareer(s, result);
+      const label = stage === 'first' ? firstLabel : stage === 'second' ? secondLabel : stage === 'other' ? otherLabel : null;
+      setCareer(s, result, label || undefined);
       setFlag(s, '就職済');
       s.jobHistory.push({ age: s.age, first, second, result, stage, economy: econ(s), highSchool, retry });
     }
@@ -341,7 +396,10 @@
       yield* envelope(s, entry, title, ok ? (name === '転職判定(登用)' ? '合格' : '内定') : '見送り', ok);
       yield* applyOps(s, fx(ok ? cfg.success : cfg.fail), entry);
       if (ok) setFlag(s, '転職経験');
-      if (ok && cfg.redraw) drawCompany(s);
+      if (ok && cfg.redraw) {
+        s.jobLabel = companyName(s, s.career, new Set([s.jobLabel])).name; // 同じ仕事の、別の会社へ
+        drawCompany(s);
+      }
     }
 
     // 配偶者シートの属性を、条件に合う候補から割合でくじ引き
@@ -525,7 +583,7 @@
         yield { kind: 'after', entry };
         return;
       }
-      const choices = ev.choices.map((c) => ({ label: c.labelFn(s), enabled: c.condFn(s) }));
+      const choices = ev.choices.map((c, i) => ({ label: c.labelFn(s), enabled: c.condFn(s), weight: ev.weights && ev.weights[i] }));
       const answer = yield { ...base, kind: 'event', text: ev.textFn(s), choices, fate: ev.type === '運命' };
       let idx = Number(answer);
       if (!(idx >= 0 && idx < choices.length && choices[idx].enabled)) idx = choices.findIndex((c) => c.enabled);
@@ -619,7 +677,7 @@
       if (s.dead) return '';
       if (s.flags.has('経営者')) return `${s.career}（社長）`;
       if (s.career === '学生') return s.path === '大学' ? '大学生' : '学生';
-      return s.career;
+      return s.jobLabel && s.jobLabel !== s.career ? `${s.career}（${s.jobLabel}）` : s.career;
     }
 
     function pick(p, field, age) {

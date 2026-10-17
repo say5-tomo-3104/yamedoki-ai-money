@@ -126,8 +126,8 @@
 
   function lifeLine(s) {
     const parts = [];
-    if (s.career === '学生') parts.push(s.path === '大学' ? '大学生' : '学生');
-    else parts.push(s.career);
+    if (s.career === '学生') parts.push(s.path === '大学' ? `大学生${s.faculty ? `（${s.faculty}）` : ''}` : '学生');
+    else parts.push(s.jobLabel && s.jobLabel !== s.career ? `${s.jobLabel}（${s.career}）` : s.career);
     if (s.partner) parts.push(s.partner.status === '既婚' ? '既婚' : '交際中');
     else parts.push(s.flags.has('結婚経験') ? '一人（結婚経験あり）' : '独身');
     if (s.children.length) parts.push(`子${s.children.length}人`);
@@ -548,7 +548,7 @@
       try { await navigator.clipboard.writeText(e.share); copyBtn.textContent = 'コピーしました'; } catch (err) { share.select(); copyBtn.textContent = '選択しました。コピーしてください'; }
     });
     const companies = e.hidden.companies.length
-      ? e.hidden.companies.map((c) => `${c.age}歳 ${c.career}：${c.fortune}`).join('\n')
+      ? e.hidden.companies.map((c) => `${c.age}歳 ${c.label && c.label !== c.career ? `${c.label}（${c.career}）` : c.career}：${c.fortune}`).join('\n')
       : '（会社に勤めなかった）';
     const hp = e.hidden.partner;
 

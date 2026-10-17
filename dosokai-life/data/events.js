@@ -16,12 +16,12 @@ window.GAME_DATA = {
    "choices": [
     {
      "label": "県外の大学を受ける〔家庭=きびしい〕\n（奨学金を借りることになります）〔/〕",
-     "effect": "フラグ:県外志望 処理:入試判定",
+     "effect": "フラグ:県外志望 フラグ:大学志望",
      "cond": ""
     },
     {
      "label": "地元の大学を受ける〔家庭=きびしい〕\n（奨学金を借りることになります）〔/〕",
-     "effect": "フラグ:地元志望 処理:入試判定",
+     "effect": "フラグ:地元志望 フラグ:大学志望",
      "cond": ""
     },
     {
@@ -33,11 +33,74 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E012",
+   "row": 3,
+   "type": "選択",
+   "ageFrom": 18,
+   "ageTo": 18,
+   "cond": "フラグ:大学志望;!フラグ:学部選択",
+   "prob": 1,
+   "once": true,
+   "title": "願書",
+   "text": "願書の「志望学部」の欄で、ペンが止まった。\n担任は「行ける学部と、行きたい学部は違うからな」と言った。\nどちらの話をしているのか、少しわからなかった。",
+   "choices": [
+    {
+     "label": "文系（法・経済・文学など）",
+     "effect": "学部:文系 フラグ:学部選択 処理:入試判定",
+     "cond": ""
+    },
+    {
+     "label": "理系（工学・理学・農学など）",
+     "effect": "学部:理系 フラグ:学部選択 処理:入試判定",
+     "cond": ""
+    },
+    {
+     "label": "教育学部（先生をめざす）",
+     "effect": "学部:教育学部 フラグ:学部選択 処理:入試判定",
+     "cond": ""
+    },
+    {
+     "label": "看護・医療系（看護師などをめざす）",
+     "effect": "学部:看護・医療 フラグ:学部選択 処理:入試判定",
+     "cond": ""
+    },
+    {
+     "label": "薬学部（6年。薬剤師をめざす）",
+     "effect": "学部:薬学部 フラグ:学部選択 処理:入試判定 お金-3",
+     "cond": "手応え>=50"
+    },
+    {
+     "label": "医学部（6年。医師をめざす）\n入試はとても難しい",
+     "effect": "学部:医学部 フラグ:学部選択 処理:入試判定 お金-5",
+     "cond": "手応え>=54"
+    },
+    {
+     "label": "歯学部（6年。歯科医師をめざす）",
+     "effect": "学部:歯学部 フラグ:学部選択 処理:入試判定 お金-4",
+     "cond": "手応え>=52"
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": [
+    45.0,
+    22.0,
+    7.0,
+    8.0,
+    3.0,
+    2.5,
+    0.6
+   ]
   },
   {
    "id": "E002",
-   "row": 3,
+   "row": 4,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 19,
@@ -50,11 +113,12 @@ window.GAME_DATA = {
    "effect": "お金+5 余白-3 フラグ:奨学金",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E003",
-   "row": 4,
+   "row": 5,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 18,
@@ -83,11 +147,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E004",
-   "row": 5,
+   "row": 6,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 21,
@@ -100,11 +165,12 @@ window.GAME_DATA = {
    "effect": "余白+2 つながり+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E005",
-   "row": 6,
+   "row": 7,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 22,
@@ -117,11 +183,12 @@ window.GAME_DATA = {
    "effect": "お金+1 つながり+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E006",
-   "row": 7,
+   "row": 8,
    "type": "選択",
    "ageFrom": 19,
    "ageTo": 21,
@@ -150,11 +217,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E007",
-   "row": 8,
+   "row": 9,
    "type": "運命",
    "ageFrom": 19,
    "ageTo": 22,
@@ -178,11 +246,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E008",
-   "row": 9,
+   "row": 10,
    "type": "一行",
    "ageFrom": 20,
    "ageTo": 20,
@@ -195,14 +264,15 @@ window.GAME_DATA = {
    "effect": "つながり+3",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E010",
-   "row": 10,
+   "row": 11,
    "type": "運命",
    "ageFrom": 21,
-   "ageTo": 22,
+   "ageTo": 27,
    "cond": "景気=不況;進路=大学;!フラグ:就職済;フラグ:就活の年",
    "prob": 1,
    "once": true,
@@ -212,22 +282,23 @@ window.GAME_DATA = {
    "effect": "余白-5",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E009",
-   "row": 11,
+   "row": 12,
    "type": "選択",
    "ageFrom": 21,
-   "ageTo": 22,
+   "ageTo": 27,
    "cond": "進路=大学;!フラグ:就職済;フラグ:就活の年",
    "prob": 1,
    "once": true,
    "title": "就職活動",
-   "text": "黒いスーツは、一着目より二着目のほうが体に馴染んだ。\n説明会の帰り道、ビルのガラスに、同じ格好の自分が何十人も映っていた。",
+   "text": "〔学部=医学部|歯学部|薬学部〕国家試験の過去問を、三周解き終えた。\n働きたい病院や薬局の説明会にも、白衣ではなくスーツで行った。〔/〕〔!学部=医学部|歯学部|薬学部〕黒いスーツは、一着目より二着目のほうが体に馴染んだ。\n説明会の帰り道、ビルのガラスに、同じ格好の自分が何十人も映っていた。〔/〕",
    "choices": [
     {
-     "label": "第一志望・第二志望を選ぶ",
+     "label": "届いた求人から、第一志望・第二志望を選ぶ",
      "effect": "処理:就職判定",
      "cond": ""
     }
@@ -235,11 +306,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E011",
-   "row": 12,
+   "row": 13,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 23,
@@ -268,11 +340,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E020",
-   "row": 13,
+   "row": 14,
    "type": "一行",
    "ageFrom": 19,
    "ageTo": 24,
@@ -285,11 +358,12 @@ window.GAME_DATA = {
    "effect": "つながり+3 お金-1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E021",
-   "row": 14,
+   "row": 15,
    "type": "運命",
    "ageFrom": 19,
    "ageTo": 55,
@@ -302,11 +376,12 @@ window.GAME_DATA = {
    "effect": "手応え+6 余白+3",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E022",
-   "row": 15,
+   "row": 16,
    "type": "運命",
    "ageFrom": 19,
    "ageTo": 55,
@@ -335,11 +410,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E023",
-   "row": 16,
+   "row": 17,
    "type": "一行",
    "ageFrom": 21,
    "ageTo": 27,
@@ -352,11 +428,12 @@ window.GAME_DATA = {
    "effect": "余白-2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E024",
-   "row": 17,
+   "row": 18,
    "type": "選択",
    "ageFrom": 18,
    "ageTo": 65,
@@ -385,11 +462,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "フラグ:結婚を保留→×1.5",
    "staging": "立ち絵:パートナー/照れ/右",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E025",
-   "row": 18,
+   "row": 19,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 50,
@@ -400,13 +478,14 @@ window.GAME_DATA = {
    "text": "〔フラグ:双子直後〕分娩室の外で待っていると、看護師が指を二本立てて出てきた。\n「お二人とも、元気ですよ」\n二人分の泣き声が、廊下の端まで聞こえていた。〔/〕〔!フラグ:双子直後;子ども数=1〕生まれてきた子の手は、思っていたより熱かった。\n握り返される力の強さに、意味もなく笑ってしまった。〔/〕〔!フラグ:双子直後;子ども数>=2〕上の子が、新しく来た家族の小さな足を、こわごわと指でつついた。\n「ちっちゃい」と言って、自分の手と見比べていた。〔/〕",
    "choices": [],
    "effect": "処理:出産 つながり+10 お金-5 余白-6 健康-2",
-   "probMod": "子ども数=1→×0.85／子ども数=2→×0.22／子ども数>=3→×0.12／フラグ:今の人数で→×0.15／フラグ:もう一人→×1.4",
+   "probMod": "子ども数=1→×0.85／子ども数=2→×0.22／子ども数>=3→×0.12／フラグ:今の人数で→×0.15／フラグ:もう一人→×1.4／フラグ:不妊治療→×1.6",
    "staging": "立ち絵:子ども/笑顔/右",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E026",
-   "row": 19,
+   "row": 20,
    "type": "運命",
    "ageFrom": 25,
    "ageTo": 65,
@@ -430,11 +509,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E027",
-   "row": 20,
+   "row": 21,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -463,11 +543,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "立ち絵:母/笑顔/右",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E028",
-   "row": 21,
+   "row": 22,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -480,11 +561,12 @@ window.GAME_DATA = {
    "effect": "お金-8 余白-3",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E029",
-   "row": 22,
+   "row": 23,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -497,11 +579,12 @@ window.GAME_DATA = {
    "effect": "余白+2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E030",
-   "row": 23,
+   "row": 24,
    "type": "一行",
    "ageFrom": 23,
    "ageTo": 42,
@@ -514,11 +597,12 @@ window.GAME_DATA = {
    "effect": "お金-2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E031",
-   "row": 24,
+   "row": 25,
    "type": "選択",
    "ageFrom": 29,
    "ageTo": 50,
@@ -547,11 +631,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E032",
-   "row": 25,
+   "row": 26,
    "type": "一行",
    "ageFrom": 23,
    "ageTo": 65,
@@ -564,11 +649,12 @@ window.GAME_DATA = {
    "effect": "余白-1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E040",
-   "row": 26,
+   "row": 27,
    "type": "運命",
    "ageFrom": 23,
    "ageTo": 28,
@@ -592,11 +678,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E041",
-   "row": 27,
+   "row": 28,
    "type": "一行",
    "ageFrom": 23,
    "ageTo": 59,
@@ -609,11 +696,12 @@ window.GAME_DATA = {
    "effect": "健康-1 手応え+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E042",
-   "row": 28,
+   "row": 29,
    "type": "運命",
    "ageFrom": 27,
    "ageTo": 50,
@@ -642,11 +730,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E043",
-   "row": 29,
+   "row": 30,
    "type": "運命",
    "ageFrom": 25,
    "ageTo": 35,
@@ -659,11 +748,12 @@ window.GAME_DATA = {
    "effect": "お金+15 余白+2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E044",
-   "row": 30,
+   "row": 31,
    "type": "選択",
    "ageFrom": 32,
    "ageTo": 45,
@@ -692,11 +782,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E045",
-   "row": 31,
+   "row": 32,
    "type": "運命",
    "ageFrom": 26,
    "ageTo": 55,
@@ -725,11 +816,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E050",
-   "row": 32,
+   "row": 33,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 59,
@@ -742,11 +834,12 @@ window.GAME_DATA = {
    "effect": "手応え+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E051",
-   "row": 33,
+   "row": 34,
    "type": "選択",
    "ageFrom": 30,
    "ageTo": 50,
@@ -775,11 +868,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E052",
-   "row": 34,
+   "row": 35,
    "type": "運命",
    "ageFrom": 26,
    "ageTo": 55,
@@ -803,11 +897,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E053",
-   "row": 35,
+   "row": 36,
    "type": "運命",
    "ageFrom": 26,
    "ageTo": 55,
@@ -831,11 +926,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E054",
-   "row": 36,
+   "row": 37,
    "type": "運命",
    "ageFrom": 25,
    "ageTo": 55,
@@ -848,11 +944,12 @@ window.GAME_DATA = {
    "effect": "手応え+8 余白+5 お金+4",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E060",
-   "row": 37,
+   "row": 38,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 59,
@@ -865,11 +962,12 @@ window.GAME_DATA = {
    "effect": "つながり+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E061",
-   "row": 38,
+   "row": 39,
    "type": "運命",
    "ageFrom": 26,
    "ageTo": 59,
@@ -882,11 +980,12 @@ window.GAME_DATA = {
    "effect": "健康-6 つながり+8 手応え+6 フラグ:災害対応",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E062",
-   "row": 39,
+   "row": 40,
    "type": "選択",
    "ageFrom": 29,
    "ageTo": 55,
@@ -910,11 +1009,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "フラグ:災害対応→0.8",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E063",
-   "row": 40,
+   "row": 41,
    "type": "運命",
    "ageFrom": 24,
    "ageTo": 59,
@@ -927,11 +1027,12 @@ window.GAME_DATA = {
    "effect": "お金-5 余白-3",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E064",
-   "row": 41,
+   "row": 42,
    "type": "一行",
    "ageFrom": 24,
    "ageTo": 59,
@@ -944,11 +1045,12 @@ window.GAME_DATA = {
    "effect": "余白-2 手応え+2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E070",
-   "row": 42,
+   "row": 43,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 59,
@@ -961,11 +1063,12 @@ window.GAME_DATA = {
    "effect": "つながり+1 余白+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E071",
-   "row": 43,
+   "row": 44,
    "type": "運命",
    "ageFrom": 27,
    "ageTo": 59,
@@ -989,11 +1092,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E072",
-   "row": 44,
+   "row": 45,
    "type": "運命",
    "ageFrom": 25,
    "ageTo": 59,
@@ -1006,11 +1110,12 @@ window.GAME_DATA = {
    "effect": "手応え+8 お金+5 余白-3",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E080",
-   "row": 45,
+   "row": 46,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 59,
@@ -1039,11 +1144,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E081",
-   "row": 46,
+   "row": 47,
    "type": "選択",
    "ageFrom": 20,
    "ageTo": 32,
@@ -1067,11 +1173,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E082",
-   "row": 47,
+   "row": 48,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 59,
@@ -1084,11 +1191,12 @@ window.GAME_DATA = {
    "effect": "お金-3 余白-1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E090",
-   "row": 48,
+   "row": 49,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1112,11 +1220,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E091",
-   "row": 49,
+   "row": 50,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1145,11 +1254,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E100",
-   "row": 50,
+   "row": 51,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1162,11 +1272,12 @@ window.GAME_DATA = {
    "effect": "処理:出会い つながり+3 余白+2",
    "probMod": "出会い運=高→×1.5／出会い運=低→×0.5／つながり<35→×0.7／フラグ:離婚経験→×0.6／フラグ:死別→×0.4",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E101",
-   "row": 51,
+   "row": 52,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1179,11 +1290,12 @@ window.GAME_DATA = {
    "effect": "余白+1 つながり+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E102",
-   "row": 52,
+   "row": 53,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1207,11 +1319,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "フラグ:結婚を保留→×1.3",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E103",
-   "row": 53,
+   "row": 54,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1224,11 +1337,12 @@ window.GAME_DATA = {
    "effect": "つながり+2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E104",
-   "row": 54,
+   "row": 55,
    "type": "選択",
    "ageFrom": 26,
    "ageTo": 42,
@@ -1257,11 +1371,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "立ち絵:パートナー/ふつう/右",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E105",
-   "row": 55,
+   "row": 56,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1274,11 +1389,12 @@ window.GAME_DATA = {
    "effect": "つながり+2 お金-2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E106",
-   "row": 56,
+   "row": 57,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1307,11 +1423,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "立ち絵:子ども/怒り/右",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E107",
-   "row": 57,
+   "row": 58,
    "type": "選択",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1340,11 +1457,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E108",
-   "row": 58,
+   "row": 59,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1357,11 +1475,12 @@ window.GAME_DATA = {
    "effect": "余白+3 つながり-2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E109",
-   "row": 59,
+   "row": 60,
    "type": "一行",
    "ageFrom": 40,
    "ageTo": 65,
@@ -1374,11 +1493,12 @@ window.GAME_DATA = {
    "effect": "フラグ:子が結婚 つながり+3 お金-3",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E110",
-   "row": 60,
+   "row": 61,
    "type": "運命",
    "ageFrom": 40,
    "ageTo": 65,
@@ -1391,11 +1511,12 @@ window.GAME_DATA = {
    "effect": "フラグ:孫 つながり+8 余白+3",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E111",
-   "row": 61,
+   "row": 62,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1424,11 +1545,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "配偶者:相性=ずれがある→×2.5／配偶者:相性=合う→×0.4／配偶者:分担=偏る→×1.4／余白<25→×1.5／フラグ:一度は危機→×1.8",
    "staging": "立ち絵:パートナー/悲しみ/右",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E112",
-   "row": 62,
+   "row": 63,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1441,11 +1563,12 @@ window.GAME_DATA = {
    "effect": "処理:パートナーの死 つながり-8 余白-15 健康-5",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E113",
-   "row": 63,
+   "row": 64,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1458,11 +1581,12 @@ window.GAME_DATA = {
    "effect": "つながり+3 余白+2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E114",
-   "row": 64,
+   "row": 65,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1475,11 +1599,12 @@ window.GAME_DATA = {
    "effect": "余白-1 つながり+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E115",
-   "row": 65,
+   "row": 66,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1508,11 +1633,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E116",
-   "row": 66,
+   "row": 67,
    "type": "一行",
    "ageFrom": 38,
    "ageTo": 65,
@@ -1525,11 +1651,12 @@ window.GAME_DATA = {
    "effect": "余白+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E117",
-   "row": 67,
+   "row": 68,
    "type": "選択",
    "ageFrom": 45,
    "ageTo": 60,
@@ -1558,11 +1685,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E118",
-   "row": 68,
+   "row": 69,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1575,11 +1703,12 @@ window.GAME_DATA = {
    "effect": "余白-2 手応え-1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E200",
-   "row": 69,
+   "row": 70,
    "type": "選択",
    "ageFrom": 20,
    "ageTo": 35,
@@ -1603,11 +1732,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E201",
-   "row": 70,
+   "row": 71,
    "type": "選択",
    "ageFrom": 25,
    "ageTo": 65,
@@ -1620,12 +1750,12 @@ window.GAME_DATA = {
     {
      "label": "新築を買う",
      "effect": "住まい:持ち家 ローン:35 お金-10 余白+3 フラグ:持ち家",
-     "cond": "お金>=45"
+     "cond": "お金>=40"
     },
     {
      "label": "中古の家を買う",
      "effect": "住まい:持ち家 ローン:25 お金-6 余白+2 フラグ:持ち家",
-     "cond": "お金>=30"
+     "cond": "お金>=25"
     },
     {
      "label": "まだ借りておく",
@@ -1636,11 +1766,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "パートナー=既婚→×1.8／子ども数>=1→×1.4／パートナー=なし→×0.25",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E202",
-   "row": 71,
+   "row": 72,
    "type": "一行",
    "ageFrom": 25,
    "ageTo": 65,
@@ -1653,11 +1784,12 @@ window.GAME_DATA = {
    "effect": "余白-1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E203",
-   "row": 72,
+   "row": 73,
    "type": "一行",
    "ageFrom": 25,
    "ageTo": 65,
@@ -1670,11 +1802,12 @@ window.GAME_DATA = {
    "effect": "余白+5 お金+3",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E204",
-   "row": 73,
+   "row": 74,
    "type": "運命",
    "ageFrom": 30,
    "ageTo": 65,
@@ -1703,11 +1836,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E250",
-   "row": 74,
+   "row": 75,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1736,11 +1870,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "体質=弱い→×1.5／健康<30→×1.4／フラグ:がん経験→×1.5",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E251",
-   "row": 75,
+   "row": 76,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1753,11 +1888,12 @@ window.GAME_DATA = {
    "effect": "フラグ消:持病がん 余白+5 健康+5",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E252",
-   "row": 76,
+   "row": 77,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1786,11 +1922,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "余白<30→×2.5／余白>=60→×0.5",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E253",
-   "row": 77,
+   "row": 78,
    "type": "運命",
    "ageFrom": 40,
    "ageTo": 65,
@@ -1814,11 +1951,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "健康<30→×2／体質=弱い→×1.3",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E254",
-   "row": 78,
+   "row": 79,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1842,11 +1980,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E255",
-   "row": 79,
+   "row": 80,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1859,11 +1998,12 @@ window.GAME_DATA = {
    "effect": "フラグ:交通事故経験 フラグ:後遺症 健康-15 お金-8 手応え-5",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E256",
-   "row": 80,
+   "row": 81,
    "type": "一行",
    "ageFrom": 40,
    "ageTo": 65,
@@ -1876,11 +2016,12 @@ window.GAME_DATA = {
    "effect": "余白-1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E257",
-   "row": 81,
+   "row": 82,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1893,11 +2034,12 @@ window.GAME_DATA = {
    "effect": "処理:被災判定 健康-3 余白-5",
    "probMod": "災害リスク=高→×2／災害リスク=低→×0.4",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E258",
-   "row": 82,
+   "row": 83,
    "type": "選択",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1926,11 +2068,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E259",
-   "row": 83,
+   "row": 84,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1943,11 +2086,12 @@ window.GAME_DATA = {
    "effect": "お金-8 余白-4",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E300",
-   "row": 84,
+   "row": 85,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1960,11 +2104,12 @@ window.GAME_DATA = {
    "effect": "つながり+1 余白-2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E301",
-   "row": 85,
+   "row": 86,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -1993,11 +2138,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "立ち絵:父/ふつう/右",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E302",
-   "row": 86,
+   "row": 87,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2010,11 +2156,12 @@ window.GAME_DATA = {
    "effect": "余白-1 つながり+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E303",
-   "row": 87,
+   "row": 88,
    "type": "選択",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2043,11 +2190,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E304",
-   "row": 88,
+   "row": 89,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2060,11 +2208,12 @@ window.GAME_DATA = {
    "effect": "処理:父の死 つながり-2 余白-6",
    "probMod": "父=要介護→×2",
    "staging": "立ち絵:父/ふつう/右",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E305",
-   "row": 89,
+   "row": 90,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2077,11 +2226,12 @@ window.GAME_DATA = {
    "effect": "処理:母の死 つながり-2 余白-6",
    "probMod": "母=要介護→×2",
    "staging": "立ち絵:母/笑顔/右",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E306",
-   "row": 90,
+   "row": 91,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2094,11 +2244,12 @@ window.GAME_DATA = {
    "effect": "つながり+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E310",
-   "row": 91,
+   "row": 92,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2111,11 +2262,12 @@ window.GAME_DATA = {
    "effect": "つながり-3 余白-5",
    "probMod": "",
    "staging": "カットイン:健太/……",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E311",
-   "row": 92,
+   "row": 93,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2128,11 +2280,12 @@ window.GAME_DATA = {
    "effect": "つながり-3 余白-5",
    "probMod": "",
    "staging": "カットイン:美咲/……",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E312",
-   "row": 93,
+   "row": 94,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2145,11 +2298,12 @@ window.GAME_DATA = {
    "effect": "つながり-3 余白-5",
    "probMod": "",
    "staging": "カットイン:拓海/……",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E350",
-   "row": 94,
+   "row": 95,
    "type": "選択",
    "ageFrom": 22,
    "ageTo": 59,
@@ -2178,11 +2332,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E351",
-   "row": 95,
+   "row": 96,
    "type": "運命",
    "ageFrom": 33,
    "ageTo": 55,
@@ -2195,11 +2350,12 @@ window.GAME_DATA = {
    "effect": "フラグ:管理職 手応え+6 お金+5 余白-4",
    "probMod": "",
    "staging": "立ち絵:上司/笑顔/右",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E352",
-   "row": 96,
+   "row": 97,
    "type": "一行",
    "ageFrom": 33,
    "ageTo": 65,
@@ -2212,11 +2368,12 @@ window.GAME_DATA = {
    "effect": "余白-2 手応え+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E353",
-   "row": 97,
+   "row": 98,
    "type": "運命",
    "ageFrom": 45,
    "ageTo": 55,
@@ -2245,11 +2402,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E354",
-   "row": 98,
+   "row": 99,
    "type": "選択",
    "ageFrom": 50,
    "ageTo": 58,
@@ -2278,11 +2436,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E355",
-   "row": 99,
+   "row": 100,
    "type": "選択",
    "ageFrom": 60,
    "ageTo": 60,
@@ -2311,11 +2470,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E356",
-   "row": 100,
+   "row": 101,
    "type": "一行",
    "ageFrom": 60,
    "ageTo": 65,
@@ -2328,11 +2488,12 @@ window.GAME_DATA = {
    "effect": "余白+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E357",
-   "row": 101,
+   "row": 102,
    "type": "一行",
    "ageFrom": 55,
    "ageTo": 65,
@@ -2345,11 +2506,12 @@ window.GAME_DATA = {
    "effect": "つながり+1 余白+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E358",
-   "row": 102,
+   "row": 103,
    "type": "一行",
    "ageFrom": 40,
    "ageTo": 65,
@@ -2362,11 +2524,12 @@ window.GAME_DATA = {
    "effect": "余白-1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E359",
-   "row": 103,
+   "row": 104,
    "type": "運命",
    "ageFrom": 25,
    "ageTo": 65,
@@ -2379,11 +2542,12 @@ window.GAME_DATA = {
    "effect": "手応え+8 お金+6 余白+3",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E360",
-   "row": 104,
+   "row": 105,
    "type": "運命",
    "ageFrom": 25,
    "ageTo": 65,
@@ -2412,11 +2576,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E361",
-   "row": 105,
+   "row": 106,
    "type": "一行",
    "ageFrom": 25,
    "ageTo": 65,
@@ -2429,11 +2594,12 @@ window.GAME_DATA = {
    "effect": "手応え+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E362",
-   "row": 106,
+   "row": 107,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2446,11 +2612,12 @@ window.GAME_DATA = {
    "effect": "余白+1 手応え-1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E363",
-   "row": 107,
+   "row": 108,
    "type": "選択",
    "ageFrom": 20,
    "ageTo": 64,
@@ -2474,11 +2641,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E364",
-   "row": 108,
+   "row": 109,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2491,11 +2659,12 @@ window.GAME_DATA = {
    "effect": "フラグ:無職",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E365",
-   "row": 109,
+   "row": 110,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2508,11 +2677,12 @@ window.GAME_DATA = {
    "effect": "フラグ消:無職 手応え+2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E400",
-   "row": 110,
+   "row": 111,
    "type": "選択",
    "ageFrom": 25,
    "ageTo": 65,
@@ -2541,11 +2711,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "カットイン:/人生の転機",
-   "category": "転機"
+   "category": "転機",
+   "weights": []
   },
   {
    "id": "E401",
-   "row": 111,
+   "row": 112,
    "type": "一行",
    "ageFrom": 25,
    "ageTo": 65,
@@ -2558,11 +2729,12 @@ window.GAME_DATA = {
    "effect": "つながり+3 余白+3",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E402",
-   "row": 112,
+   "row": 113,
    "type": "選択",
    "ageFrom": 26,
    "ageTo": 65,
@@ -2591,11 +2763,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": "転機"
+   "category": "転機",
+   "weights": []
   },
   {
    "id": "E403",
-   "row": 113,
+   "row": 114,
    "type": "選択",
    "ageFrom": 22,
    "ageTo": 65,
@@ -2624,11 +2797,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "カットイン:/人生の転機",
-   "category": "転機"
+   "category": "転機",
+   "weights": []
   },
   {
    "id": "E404",
-   "row": 114,
+   "row": 115,
    "type": "選択",
    "ageFrom": 25,
    "ageTo": 65,
@@ -2652,11 +2826,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": "転機"
+   "category": "転機",
+   "weights": []
   },
   {
    "id": "E405",
-   "row": 115,
+   "row": 116,
    "type": "選択",
    "ageFrom": 30,
    "ageTo": 60,
@@ -2685,11 +2860,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "カットイン:/人生の転機",
-   "category": "転機"
+   "category": "転機",
+   "weights": []
   },
   {
    "id": "E406",
-   "row": 116,
+   "row": 117,
    "type": "選択",
    "ageFrom": 28,
    "ageTo": 55,
@@ -2718,11 +2894,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "カットイン:/人生の転機",
-   "category": "転機"
+   "category": "転機",
+   "weights": []
   },
   {
    "id": "E407",
-   "row": 117,
+   "row": 118,
    "type": "選択",
    "ageFrom": 30,
    "ageTo": 60,
@@ -2746,11 +2923,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": "転機"
+   "category": "転機",
+   "weights": []
   },
   {
    "id": "E408",
-   "row": 118,
+   "row": 119,
    "type": "選択",
    "ageFrom": 22,
    "ageTo": 45,
@@ -2779,11 +2957,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "カットイン:/人生の転機",
-   "category": "転機"
+   "category": "転機",
+   "weights": []
   },
   {
    "id": "E409",
-   "row": 119,
+   "row": 120,
    "type": "運命",
    "ageFrom": 26,
    "ageTo": 65,
@@ -2796,11 +2975,12 @@ window.GAME_DATA = {
    "effect": "地域:都市 つながり+4 処理:再就職判定",
    "probMod": "",
    "staging": "",
-   "category": "転機"
+   "category": "転機",
+   "weights": []
   },
   {
    "id": "E410",
-   "row": 120,
+   "row": 121,
    "type": "選択",
    "ageFrom": 35,
    "ageTo": 60,
@@ -2824,11 +3004,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "カットイン:/人生の転機",
-   "category": "転機"
+   "category": "転機",
+   "weights": []
   },
   {
    "id": "E500",
-   "row": 121,
+   "row": 122,
    "type": "選択",
    "ageFrom": 20,
    "ageTo": 40,
@@ -2857,11 +3038,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E600",
-   "row": 122,
+   "row": 123,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2874,11 +3056,12 @@ window.GAME_DATA = {
    "effect": "健康-1 手応え+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E601",
-   "row": 123,
+   "row": 124,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -2907,11 +3090,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E602",
-   "row": 124,
+   "row": 125,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2924,11 +3108,12 @@ window.GAME_DATA = {
    "effect": "手応え+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E603",
-   "row": 125,
+   "row": 126,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -2957,11 +3142,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E604",
-   "row": 126,
+   "row": 127,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -2974,11 +3160,12 @@ window.GAME_DATA = {
    "effect": "健康-1 つながり+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E605",
-   "row": 127,
+   "row": 128,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -2991,11 +3178,12 @@ window.GAME_DATA = {
    "effect": "手応え+6 余白-5 お金+2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E606",
-   "row": 128,
+   "row": 129,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -3008,11 +3196,12 @@ window.GAME_DATA = {
    "effect": "健康-1 手応え+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E607",
-   "row": 129,
+   "row": 130,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -3025,11 +3214,12 @@ window.GAME_DATA = {
    "effect": "手応え+4 余白-4 つながり+2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E608",
-   "row": 130,
+   "row": 131,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -3042,11 +3232,12 @@ window.GAME_DATA = {
    "effect": "手応え+1 余白-1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E609",
-   "row": 131,
+   "row": 132,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -3059,11 +3250,12 @@ window.GAME_DATA = {
    "effect": "手応え+6 つながり+4 余白+2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E610",
-   "row": 132,
+   "row": 133,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -3076,11 +3268,12 @@ window.GAME_DATA = {
    "effect": "健康+1 手応え+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E611",
-   "row": 133,
+   "row": 134,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -3093,11 +3286,12 @@ window.GAME_DATA = {
    "effect": "手応え+8 お金+3",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E612",
-   "row": 134,
+   "row": 135,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -3110,11 +3304,12 @@ window.GAME_DATA = {
    "effect": "手応え+1 余白-1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E613",
-   "row": 135,
+   "row": 136,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -3143,11 +3338,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E614",
-   "row": 136,
+   "row": 137,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -3160,11 +3356,12 @@ window.GAME_DATA = {
    "effect": "つながり+1 健康-1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E615",
-   "row": 137,
+   "row": 138,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -3177,11 +3374,12 @@ window.GAME_DATA = {
    "effect": "健康+4 余白+3 お金-3",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E616",
-   "row": 138,
+   "row": 139,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -3194,11 +3392,12 @@ window.GAME_DATA = {
    "effect": "健康-1 つながり+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E617",
-   "row": 139,
+   "row": 140,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -3211,11 +3410,12 @@ window.GAME_DATA = {
    "effect": "手応え+5 余白+4",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E618",
-   "row": 140,
+   "row": 141,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -3228,11 +3428,12 @@ window.GAME_DATA = {
    "effect": "つながり+1 手応え+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E619",
-   "row": 141,
+   "row": 142,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -3261,11 +3462,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E620",
-   "row": 142,
+   "row": 143,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -3278,11 +3480,12 @@ window.GAME_DATA = {
    "effect": "余白-1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E621",
-   "row": 143,
+   "row": 144,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -3295,11 +3498,12 @@ window.GAME_DATA = {
    "effect": "お金+8 手応え+5 余白-2",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E622",
-   "row": 144,
+   "row": 145,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -3312,11 +3516,12 @@ window.GAME_DATA = {
    "effect": "健康-1 つながり+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E623",
-   "row": 145,
+   "row": 146,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -3345,11 +3550,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E624",
-   "row": 146,
+   "row": 147,
    "type": "一行",
    "ageFrom": 18,
    "ageTo": 65,
@@ -3362,11 +3568,12 @@ window.GAME_DATA = {
    "effect": "健康+1 手応え+1",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E625",
-   "row": 147,
+   "row": 148,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -3395,11 +3602,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E660",
-   "row": 148,
+   "row": 149,
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 59,
@@ -3412,11 +3620,12 @@ window.GAME_DATA = {
    "effect": "お金+6 手応え+4",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E661",
-   "row": 149,
+   "row": 150,
    "type": "運命",
    "ageFrom": 22,
    "ageTo": 59,
@@ -3445,11 +3654,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E662",
-   "row": 150,
+   "row": 151,
    "type": "運命",
    "ageFrom": 22,
    "ageTo": 59,
@@ -3478,11 +3688,12 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   },
   {
    "id": "E663",
-   "row": 151,
+   "row": 152,
    "type": "運命",
    "ageFrom": 22,
    "ageTo": 59,
@@ -3511,11 +3722,1109 @@ window.GAME_DATA = {
    "effect": "",
    "probMod": "",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E700",
+   "row": 153,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=工場勤務",
+   "prob": 0.3,
+   "once": false,
+   "title": "工場勤務",
+   "text": "交代勤務の夜、ラインの音が止まる休憩の十五分だけ、工場が静かになる。",
+   "choices": [],
+   "effect": "健康-1 手応え+1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E701",
+   "row": 154,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=工場勤務",
+   "prob": 0.12,
+   "once": true,
+   "title": "班長",
+   "text": "「来月から班長をやってくれ」と言われた。\n自分より年上の人が、三人いる班だった。",
+   "choices": [
+    {
+     "label": "引き受ける",
+     "effect": "手応え+6 余白-4 お金+3",
+     "cond": ""
+    },
+    {
+     "label": "もう少し現場で腕を磨きたいと伝える",
+     "effect": "手応え+2",
+     "cond": ""
+    },
+    {
+     "label": "資格をとって、技術職をめざす",
+     "effect": "手応え+4 余白-3 フラグ:資格",
+     "cond": ""
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E702",
+   "row": 155,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=研究者",
+   "prob": 0.3,
+   "once": false,
+   "title": "研究者",
+   "text": "実験は、今日も予定どおりに失敗した。",
+   "choices": [],
+   "effect": "手応え+1 余白-1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E703",
+   "row": 156,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=研究者",
+   "prob": 0.15,
+   "once": true,
+   "title": "論文",
+   "text": "三年かけた研究の論文が、海外の学術誌に載った。\n共著者の欄の自分の名前を、指でなぞった。",
+   "choices": [],
+   "effect": "手応え+10 余白+3",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E704",
+   "row": 157,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=観光業",
+   "prob": 0.3,
+   "once": false,
+   "title": "観光業",
+   "text": "バスの先頭で旗を振りながら、同じ説明を一日に六回した。",
+   "choices": [],
+   "effect": "つながり+1 健康-1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E705",
+   "row": 158,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=観光業",
+   "prob": 0.12,
+   "once": true,
+   "title": "観光の波",
+   "text": "海外からの観光客が、去年の倍になった。\n案内の看板に、知らない国の言葉が三つ増えた。",
+   "choices": [
+    {
+     "label": "外国語を勉強し直す",
+     "effect": "手応え+5 余白-3",
+     "cond": ""
+    },
+    {
+     "label": "地元の新しい観光ルートを企画する",
+     "effect": "手応え+6 つながり+3 余白-3",
+     "cond": ""
+    },
+    {
+     "label": "今の仕事を丁寧に続ける",
+     "effect": "余白+1",
+     "cond": ""
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E706",
+   "row": 159,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=国家公務員",
+   "prob": 0.3,
+   "once": false,
+   "title": "国家公務員",
+   "text": "国会の会期中は、答弁の資料づくりで終電を逃すのが当たり前になった。",
+   "choices": [],
+   "effect": "健康-1 手応え+1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E707",
+   "row": 160,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=国家公務員",
+   "prob": 0.12,
+   "once": true,
+   "title": "法律",
+   "text": "自分が担当した条文が、法律になった。\n官報に載ったその一行には、もちろん自分の名前はない。",
+   "choices": [],
+   "effect": "手応え+8 余白-2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E708",
+   "row": 161,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=税関",
+   "prob": 0.3,
+   "once": false,
+   "title": "税関",
+   "text": "空港の税関で、スーツケースを開ける手袋の白さにも、もう慣れた。",
+   "choices": [],
+   "effect": "手応え+1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E709",
+   "row": 162,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=税関",
+   "prob": 0.12,
+   "once": true,
+   "title": "見つけたもの",
+   "text": "X線の画面に、見慣れない影が映った。\n開けてみると、靴の底に、白い粉の袋が縫い込まれていた。",
+   "choices": [],
+   "effect": "手応え+8 つながり+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E710",
+   "row": 163,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=警察官",
+   "prob": 0.3,
+   "once": false,
+   "title": "警察官",
+   "text": "交番の前で、道を聞かれた回数を数えるのは、三日でやめた。",
+   "choices": [],
+   "effect": "つながり+1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E711",
+   "row": 164,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=警察官",
+   "prob": 0.12,
+   "once": true,
+   "title": "夜の通報",
+   "text": "夜中の通報で駆けつけた家で、小さな子が一人で泣いていた。\n朝まで、パトカーの後ろの席でその子の手を握っていた。",
+   "choices": [],
+   "effect": "手応え+6 余白-4 つながり+3",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E712",
+   "row": 165,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=消防士",
+   "prob": 0.3,
+   "once": false,
+   "title": "消防士",
+   "text": "仮眠室の天井を見ていると、出動の鐘が鳴る前に目が覚める。",
+   "choices": [],
+   "effect": "健康+1 余白-1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E713",
+   "row": 166,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=消防士",
+   "prob": 0.12,
+   "once": true,
+   "title": "火の中",
+   "text": "燃えている家の二階から、子どもを抱えて降りた。\n防火服の中が汗で重く、腕の中だけが軽かった。",
+   "choices": [],
+   "effect": "手応え+10 健康-3 つながり+4",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E714",
+   "row": 167,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=自衛官",
+   "prob": 0.3,
+   "once": false,
+   "title": "自衛官",
+   "text": "朝六時の起床ラッパで、体が勝手に起きるようになった。",
+   "choices": [],
+   "effect": "健康+1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E715",
+   "row": 168,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=自衛官",
+   "prob": 0.15,
+   "once": true,
+   "title": "災害派遣",
+   "text": "大きな災害の被災地へ派遣された。\n避難所で配った温かい食事の列は、夜になっても短くならなかった。",
+   "choices": [],
+   "effect": "手応え+8 健康-4 つながり+5",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E716",
+   "row": 169,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=医師",
+   "prob": 0.3,
+   "once": false,
+   "title": "医師",
+   "text": "当直明けの朝、自分の名前を呼ばれても、一瞬誰のことかわからなかった。",
+   "choices": [],
+   "effect": "健康-2 手応え+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E717",
+   "row": 170,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=医師",
+   "prob": 0.15,
+   "once": true,
+   "title": "救えた命",
+   "text": "救急で運ばれてきた患者が、二週間後に自分の足で退院していった。\n「先生の顔、覚えてないんです」と笑われた。それでよかった。",
+   "choices": [
+    {
+     "label": "この科で専門を極める",
+     "effect": "手応え+8 余白-3",
+     "cond": ""
+    },
+    {
+     "label": "地域の診療所に移ることを考える",
+     "effect": "つながり+5 お金-3 余白+3",
+     "cond": ""
+    },
+    {
+     "label": "研究の道に進む",
+     "effect": "キャリア:研究者 手応え+5 お金-4",
+     "cond": ""
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E718",
+   "row": 171,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=歯科医師",
+   "prob": 0.3,
+   "once": false,
+   "title": "歯科医師",
+   "text": "一日に三十人の口の中を見ると、帰りの電車で人の歯並びばかり気になる。",
+   "choices": [],
+   "effect": "手応え+1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E719",
+   "row": 172,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=歯科医師",
+   "prob": 0.12,
+   "once": true,
+   "title": "開業",
+   "text": "先輩の歯科医院を継がないか、と声をかけられた。\n患者のカルテは、三千人分あった。",
+   "choices": [
+    {
+     "label": "継いで院長になる",
+     "effect": "キャリア:自営業 フラグ:開業 フラグ:経営者 お金-10 手応え+8",
+     "cond": ""
+    },
+    {
+     "label": "勤務医のまま続ける",
+     "effect": "余白+2",
+     "cond": ""
+    },
+    {
+     "label": "自分で新しく開業する",
+     "effect": "キャリア:自営業 フラグ:開業 お金-15 手応え+6",
+     "cond": "お金>=40"
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E720",
+   "row": 173,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=薬剤師",
+   "prob": 0.3,
+   "once": false,
+   "title": "薬剤師",
+   "text": "処方箋の字が読めない医師の名前は、もう全員覚えた。",
+   "choices": [],
+   "effect": "手応え+1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E721",
+   "row": 174,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=薬剤師",
+   "prob": 0.12,
+   "once": true,
+   "title": "飲み合わせ",
+   "text": "処方箋を見て、手が止まった。\n二つの病院から出ている薬の組み合わせが、危なかった。\n医師に電話をかけると、少し黙ってから「ありがとう」と言われた。",
+   "choices": [],
+   "effect": "手応え+6 つながり+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E722",
+   "row": 175,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=看護師",
+   "prob": 0.3,
+   "once": false,
+   "title": "看護師",
+   "text": "夜勤のナースステーションで、ナースコールのランプがまた一つ灯った。",
+   "choices": [],
+   "effect": "健康-1 手応え+1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E723",
+   "row": 176,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=看護師",
+   "prob": 0.12,
+   "once": true,
+   "title": "三交代",
+   "text": "人が足りず、夜勤が月に十回を超えた。\n休みの日にも、ナースコールの音が耳に残っていた。",
+   "choices": [
+    {
+     "label": "病棟で踏ん張る",
+     "effect": "手応え+4 健康-6 余白-5",
+     "cond": ""
+    },
+    {
+     "label": "日勤のクリニックに移る",
+     "effect": "お金-3 余白+5 健康+3",
+     "cond": ""
+    },
+    {
+     "label": "訪問看護に転じる",
+     "effect": "つながり+5 手応え+3",
+     "cond": ""
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E724",
+   "row": 177,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=保育士",
+   "prob": 0.3,
+   "once": false,
+   "title": "保育士",
+   "text": "お迎えの時間、子どもたちが一人ずつ「先生、ばいばい」と言って帰っていく。",
+   "choices": [],
+   "effect": "つながり+1 余白+1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E725",
+   "row": 178,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=保育士",
+   "prob": 0.12,
+   "once": true,
+   "title": "卒園",
+   "text": "最初に担当した子どもたちが卒園した。\n式の最中に「先生泣いてる」と言われて、余計に泣いた。",
+   "choices": [],
+   "effect": "手応え+6 つながり+4 余白+3",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E726",
+   "row": 179,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=マスコミ",
+   "prob": 0.3,
+   "once": false,
+   "title": "マスコミ",
+   "text": "締め切りの十分前に、原稿の最後の一行が決まった。",
+   "choices": [],
+   "effect": "手応え+1 健康-1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E727",
+   "row": 180,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=マスコミ",
+   "prob": 0.12,
+   "once": true,
+   "title": "スクープ",
+   "text": "取材していた話が、翌朝の一面に載った。\n駅の売店で、自分の書いた見出しが山積みになっていた。",
+   "choices": [],
+   "effect": "手応え+10 余白-3",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E728",
+   "row": 181,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=ゲーム・アニメ",
+   "prob": 0.3,
+   "once": false,
+   "title": "ゲーム・アニメ",
+   "text": "エンドロールの、自分の名前が流れる二秒を、何度も巻き戻した。",
+   "choices": [],
+   "effect": "手応え+2 余白-1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E729",
+   "row": 182,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=ゲーム・アニメ",
+   "prob": 0.12,
+   "once": true,
+   "title": "発売日",
+   "text": "三年かけて作ったゲームの発売日。\n夜、ネットの感想を読み始めて、気づいたら朝だった。",
+   "choices": [
+    {
+     "label": "次の作品の企画を出す",
+     "effect": "手応え+6 余白-3",
+     "cond": ""
+    },
+    {
+     "label": "しばらく休む",
+     "effect": "余白+6 健康+3",
+     "cond": ""
+    },
+    {
+     "label": "独立して小さなスタジオを作る",
+     "effect": "キャリア:自営業 フラグ:開業 フラグ:転機 お金-10 手応え+8",
+     "cond": "お金>=35"
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E730",
+   "row": 183,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=航空",
+   "prob": 0.3,
+   "once": false,
+   "title": "航空",
+   "text": "離陸の瞬間に窓の外を見る癖は、何百回乗っても抜けなかった。",
+   "choices": [],
+   "effect": "余白+1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E731",
+   "row": 184,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=航空",
+   "prob": 0.12,
+   "once": true,
+   "title": "空の上の急病人",
+   "text": "高度一万メートルで、乗客の一人が倒れた。\n「お客様の中に、お医者様は」というアナウンスを、自分の声で初めてした。",
+   "choices": [],
+   "effect": "手応え+6 つながり+3",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E732",
+   "row": 185,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "キャリア=自動車整備",
+   "prob": 0.3,
+   "once": false,
+   "title": "自動車整備",
+   "text": "エンジンの音を聞いただけで、どこが悪いかわかるようになってきた。",
+   "choices": [],
+   "effect": "手応え+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E733",
+   "row": 186,
+   "type": "運命",
+   "ageFrom": 20,
+   "ageTo": 59,
+   "cond": "キャリア=自動車整備",
+   "prob": 0.12,
+   "once": true,
+   "title": "電気自動車",
+   "text": "整備工場に、電気自動車が増えてきた。\nボンネットを開けても、知っている部品が半分しかなかった。",
+   "choices": [
+    {
+     "label": "新しい資格をとる",
+     "effect": "手応え+6 余白-3",
+     "cond": ""
+    },
+    {
+     "label": "昔ながらの車を専門にする",
+     "effect": "つながり+3 お金-2",
+     "cond": ""
+    },
+    {
+     "label": "これを機に転職を考える",
+     "effect": "処理:転職判定",
+     "cond": ""
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E120",
+   "row": 187,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 50,
+   "cond": "フラグ:出産直後",
+   "prob": 1,
+   "once": false,
+   "title": "名前",
+   "text": "名前の候補を三つまで絞ってから、一週間かかった。最後は、呼んでみて決めた。",
+   "choices": [],
+   "effect": "つながり+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E121",
+   "row": 188,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "末子の年齢=0",
+   "prob": 0.6,
+   "once": false,
+   "title": "夜泣き",
+   "text": "午前三時、抱っこしたまま台所を十往復した。窓の外で、新聞配達のバイクが通った。",
+   "choices": [],
+   "effect": "健康-2 余白-2 つながり+1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E122",
+   "row": 189,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "子:年齢=1",
+   "prob": 0.7,
+   "once": false,
+   "title": "はじめの一歩",
+   "text": "ソファから手を離した子どもが、三歩だけ歩いて、こちらに倒れ込んできた。",
+   "choices": [],
+   "effect": "余白+3 つながり+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E123",
+   "row": 190,
+   "type": "選択",
+   "ageFrom": 18,
+   "ageTo": 60,
+   "cond": "子:年齢=1;パートナー=既婚",
+   "prob": 0.7,
+   "once": false,
+   "title": "保育園",
+   "text": "育休が終わる日が近づいてきた。\n役所の窓口で、入れそうな保育園の一覧をもらった。家から一番近い園には、二十人待ちと書いてあった。",
+   "choices": [
+    {
+     "label": "保育園に預けて、二人とも働く",
+     "effect": "お金+3 余白-3",
+     "cond": ""
+    },
+    {
+     "label": "どちらかが育休をのばす",
+     "effect": "お金-4 つながり+3",
+     "cond": ""
+    },
+    {
+     "label": "祖父母に頼る",
+     "effect": "つながり+2 余白+1",
+     "cond": "!父=亡;!母=亡"
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E124",
+   "row": 191,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "末子の年齢=4",
+   "prob": 0.6,
+   "once": false,
+   "title": "大きくなったら",
+   "text": "子どもが「大きくなったら、パン屋さんと宇宙飛行士になる」と言った。両方なれると、そのときは思った。",
+   "choices": [],
+   "effect": "余白+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E125",
+   "row": 192,
+   "type": "選択",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "子:年齢=7",
+   "prob": 0.5,
+   "once": false,
+   "title": "習い事",
+   "text": "子どもの友達の多くが、何か習い事をしていた。\n帰り道、子どもが「〇〇ちゃん、ピアノやってるんだって」と三回言った。",
+   "choices": [
+    {
+     "label": "ピアノ・音楽を習わせる",
+     "effect": "お金-3 つながり+1",
+     "cond": ""
+    },
+    {
+     "label": "スポーツのクラブに入れる",
+     "effect": "お金-2 健康+1",
+     "cond": ""
+    },
+    {
+     "label": "塾に通わせる",
+     "effect": "お金-4",
+     "cond": ""
+    },
+    {
+     "label": "今は好きに遊ばせる",
+     "effect": "余白+2",
+     "cond": ""
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E126",
+   "row": 193,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "子:年齢=8",
+   "prob": 0.6,
+   "once": false,
+   "title": "運動会",
+   "text": "運動会のリレーで、子どもは三人に抜かれた。それでも、ゴールしたあと、こっちに向かって手を振った。",
+   "choices": [],
+   "effect": "つながり+2 余白+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E127",
+   "row": 194,
+   "type": "選択",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "子:年齢=11",
+   "prob": 0.08,
+   "once": false,
+   "title": "中学受験",
+   "text": "子どもが「あの中学に行きたい」と言った。\n塾の説明会で、月謝の表を見せられた。",
+   "choices": [
+    {
+     "label": "受験させる",
+     "effect": "お金-8 余白-4 フラグ:中学受験",
+     "cond": ""
+    },
+    {
+     "label": "地元の中学に行かせる",
+     "effect": "つながり+1",
+     "cond": ""
+    },
+    {
+     "label": "子どもとよく話して決める",
+     "effect": "つながり+3 余白-1",
+     "cond": ""
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E128",
+   "row": 195,
+   "type": "運命",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "子:年齢>=13;子:年齢<=14",
+   "prob": 0.035,
+   "once": false,
+   "title": "学校に行けない朝",
+   "text": "朝、子どもの部屋のドアの前で「今日も行けない」と小さな声がした。\nランドセルが、制服のかばんに変わったばかりだった。",
+   "choices": [
+    {
+     "label": "無理に行かせない",
+     "effect": "余白-4 つながり+3",
+     "cond": ""
+    },
+    {
+     "label": "ゆっくり話を聞く",
+     "effect": "つながり+4 余白-2",
+     "cond": ""
+    },
+    {
+     "label": "別の学びの場を探す",
+     "effect": "お金-4 つながり+2",
+     "cond": ""
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E129",
+   "row": 196,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "子:年齢=16",
+   "prob": 0.5,
+   "once": false,
+   "title": "部活",
+   "text": "子どもの部活の試合を、こっそり見に行った。気づかれて、あとで「来なくていいって言ったのに」と言われた。",
+   "choices": [],
+   "effect": "つながり+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E130",
+   "row": 197,
+   "type": "運命",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "末子の年齢<=10",
+   "prob": 0.02,
+   "once": false,
+   "title": "子どもの入院",
+   "text": "子どもが、急に高い熱を出して入院した。\n病室の小さなベッドの横で、夜通し点滴の落ちる音を数えた。",
+   "choices": [],
+   "effect": "余白-6 健康-2 お金-3 つながり+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E131",
+   "row": 198,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "子:年齢=20",
+   "prob": 0.9,
+   "once": false,
+   "title": "成人式",
+   "text": "成人式の朝、スーツと着物の子どもを見て、自分の成人式の写真を探した。見つからなかった。",
+   "choices": [],
+   "effect": "つながり+2 余白+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E132",
+   "row": 199,
+   "type": "一行",
+   "ageFrom": 18,
+   "ageTo": 65,
+   "cond": "子:年齢=23",
+   "prob": 0.7,
+   "once": false,
+   "title": "子どもの就職",
+   "text": "子どもの初任給で、湯呑みを一つもらった。どこかで聞いた話だと思った。",
+   "choices": [],
+   "effect": "つながり+3 余白+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E133",
+   "row": 200,
+   "type": "一行",
+   "ageFrom": 40,
+   "ageTo": 65,
+   "cond": "長子の年齢>=25",
+   "prob": 0.15,
+   "once": false,
+   "title": "電話",
+   "text": "子どもから電話があった。用件は特になかった。それが、いちばんうれしかった。",
+   "choices": [],
+   "effect": "つながり+2 余白+1",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E134",
+   "row": 201,
+   "type": "一行",
+   "ageFrom": 45,
+   "ageTo": 65,
+   "cond": "子:年齢=30",
+   "prob": 0.5,
+   "once": false,
+   "title": "二人で飲む",
+   "text": "子どもと初めて、二人だけで飲みに行った。会計のとき、財布を出すのを止められた。",
+   "choices": [],
+   "effect": "つながり+3 余白+2",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
+  },
+  {
+   "id": "E135",
+   "row": 202,
+   "type": "選択",
+   "ageFrom": 26,
+   "ageTo": 44,
+   "cond": "パートナー=既婚;子ども数=0;結婚年数>=2;!フラグ:不妊治療;!フラグ:今の人数で",
+   "prob": 0.25,
+   "once": true,
+   "title": "二人で病院へ",
+   "text": "結婚して何年かたった。\n二人で、初めて不妊治療の病院の説明会に行った。\n待合室には、同じくらいの年の夫婦が何組も座っていた。",
+   "choices": [
+    {
+     "label": "治療を始める",
+     "effect": "フラグ:不妊治療 お金-8 余白-6",
+     "cond": ""
+    },
+    {
+     "label": "自然に任せる",
+     "effect": "",
+     "cond": ""
+    },
+    {
+     "label": "二人で生きていくと決める",
+     "effect": "フラグ:今の人数で つながり+3 余白+3",
+     "cond": ""
+    }
+   ],
+   "effect": "",
+   "probMod": "",
+   "staging": "",
+   "category": "",
+   "weights": []
   },
   {
    "id": "E900",
-   "row": 152,
+   "row": 203,
    "type": "運命",
    "ageFrom": 18,
    "ageTo": 65,
@@ -3528,7 +4837,8 @@ window.GAME_DATA = {
    "effect": "処理:本人の死",
    "probMod": "年齢>=0→×0.72／健康<20→×1.8／健康>=50→×0.75／フラグ:持病がん→×3／フラグ:循環器→×2／体質=弱い→×1.2",
    "staging": "",
-   "category": ""
+   "category": "",
+   "weights": []
   }
  ],
  "reunion": [
@@ -4551,6 +5861,7 @@ window.GAME_DATA = {
    "pass": null,
    "econ": "",
    "heading": "",
+   "faculties": "",
    "examples": [],
    "source": ""
   },
@@ -4563,45 +5874,49 @@ window.GAME_DATA = {
    "fortunes": "安泰50% ／ 資源バブル20% ／ 撤退20% ／ 不祥事10%",
    "kind": "会社員",
    "industry": "卸売（商社）",
-   "shareUni": 4,
+   "shareUni": 3,
    "shareHigh": null,
    "uniOnly": true,
    "pass": 0.25,
    "econ": "大きい",
    "heading": "",
+   "faculties": "",
    "examples": [
-    "総合商社",
-    "食品の専門商社",
-    "鉄鋼の専門商社"
+    "総合商社=物産",
+    "食品の専門商社=食品商事",
+    "鉄鋼の専門商社=鋼材",
+    "医薬品の卸=メディカル"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "メーカー",
-   "how": "大学卒・高卒とも",
+   "how": "大学卒・高卒とも（事務・技術・営業）",
    "yearly": "お金+2 手応え+1",
    "strong": "手応え（じわじわ）",
    "weak": "会社の運命に左右される",
    "fortunes": "安泰40% ／ 合併25% ／ 工場閉鎖20% ／ ヒット15%",
    "kind": "会社員",
    "industry": "製造業",
-   "shareUni": 12.1,
-   "shareHigh": 41.6,
+   "shareUni": 11.1,
+   "shareHigh": 11.6,
    "uniOnly": false,
    "pass": 0.6,
    "econ": "大きい",
    "heading": "",
+   "faculties": "理系×1.5,文系,教育学部",
    "examples": [
-    "自動車部品",
-    "食品工場",
-    "電子部品",
-    "化学メーカー",
-    "精密機械",
-    "住宅設備",
-    "印刷",
-    "製薬"
+    "自動車部品=工業",
+    "食品=食品",
+    "電子部品=電子",
+    "化学=化学",
+    "精密機械=精機",
+    "住宅設備=住設",
+    "製薬=製薬",
+    "繊維=繊維",
+    "造船=造船"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "市役所",
@@ -4611,20 +5926,20 @@ window.GAME_DATA = {
    "weak": "手応え（伸びにくい）",
    "fortunes": "平穏60% ／ 大災害20% ／ 財政難20%",
    "kind": "公務員",
-   "industry": "公務",
-   "shareUni": 6.1,
-   "shareHigh": 6,
+   "industry": "公務（地方）",
+   "shareUni": 3.6,
+   "shareHigh": 1.3,
    "uniOnly": false,
    "pass": 0.4,
    "econ": "ふつう",
-   "heading": "公務員",
+   "heading": "地方公務員",
+   "faculties": "",
    "examples": [
     "市役所",
     "県庁",
-    "町役場",
-    "警察・消防"
+    "町役場"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "地元企業",
@@ -4641,7 +5956,12 @@ window.GAME_DATA = {
    "pass": null,
    "econ": "",
    "heading": "",
-   "examples": [],
+   "faculties": "",
+   "examples": [
+    "地元の会社=商事",
+    "地元の工場=製作所",
+    "地元の店=商店"
+   ],
    "source": ""
   },
   {
@@ -4659,6 +5979,7 @@ window.GAME_DATA = {
    "pass": null,
    "econ": "",
    "heading": "",
+   "faculties": "",
    "examples": [],
    "source": ""
   },
@@ -4677,6 +5998,7 @@ window.GAME_DATA = {
    "pass": null,
    "econ": "",
    "heading": "",
+   "faculties": "",
    "examples": [],
    "source": ""
   },
@@ -4695,6 +6017,7 @@ window.GAME_DATA = {
    "pass": null,
    "econ": "",
    "heading": "",
+   "faculties": "",
    "examples": [],
    "source": ""
   },
@@ -4713,6 +6036,7 @@ window.GAME_DATA = {
    "pass": null,
    "econ": "",
    "heading": "",
+   "faculties": "",
    "examples": [],
    "source": ""
   },
@@ -4731,6 +6055,7 @@ window.GAME_DATA = {
    "pass": null,
    "econ": "",
    "heading": "",
+   "faculties": "",
    "examples": [],
    "source": ""
   },
@@ -4743,19 +6068,21 @@ window.GAME_DATA = {
    "fortunes": "安泰35% ／ 成長30% ／ 再編20% ／ 業績不振15%",
    "kind": "会社員",
    "industry": "情報通信",
-   "shareUni": 10.4,
+   "shareUni": 7.4,
    "shareHigh": 1,
    "uniOnly": false,
    "pass": 0.6,
    "econ": "大きい",
    "heading": "",
+   "faculties": "理系×2,文系,教育学部",
    "examples": [
-    "ソフトウェア開発",
-    "通信会社",
-    "ウェブサービス",
-    "システム会社"
+    "ソフトウェア開発=ソフト",
+    "通信会社=テレコム",
+    "ウェブサービス=ネット",
+    "システム会社=システムズ",
+    "セキュリティ=セキュア"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "銀行・保険",
@@ -4772,14 +6099,15 @@ window.GAME_DATA = {
    "pass": 0.5,
    "econ": "ふつう",
    "heading": "",
+   "faculties": "",
    "examples": [
-    "地方銀行",
-    "信用金庫",
-    "生命保険",
-    "損害保険",
-    "証券会社"
+    "地方銀行=銀行",
+    "信用金庫=信用金庫",
+    "生命保険=生命",
+    "損害保険=損保",
+    "証券会社=証券"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "小売・販売",
@@ -4796,40 +6124,41 @@ window.GAME_DATA = {
    "pass": 0.8,
    "econ": "ふつう",
    "heading": "",
+   "faculties": "文系,理系,教育学部,薬学部×0.3",
    "examples": [
-    "スーパー",
-    "ドラッグストア",
-    "家電量販店",
-    "ホームセンター",
-    "百貨店",
-    "コンビニ本部",
-    "車のディーラー"
+    "スーパー=ストア",
+    "ドラッグストア=ドラッグ",
+    "家電量販店=電機",
+    "ホームセンター=ホームセンター",
+    "百貨店=百貨店",
+    "コンビニ本部=マート",
+    "車のディーラー=モータース"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "病院・介護",
-   "how": "大学卒・高卒とも（資格をとる）",
+   "how": "大学卒・高卒とも（介護・医療事務・福祉）",
    "yearly": "手応え+2 つながり+1 健康-1 余白-1",
    "strong": "手応え・つながり",
    "weak": "健康・余白",
    "fortunes": "平穏50% ／ 人手不足50%",
    "kind": "会社員",
    "industry": "医療・福祉",
-   "shareUni": 12.7,
-   "shareHigh": 7,
+   "shareUni": 3.9,
+   "shareHigh": 6,
    "uniOnly": false,
-   "pass": 0.75,
+   "pass": 0.8,
    "econ": "小さい",
-   "heading": "",
+   "heading": "介護・福祉",
+   "faculties": "文系,理系,教育学部,看護・医療",
    "examples": [
-    "総合病院",
-    "介護施設",
-    "保育園",
-    "クリニック",
-    "福祉施設"
+    "介護施設=ケアセンター",
+    "医療事務=クリニック",
+    "福祉施設=福祉会",
+    "訪問介護=ケアサービス"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "学校の先生",
@@ -4846,12 +6175,14 @@ window.GAME_DATA = {
    "pass": 0.35,
    "econ": "小さい",
    "heading": "教員",
+   "faculties": "教育学部×6,文系,理系",
    "examples": [
     "小学校",
     "中学校",
-    "高校"
+    "高校",
+    "特別支援学校"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "建設会社",
@@ -4868,36 +6199,38 @@ window.GAME_DATA = {
    "pass": 0.75,
    "econ": "大きい",
    "heading": "",
+   "faculties": "",
    "examples": [
-    "総合建設",
-    "電気工事",
-    "設備工事",
-    "住宅メーカー"
+    "総合建設=建設",
+    "電気工事=電設",
+    "設備工事=設備",
+    "住宅メーカー=ホーム"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "研究・専門職",
-   "how": "大学卒のみ（設計事務所・会計事務所・研究所など）",
+   "how": "大学卒のみ（設計事務所・会計事務所など）",
    "yearly": "お金+1 手応え+3 余白-1",
    "strong": "手応え",
    "weak": "余白",
    "fortunes": "安泰45% ／ 成長30% ／ 業績不振25%",
    "kind": "会社員",
-   "industry": "学術研究・専門・技術サービス",
-   "shareUni": 5,
+   "industry": "専門・技術サービス",
+   "shareUni": 4,
    "shareHigh": null,
    "uniOnly": true,
    "pass": 0.5,
    "econ": "ふつう",
-   "heading": "",
+   "heading": "専門職",
+   "faculties": "理系×2,文系",
    "examples": [
-    "設計事務所",
-    "会計事務所",
-    "研究所",
-    "広告制作"
+    "設計事務所=設計",
+    "会計事務所=会計事務所",
+    "特許事務所=特許事務所",
+    "建設コンサル=コンサルタンツ"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "運送・物流",
@@ -4908,19 +6241,20 @@ window.GAME_DATA = {
    "fortunes": "安泰40% ／ 人手不足40% ／ 業績不振20%",
    "kind": "会社員",
    "industry": "運輸・郵便",
-   "shareUni": 3,
-   "shareHigh": 6,
+   "shareUni": 2.7,
+   "shareHigh": 5,
    "uniOnly": false,
    "pass": 0.8,
    "econ": "ふつう",
    "heading": "",
+   "faculties": "",
    "examples": [
-    "運送会社",
-    "物流センター",
-    "郵便",
-    "バス会社"
+    "運送会社=運輸",
+    "物流センター=ロジスティクス",
+    "郵便=郵便局",
+    "バス会社=交通"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "ホテル・飲食",
@@ -4937,13 +6271,14 @@ window.GAME_DATA = {
    "pass": 0.85,
    "econ": "大きい",
    "heading": "",
+   "faculties": "",
    "examples": [
-    "ホテル",
-    "旅館",
-    "レストラン",
-    "居酒屋チェーン"
+    "ホテル=ホテル",
+    "旅館=旅館",
+    "レストラン=キッチン",
+    "居酒屋チェーン=フーズ"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "美容・サービス",
@@ -4953,21 +6288,24 @@ window.GAME_DATA = {
    "weak": "余白",
    "fortunes": "安泰40% ／ 成長20% ／ 業績不振40%",
    "kind": "会社員",
-   "industry": "生活関連サービス・そのほかのサービス",
-   "shareUni": 8,
-   "shareHigh": 9,
+   "industry": "生活関連サービス",
+   "shareUni": 7,
+   "shareHigh": 7,
    "uniOnly": false,
    "pass": 0.8,
    "econ": "ふつう",
-   "heading": "",
+   "heading": "サービス業",
+   "faculties": "",
    "examples": [
-    "美容室",
-    "ブライダル",
-    "警備会社",
-    "人材サービス",
-    "スポーツクラブ"
+    "美容室=ヘアサロン",
+    "ブライダル=ウエディング",
+    "警備=警備保障",
+    "人材サービス=キャリア",
+    "スポーツクラブ=スポーツ",
+    "葬祭=セレモニー",
+    "クリーニング=クリーニング"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "不動産",
@@ -4984,12 +6322,13 @@ window.GAME_DATA = {
    "pass": 0.7,
    "econ": "大きい",
    "heading": "",
+   "faculties": "",
    "examples": [
-    "不動産仲介",
-    "ハウスメーカーの営業",
-    "マンション管理"
+    "不動産仲介=不動産",
+    "ハウスメーカーの営業=ハウジング",
+    "マンション管理=コミュニティ"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "電力・鉄道",
@@ -5006,12 +6345,13 @@ window.GAME_DATA = {
    "pass": 0.3,
    "econ": "小さい",
    "heading": "",
+   "faculties": "",
    "examples": [
-    "電力会社",
-    "ガス会社",
-    "鉄道会社"
+    "電力会社=電力",
+    "ガス会社=ガス",
+    "鉄道会社=鉄道"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   },
   {
    "name": "農業・漁業",
@@ -5028,12 +6368,411 @@ window.GAME_DATA = {
    "pass": 0.8,
    "econ": "小さい",
    "heading": "",
+   "faculties": "",
    "examples": [
-    "農業法人",
-    "漁業協同組合",
-    "牧場"
+    "農業法人=ファーム",
+    "漁業協同組合=水産",
+    "牧場=牧場"
    ],
-   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）。ほかは推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）。ほかは推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」"
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "工場勤務",
+   "how": "高卒が中心（製造ラインの仕事）",
+   "yearly": "お金+1 手応え+1 健康-1",
+   "strong": "手応え",
+   "weak": "健康",
+   "fortunes": "安泰40% ／ 合併20% ／ 工場閉鎖25% ／ ヒット15%",
+   "kind": "会社員",
+   "industry": "製造業（生産の現場）",
+   "shareUni": 1,
+   "shareHigh": 30,
+   "uniOnly": false,
+   "pass": 0.85,
+   "econ": "大きい",
+   "heading": "工場",
+   "faculties": "",
+   "examples": [
+    "自動車工場=自動車工業",
+    "食品工場=フーズ",
+    "半導体工場=セミコン",
+    "金属加工=金属",
+    "印刷工場=印刷"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "ゲーム・アニメ",
+   "how": "大学卒が中心（狭き門）",
+   "yearly": "手応え+3 健康-1 余白-2",
+   "strong": "手応え",
+   "weak": "健康・余白",
+   "fortunes": "成長35% ／ 安泰25% ／ 業績不振40%",
+   "kind": "会社員",
+   "industry": "情報通信（ゲーム・アニメ）",
+   "shareUni": 0.8,
+   "shareHigh": 0.3,
+   "uniOnly": false,
+   "pass": 0.3,
+   "econ": "大きい",
+   "heading": "",
+   "faculties": "",
+   "examples": [
+    "ゲーム会社=ゲームス",
+    "アニメ制作=アニメーション",
+    "アプリ開発=エンタテインメント"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "マスコミ",
+   "how": "大学卒のみ（狭き門）",
+   "yearly": "手応え+3 健康-1 余白-2",
+   "strong": "手応え",
+   "weak": "健康・余白",
+   "fortunes": "安泰40% ／ 再編30% ／ 業績不振30%",
+   "kind": "会社員",
+   "industry": "情報通信（放送・新聞・出版・広告）",
+   "shareUni": 1.2,
+   "shareHigh": null,
+   "uniOnly": true,
+   "pass": 0.15,
+   "econ": "大きい",
+   "heading": "",
+   "faculties": "",
+   "examples": [
+    "テレビ局=放送",
+    "新聞社=新聞",
+    "出版社=書房",
+    "広告会社=広告"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "看護師",
+   "how": "看護・医療系の学部を出て、国家試験",
+   "yearly": "手応え+2 つながり+1 健康-2 余白-1",
+   "strong": "手応え・つながり",
+   "weak": "健康・余白",
+   "fortunes": "平穏50% ／ 人手不足50%",
+   "kind": "会社員",
+   "industry": "医療（看護）",
+   "shareUni": 4,
+   "shareHigh": null,
+   "uniOnly": true,
+   "pass": 0.9,
+   "econ": "小さい",
+   "heading": "",
+   "faculties": "看護・医療",
+   "examples": [
+    "総合病院=総合病院",
+    "大学病院=大学病院",
+    "訪問看護=訪問看護ステーション",
+    "クリニック=クリニック"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "医師",
+   "how": "医学部（6年）を出て、国家試験と研修",
+   "yearly": "お金+4 手応え+3 健康-2 余白-2",
+   "strong": "お金・手応え",
+   "weak": "健康・余白",
+   "fortunes": "平穏60% ／ 人手不足40%",
+   "kind": "会社員",
+   "industry": "医療（医師）",
+   "shareUni": 1.5,
+   "shareHigh": null,
+   "uniOnly": true,
+   "pass": 0.9,
+   "econ": "小さい",
+   "heading": "",
+   "faculties": "医学部",
+   "examples": [
+    "内科=総合病院",
+    "外科=総合病院",
+    "小児科=こども病院",
+    "救急科=救命センター",
+    "精神科=メンタルクリニック"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "歯科医師",
+   "how": "歯学部（6年）を出て、国家試験",
+   "yearly": "お金+3 手応え+2 余白-1",
+   "strong": "お金・手応え",
+   "weak": "余白",
+   "fortunes": "安泰50% ／ 成長20% ／ 業績不振30%",
+   "kind": "会社員",
+   "industry": "医療（歯科）",
+   "shareUni": 0.4,
+   "shareHigh": null,
+   "uniOnly": true,
+   "pass": 0.75,
+   "econ": "小さい",
+   "heading": "",
+   "faculties": "歯学部",
+   "examples": [
+    "歯科医院=歯科",
+    "矯正歯科=矯正歯科",
+    "口腔外科=歯科医療センター"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "薬剤師",
+   "how": "薬学部（6年）を出て、国家試験",
+   "yearly": "お金+2 手応え+1",
+   "strong": "お金",
+   "weak": "手応え",
+   "fortunes": "安泰70% ／ 再編30%",
+   "kind": "会社員",
+   "industry": "医療（薬）",
+   "shareUni": 1.8,
+   "shareHigh": null,
+   "uniOnly": true,
+   "pass": 0.8,
+   "econ": "小さい",
+   "heading": "",
+   "faculties": "薬学部",
+   "examples": [
+    "調剤薬局=薬局",
+    "病院薬剤部=総合病院",
+    "ドラッグストア=ドラッグ",
+    "製薬会社=製薬"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "保育士",
+   "how": "保育士の資格をとって（大学・短大・専門学校）",
+   "yearly": "つながり+2 手応え+1 健康-1 余白-1",
+   "strong": "つながり",
+   "weak": "健康・余白",
+   "fortunes": "平穏50% ／ 人手不足50%",
+   "kind": "会社員",
+   "industry": "福祉（保育）",
+   "shareUni": 1,
+   "shareHigh": null,
+   "uniOnly": true,
+   "pass": 0.8,
+   "econ": "小さい",
+   "heading": "",
+   "faculties": "教育学部×3,文系",
+   "examples": [
+    "保育園=保育園",
+    "認定こども園=こども園",
+    "学童保育=学童クラブ"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "研究者",
+   "how": "理系の大学・大学院から（大学・研究所）",
+   "yearly": "手応え+3 余白-1",
+   "strong": "手応え",
+   "weak": "余白・お金",
+   "fortunes": "安泰50% ／ 成長25% ／ 業績不振25%",
+   "kind": "会社員",
+   "industry": "学術研究",
+   "shareUni": 1,
+   "shareHigh": null,
+   "uniOnly": true,
+   "pass": 0.25,
+   "econ": "ふつう",
+   "heading": "",
+   "faculties": "理系×3,医学部×0.1,薬学部×0.2",
+   "examples": [
+    "大学の研究室=大学",
+    "公的研究機関=研究所",
+    "企業の研究所=中央研究所"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "国家公務員",
+   "how": "大学卒が中心（国家公務員試験）",
+   "yearly": "手応え+2 お金+1 余白-2",
+   "strong": "手応え",
+   "weak": "余白",
+   "fortunes": "平穏70% ／ 再編30%",
+   "kind": "公務員",
+   "industry": "公務（国）",
+   "shareUni": 0.8,
+   "shareHigh": 0.2,
+   "uniOnly": false,
+   "pass": 0.2,
+   "econ": "ふつう",
+   "heading": "",
+   "faculties": "",
+   "examples": [
+    "中央省庁（霞が関）",
+    "財務局",
+    "労働局",
+    "国土交通省の出先機関"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "税関",
+   "how": "大学卒・高卒とも（国家公務員試験）",
+   "yearly": "手応え+1 お金+1 つながり+1",
+   "strong": "手応え",
+   "weak": "—",
+   "fortunes": "平穏80% ／ 人手不足20%",
+   "kind": "公務員",
+   "industry": "公務（国・税関）",
+   "shareUni": 0.1,
+   "shareHigh": 0.05,
+   "uniOnly": false,
+   "pass": 0.3,
+   "econ": "ふつう",
+   "heading": "国家公務員（税関）",
+   "faculties": "",
+   "examples": [
+    "港の税関",
+    "空港の税関"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "警察官",
+   "how": "大学卒・高卒とも（警察官採用試験）",
+   "yearly": "手応え+2 つながり+1 健康-1 余白-1",
+   "strong": "手応え・つながり",
+   "weak": "健康・余白",
+   "fortunes": "平穏70% ／ 人手不足30%",
+   "kind": "公務員",
+   "industry": "公務（警察）",
+   "shareUni": 0.9,
+   "shareHigh": 1.2,
+   "uniOnly": false,
+   "pass": 0.4,
+   "econ": "ふつう",
+   "heading": "",
+   "faculties": "",
+   "examples": [
+    "県警",
+    "交番",
+    "機動隊"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "消防士",
+   "how": "大学卒・高卒とも（消防官採用試験）",
+   "yearly": "健康+1 手応え+2 つながり+1 余白-1",
+   "strong": "手応え・健康",
+   "weak": "余白",
+   "fortunes": "平穏70% ／ 人手不足30%",
+   "kind": "公務員",
+   "industry": "公務（消防）",
+   "shareUni": 0.3,
+   "shareHigh": 0.8,
+   "uniOnly": false,
+   "pass": 0.25,
+   "econ": "小さい",
+   "heading": "",
+   "faculties": "",
+   "examples": [
+    "消防本部",
+    "消防署",
+    "救急隊"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "自衛官",
+   "how": "大学卒・高卒とも",
+   "yearly": "健康+2 手応え+1 つながり+1 余白-1",
+   "strong": "健康",
+   "weak": "余白",
+   "fortunes": "平穏70% ／ 人手不足30%",
+   "kind": "公務員",
+   "industry": "公務（自衛隊）",
+   "shareUni": 0.3,
+   "shareHigh": 2.5,
+   "uniOnly": false,
+   "pass": 0.7,
+   "econ": "小さい",
+   "heading": "",
+   "faculties": "",
+   "examples": [
+    "陸上自衛隊",
+    "海上自衛隊",
+    "航空自衛隊"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "航空",
+   "how": "大学卒が中心（客室乗務員・整備・空港）",
+   "yearly": "お金+2 手応え+2 健康-1",
+   "strong": "手応え",
+   "weak": "健康",
+   "fortunes": "安泰50% ／ 成長20% ／ 業績不振30%",
+   "kind": "会社員",
+   "industry": "運輸（航空）",
+   "shareUni": 0.3,
+   "shareHigh": 0.2,
+   "uniOnly": false,
+   "pass": 0.2,
+   "econ": "大きい",
+   "heading": "",
+   "faculties": "",
+   "examples": [
+    "客室乗務員=航空",
+    "航空機の整備=エアテクニクス",
+    "空港の運営=空港ビル"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "観光業",
+   "how": "大学卒・高卒とも",
+   "yearly": "つながり+2 手応え+1 余白-1",
+   "strong": "つながり",
+   "weak": "余白",
+   "fortunes": "安泰35% ／ 成長30% ／ 業績不振35%",
+   "kind": "会社員",
+   "industry": "観光（旅行・観光施設）",
+   "shareUni": 1,
+   "shareHigh": 1.5,
+   "uniOnly": false,
+   "pass": 0.7,
+   "econ": "大きい",
+   "heading": "",
+   "faculties": "",
+   "examples": [
+    "旅行会社=ツーリスト",
+    "観光施設=観光",
+    "テーマパーク=ランド",
+    "観光協会=観光協会"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
+  },
+  {
+   "name": "自動車整備",
+   "how": "高卒が中心（整備士の資格）",
+   "yearly": "手応え+2 お金+1",
+   "strong": "手応え",
+   "weak": "—",
+   "fortunes": "安泰60% ／ 業績不振40%",
+   "kind": "会社員",
+   "industry": "自動車整備",
+   "shareUni": 0.2,
+   "shareHigh": 2,
+   "uniOnly": false,
+   "pass": 0.8,
+   "econ": "ふつう",
+   "heading": "整備士",
+   "faculties": "",
+   "examples": [
+    "整備工場=自動車整備",
+    "ディーラーの整備=モータース"
+   ],
+   "source": "大卒：2019年春卒 学校基本調査（卸売・小売15.3％、医療・福祉12.7％、製造業12.1％、情報通信10.4％、教育7.3％、金融・保険6.8％、公務6.1％）をさらに仕事ごとに分けた推計／高卒：2016年3月卒 厚生労働省の集計（製造業 約42％、卸売・小売 約14％、建設 約8％）をさらに分けた推計。合格率・景気の影響はゲームの設計。求人の届きやすさは「割合 ÷ 合格率」。会社の例は「表示=会社名の語尾」（語尾がない例はそのまま名前になる）"
   }
  ],
  "tables": [
@@ -6013,8 +7752,8 @@ window.GAME_DATA = {
   },
   {
    "row": 27,
-   "name": "大卒の最初の仕事：製造業（メーカー）",
-   "measure": "最初の仕事=メーカー@25|進路=大学",
+   "name": "大卒の最初の仕事：製造業（メーカー・工場）",
+   "measure": "最初の仕事=メーカー|工場勤務@25|進路=大学",
    "real": 0.121,
    "low": 0.07,
    "high": 0.17,
@@ -6022,7 +7761,7 @@ window.GAME_DATA = {
   },
   {
    "row": 28,
-   "name": "大卒の最初の仕事：卸売・小売（商社・小売・販売）",
+   "name": "大卒の最初の仕事：卸売・小売",
    "measure": "最初の仕事=商社|小売・販売@25|進路=大学",
    "real": 0.153,
    "low": 0.09,
@@ -6032,7 +7771,7 @@ window.GAME_DATA = {
   {
    "row": 29,
    "name": "大卒の最初の仕事：医療・福祉",
-   "measure": "最初の仕事=病院・介護@25|進路=大学",
+   "measure": "最初の仕事=病院・介護|看護師|医師|歯科医師|薬剤師|保育士@26|進路=大学",
    "real": 0.127,
    "low": 0.07,
    "high": 0.18,
@@ -6041,7 +7780,7 @@ window.GAME_DATA = {
   {
    "row": 30,
    "name": "大卒の最初の仕事：情報通信",
-   "measure": "最初の仕事=IT企業@25|進路=大学",
+   "measure": "最初の仕事=IT企業|ゲーム・アニメ|マスコミ@25|進路=大学",
    "real": 0.104,
    "low": 0.06,
    "high": 0.15,
@@ -6049,15 +7788,33 @@ window.GAME_DATA = {
   },
   {
    "row": 31,
-   "name": "高卒の最初の仕事：製造業（メーカー）",
-   "measure": "最初の仕事=メーカー@25|進路=就職",
+   "name": "大卒の最初の仕事：公務",
+   "measure": "最初の仕事=市役所|国家公務員|税関|警察官|消防士|自衛官@25|進路=大学",
+   "real": 0.061,
+   "low": 0.035,
+   "high": 0.09,
+   "source": "同上"
+  },
+  {
+   "row": 32,
+   "name": "大卒の最初の仕事：医師",
+   "measure": "最初の仕事=医師@26|進路=大学",
+   "real": 0.015,
+   "low": 0.006,
+   "high": 0.03,
+   "source": "医学部の卒業生 年約9,000人 ÷ 大卒の就職者 約45万人（推計）"
+  },
+  {
+   "row": 33,
+   "name": "高卒の最初の仕事：製造業（メーカー・工場）",
+   "measure": "最初の仕事=メーカー|工場勤務@25|進路=就職",
    "real": 0.416,
    "low": 0.3,
    "high": 0.5,
    "source": "2016年3月卒 厚生労働省の集計"
   },
   {
-   "row": 32,
+   "row": 34,
    "name": "高卒の最初の仕事：卸売・小売",
    "measure": "最初の仕事=小売・販売@25|進路=就職",
    "real": 0.135,
@@ -6066,7 +7823,7 @@ window.GAME_DATA = {
    "source": "同上"
   },
   {
-   "row": 33,
+   "row": 35,
    "name": "高卒の最初の仕事：建設",
    "measure": "最初の仕事=建設会社@25|進路=就職",
    "real": 0.077,
@@ -6377,6 +8134,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "A お金・くじ",
    "rarity": 5,
    "lifetime": "約4.3万人に1人（毎年10枚買う人）",
@@ -6399,6 +8157,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "A お金・くじ",
    "rarity": 3,
    "lifetime": "約0.5％（毎年買う人）",
@@ -6421,6 +8180,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "A お金・くじ",
    "rarity": 1,
    "lifetime": "約3割（毎年買う人）",
@@ -6443,6 +8203,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "A お金・くじ",
    "rarity": 4,
    "lifetime": "約2,500人に1人（毎週1口）",
@@ -6465,6 +8226,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "A お金・くじ",
    "rarity": 4,
    "lifetime": "約2,100人に1人（毎月4口）",
@@ -6487,6 +8249,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "A お金・くじ",
    "rarity": 2,
    "lifetime": "約1％",
@@ -6509,6 +8272,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "A お金・くじ",
    "rarity": 3,
    "lifetime": "約0.5％",
@@ -6531,6 +8295,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "A お金・くじ",
    "rarity": 1,
    "lifetime": "約15％",
@@ -6553,6 +8318,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "A お金・くじ",
    "rarity": 2,
    "lifetime": "約2％",
@@ -6575,6 +8341,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "A お金・くじ",
    "rarity": 3,
    "lifetime": "約0.3％",
@@ -6597,6 +8364,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "A お金・くじ",
    "rarity": 3,
    "lifetime": "約0.1％",
@@ -6619,6 +8387,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "A お金・くじ",
    "rarity": 2,
    "lifetime": "約2％",
@@ -6641,6 +8410,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 5,
    "lifetime": "約30万人に1人",
@@ -6663,6 +8433,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 1,
    "lifetime": "約1割",
@@ -6685,6 +8456,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 2,
    "lifetime": "約3％",
@@ -6707,6 +8479,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 3,
    "lifetime": "約0.2％",
@@ -6729,6 +8502,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 3,
    "lifetime": "約0.3％",
@@ -6751,6 +8525,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 4,
    "lifetime": "約0.05％",
@@ -6773,6 +8548,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 3,
    "lifetime": "約0.2％",
@@ -6795,6 +8571,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 4,
    "lifetime": "約0.03％",
@@ -6807,8 +8584,8 @@ window.GAME_DATA = {
    "type": "運命",
    "ageFrom": 20,
    "ageTo": 65,
-   "cond": "お金>=40",
-   "prob": 7e-05,
+   "cond": "お金>=35",
+   "prob": 0.00015,
    "once": true,
    "title": "世界一周",
    "text": "地球を一周して戻ってきた港は、出発した日と同じ匂いがした。",
@@ -6817,6 +8594,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 3,
    "lifetime": "約0.3％",
@@ -6839,6 +8617,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 2,
    "lifetime": "約2％",
@@ -6861,6 +8640,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 2,
    "lifetime": "約1％",
@@ -6883,6 +8663,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 3,
    "lifetime": "約0.1％",
@@ -6905,6 +8686,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 3,
    "lifetime": "約0.3％",
@@ -6927,6 +8709,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "B 冒険・挑戦",
    "rarity": 5,
    "lifetime": "約700万人に1人（伝説）",
@@ -6949,6 +8732,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "C 名誉・世に出る",
    "rarity": 2,
    "lifetime": "約5％",
@@ -6971,6 +8755,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "C 名誉・世に出る",
    "rarity": 2,
    "lifetime": "約3％",
@@ -6993,6 +8778,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "C 名誉・世に出る",
    "rarity": 3,
    "lifetime": "約0.1％",
@@ -7015,6 +8801,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "C 名誉・世に出る",
    "rarity": 2,
    "lifetime": "約1％",
@@ -7037,6 +8824,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "C 名誉・世に出る",
    "rarity": 5,
    "lifetime": "約0.001％",
@@ -7059,6 +8847,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "C 名誉・世に出る",
    "rarity": 2,
    "lifetime": "約2％",
@@ -7081,6 +8870,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "C 名誉・世に出る",
    "rarity": 2,
    "lifetime": "約2％",
@@ -7103,6 +8893,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "C 名誉・世に出る",
    "rarity": 4,
    "lifetime": "約0.05％",
@@ -7125,6 +8916,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "C 名誉・世に出る",
    "rarity": 5,
    "lifetime": "約0.001％",
@@ -7147,6 +8939,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "C 名誉・世に出る",
    "rarity": 5,
    "lifetime": "約2万人に1人",
@@ -7169,6 +8962,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "C 名誉・世に出る",
    "rarity": 4,
    "lifetime": "約0.05％",
@@ -7191,6 +8985,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "C 名誉・世に出る",
    "rarity": 3,
    "lifetime": "約0.4％",
@@ -7213,6 +9008,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "D 仕事の大波",
    "rarity": 2,
    "lifetime": "約5％",
@@ -7235,6 +9031,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "D 仕事の大波",
    "rarity": 2,
    "lifetime": "約5％",
@@ -7257,6 +9054,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "D 仕事の大波",
    "rarity": 3,
    "lifetime": "約0.5％",
@@ -7279,6 +9077,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "D 仕事の大波",
    "rarity": 5,
    "lifetime": "約2万人に1人",
@@ -7301,6 +9100,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "D 仕事の大波",
    "rarity": 4,
    "lifetime": "約0.06％",
@@ -7323,6 +9123,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "D 仕事の大波",
    "rarity": 3,
    "lifetime": "約0.1％",
@@ -7345,6 +9146,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "D 仕事の大波",
    "rarity": 4,
    "lifetime": "約0.01％",
@@ -7367,6 +9169,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "D 仕事の大波",
    "rarity": 2,
    "lifetime": "約3％（開業した人の中で）",
@@ -7389,6 +9192,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "D 仕事の大波",
    "rarity": 3,
    "lifetime": "約0.1％",
@@ -7411,6 +9215,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "D 仕事の大波",
    "rarity": 2,
    "lifetime": "約2％",
@@ -7433,6 +9238,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 2,
    "lifetime": "約1.5％（子がいる人）",
@@ -7455,6 +9261,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 4,
    "lifetime": "約0.04％（子がいる人）",
@@ -7477,6 +9284,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 3,
    "lifetime": "約0.3％（子1人あたり）",
@@ -7499,6 +9307,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 3,
    "lifetime": "約0.3％（息子1人あたり）",
@@ -7521,6 +9330,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 4,
    "lifetime": "約0.02％（息子1人あたり）",
@@ -7543,6 +9353,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 3,
    "lifetime": "約0.2％",
@@ -7565,6 +9376,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 3,
    "lifetime": "約0.1％",
@@ -7587,6 +9399,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 3,
    "lifetime": "約0.3％（結婚した人）",
@@ -7609,6 +9422,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 2,
    "lifetime": "約3％（結婚した人）",
@@ -7631,6 +9445,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 2,
    "lifetime": "約5％（結婚した人）",
@@ -7653,6 +9468,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 2,
    "lifetime": "約1％",
@@ -7675,6 +9491,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 3,
    "lifetime": "約0.1％",
@@ -7697,6 +9514,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 1,
    "lifetime": "約1割",
@@ -7719,6 +9537,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 2,
    "lifetime": "約3％",
@@ -7741,6 +9560,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 2,
    "lifetime": "約1.5％",
@@ -7763,6 +9583,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "E 家族・人のつながり",
    "rarity": 2,
    "lifetime": "約5％",
@@ -7785,6 +9606,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "F 自然・不思議",
    "rarity": 5,
    "lifetime": "約13万人に1人",
@@ -7807,6 +9629,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "F 自然・不思議",
    "rarity": 5,
    "lifetime": "ほぼゼロ（伝説）",
@@ -7829,6 +9652,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "F 自然・不思議",
    "rarity": 1,
    "lifetime": "約1割",
@@ -7851,6 +9675,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "F 自然・不思議",
    "rarity": 2,
    "lifetime": "約5％",
@@ -7873,6 +9698,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "F 自然・不思議",
    "rarity": 1,
    "lifetime": "約3割",
@@ -7895,6 +9721,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "F 自然・不思議",
    "rarity": 1,
    "lifetime": "約3割",
@@ -7917,6 +9744,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "F 自然・不思議",
    "rarity": 4,
    "lifetime": "約0.01％",
@@ -7939,6 +9767,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "F 自然・不思議",
    "rarity": 5,
    "lifetime": "約0.001％",
@@ -7961,6 +9790,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "F 自然・不思議",
    "rarity": 5,
    "lifetime": "ほぼゼロ（伝説）",
@@ -7983,6 +9813,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "F 自然・不思議",
    "rarity": 2,
    "lifetime": "約2％",
@@ -8005,6 +9836,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 2,
    "lifetime": "約1.4％",
@@ -8027,6 +9859,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 2,
    "lifetime": "約1％",
@@ -8049,6 +9882,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 1,
    "lifetime": "約3割",
@@ -8071,6 +9905,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 3,
    "lifetime": "約0.3％",
@@ -8093,6 +9928,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 3,
    "lifetime": "約0.3％",
@@ -8115,6 +9951,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 1,
    "lifetime": "約1割",
@@ -8137,6 +9974,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 3,
    "lifetime": "約0.2％",
@@ -8159,6 +9997,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 4,
    "lifetime": "約0.015％",
@@ -8181,6 +10020,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 3,
    "lifetime": "約0.5％",
@@ -8203,6 +10043,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 2,
    "lifetime": "約1％",
@@ -8225,6 +10066,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 3,
    "lifetime": "約0.5％",
@@ -8247,6 +10089,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 1,
    "lifetime": "約1割",
@@ -8269,6 +10112,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 1,
    "lifetime": "約3割",
@@ -8302,6 +10146,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "G 災難・事件",
    "rarity": 2,
    "lifetime": "約2％",
@@ -8324,6 +10169,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "H 地域・社会の役目",
    "rarity": 2,
    "lifetime": "約9％",
@@ -8346,6 +10192,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "H 地域・社会の役目",
    "rarity": 3,
    "lifetime": "約0.3％",
@@ -8368,6 +10215,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "H 地域・社会の役目",
    "rarity": 4,
    "lifetime": "約0.07％",
@@ -8390,6 +10238,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "H 地域・社会の役目",
    "rarity": 2,
    "lifetime": "約2％",
@@ -8412,6 +10261,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "H 地域・社会の役目",
    "rarity": 3,
    "lifetime": "約0.7％",
@@ -8434,6 +10284,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "H 地域・社会の役目",
    "rarity": 2,
    "lifetime": "約2％（子がいる人）",
@@ -8456,6 +10307,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "H 地域・社会の役目",
    "rarity": 2,
    "lifetime": "約3％",
@@ -8478,6 +10330,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "H 地域・社会の役目",
    "rarity": 3,
    "lifetime": "約0.5％",
@@ -8500,6 +10353,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "I 偶然・数字の奇跡",
    "rarity": 3,
    "lifetime": "約0.2％",
@@ -8522,6 +10376,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "I 偶然・数字の奇跡",
    "rarity": 4,
    "lifetime": "約0.01％",
@@ -8544,6 +10399,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "I 偶然・数字の奇跡",
    "rarity": 3,
    "lifetime": "約0.1％",
@@ -8566,6 +10422,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "I 偶然・数字の奇跡",
    "rarity": 2,
    "lifetime": "約5％",
@@ -8588,6 +10445,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "I 偶然・数字の奇跡",
    "rarity": 1,
    "lifetime": "約3割",
@@ -8610,6 +10468,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "I 偶然・数字の奇跡",
    "rarity": 1,
    "lifetime": "約3割",
@@ -8632,6 +10491,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "I 偶然・数字の奇跡",
    "rarity": 1,
    "lifetime": "約1割",
@@ -8654,6 +10514,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "I 偶然・数字の奇跡",
    "rarity": 2,
    "lifetime": "約1％",
@@ -8687,6 +10548,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 2,
    "lifetime": "約5％",
@@ -8709,6 +10571,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 2,
    "lifetime": "約1％",
@@ -8731,6 +10594,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 4,
    "lifetime": "約0.02％",
@@ -8753,6 +10617,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 5,
    "lifetime": "約0.003％",
@@ -8775,6 +10640,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 4,
    "lifetime": "約0.05％",
@@ -8808,6 +10674,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 3,
    "lifetime": "約1.4％（誘われる人。出るのはその約半分）",
@@ -8830,6 +10697,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 5,
    "lifetime": "約0.001％",
@@ -8852,6 +10720,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 4,
    "lifetime": "約0.05％",
@@ -8874,6 +10743,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 3,
    "lifetime": "約0.3％",
@@ -8896,6 +10766,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 4,
    "lifetime": "約0.05％",
@@ -8918,6 +10789,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 4,
    "lifetime": "約0.05％",
@@ -8940,6 +10812,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 4,
    "lifetime": "約0.03％",
@@ -8962,6 +10835,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 5,
    "lifetime": "約0.004％",
@@ -8984,6 +10858,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 4,
    "lifetime": "約0.03％",
@@ -9006,6 +10881,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 4,
    "lifetime": "約0.05％",
@@ -9028,6 +10904,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 4,
    "lifetime": "約0.02％",
@@ -9050,6 +10927,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "カットイン:/★★★★★",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 5,
    "lifetime": "約0.0004％",
@@ -9072,6 +10950,7 @@ window.GAME_DATA = {
    "probMod": "",
    "staging": "",
    "category": "くじ",
+   "weights": [],
    "group": "J 華やかな一面",
    "rarity": 4,
    "lifetime": "約0.05％",

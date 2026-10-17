@@ -1,5 +1,5 @@
 // ゲームの結果を、イベント表の「統計」シートの現実の値と比べる。 node tests/calibrate.js [人数]
-// 選び方は「ふつうの選び方」：押せる選択肢のうち、いちばん上を6割、ほかを4割で選ぶ（表ではよくある選択を上に書く）。
+// 選び方は「ふつうの選び方」：表に「選ばれやすさ」があればその割合で、なければ押せる選択肢のいちばん上を6割、ほかを4割で選ぶ。
 'use strict';
 const { load, playThrough } = require('./lib');
 
@@ -11,6 +11,8 @@ function typicalPolicy(seed) {
   return (scene) => {
     if (scene.kind === 'event' && scene.choices.length) {
       const ok = scene.choices.map((c, i) => (c.enabled ? i : -1)).filter((i) => i >= 0);
+      // 表に「選ばれやすさ」（現実でその選択をする人の割合）があれば、その割合で選ぶ
+      if (ok.some((i) => scene.choices[i].weight > 0)) return rng.weighted(ok.map((i) => [i, scene.choices[i].weight || 0]));
       if (rng.chance(0.6) || ok.length === 1) return ok[0];
       return ok[1 + rng.int(ok.length - 1)];
     }

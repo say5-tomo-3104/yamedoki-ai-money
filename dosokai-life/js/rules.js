@@ -15,6 +15,7 @@
     '父の要介護', '母の要介護', '父の死', '母の死', '本人の死', '被災判定', '再就職判定',
   ];
   const PARENT_STATES = ['健在', '要介護', '亡'];
+  const FACULTIES = ['文系', '理系', '教育学部', '看護・医療', '薬学部', '医学部', '歯学部'];
 
   const childAges = (s) => s.children.map((c) => s.age - c.born);
   const partnerAge = (s) => (s.partner ? s.age + s.partner.ageDiff : undefined);
@@ -23,6 +24,7 @@
   // 条件の左辺（=, != で比べるもの） → [状態から値を取り出す関数, 取りうる値（null なら自由）]
   const KEYS = {
     進路: [(s) => s.path, ['大学', '就職']],
+    学部: [(s) => s.faculty || '', FACULTIES],
     景気: [(s) => s.economy[s.age - 18], ECONOMY],
     前年の景気: [(s) => s.economy[s.age - 19], ECONOMY],
     体質: [(s) => s.hidden.body, ['丈夫', 'ふつう', '弱い']],
@@ -192,6 +194,8 @@
           ops.push({ op: 'career', name: m[1] });
         } else if ((m = tok.match(/^進路:(大学|就職)$/))) {
           ops.push({ op: 'path', name: m[1] });
+        } else if ((m = tok.match(/^学部:(.+)$/)) && FACULTIES.includes(m[1])) {
+          ops.push({ op: 'faculty', name: m[1] });
         } else if ((m = tok.match(/^住まい:(実家|賃貸|持ち家)$/))) {
           ops.push({ op: 'home', name: m[1] });
         } else if ((m = tok.match(/^地域:(地元|都市|移住先|海外)$/))) {
@@ -402,6 +406,7 @@
 
   DL.STATS = STATS;
   DL.ECONOMY = ECONOMY;
+  DL.FACULTIES = FACULTIES;
   DL.compileData = createCompiler;
   DL.effectiveProb = effectiveProb;
 })(typeof window !== 'undefined' ? (window.DL = window.DL || {}) : (globalThis.DL = globalThis.DL || {}));
