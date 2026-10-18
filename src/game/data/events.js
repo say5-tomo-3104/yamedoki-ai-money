@@ -1,7 +1,10 @@
 // 50歳〜85歳の年代別イベントと小説フラグメント（SPEC.md 第6章）
 // effect の単位: assets=万円 / health・heart・memory=ポイント
 // fragment は文字列、または (state, ctx) => 文字列。効果を適用した後に評価される。
-import { PENSION_TABLE, DISABILITY_PENSION_MONTHLY } from './tables.js'
+import {
+  PENSION_TABLE, DISABILITY_PENSION_MONTHLY, STROKE_RATE_60S, CARE_RATE_74, CARE_RATE_79, CARE_COST, DOG_LIFESPAN,
+} from './tables.js'
+import { HOBBY_EVENTS } from './hobbies.js'
 
 const g = (ctx, male, female) => (ctx.gender === 'male' ? male : female)
 const spouse = (ctx) => g(ctx, '妻', '夫')
@@ -24,29 +27,38 @@ export const STEPS = [
   { type: 'chapter', chapter: 2, age: 55 },
   { type: 'event', id: 'e55_care', age: 55 },
   { type: 'event', id: 'e57_downsize', age: 57 },
+  { type: 'event', id: 'e58_dog', age: 58 },
   { type: 'chapter', chapter: 3, age: 60 },
   { type: 'event', id: 'e60_pension', age: 60 },
   { type: 'event', id: 'e60_spouse', age: 60 },
   { type: 'event', id: 'e60_work', age: 60 },
   { type: 'event', id: 'e60_invest', age: 60 },
+  { type: 'event', id: 'e61_hobby', age: 61 },
   { type: 'reunion', age: 62, act: 2, imageId: 'img_reunion_62', title: '六十二歳の同窓会', place: '駅前の居酒屋「ほたる」' },
   { type: 'event', id: 'e63_illness', age: 63 },
   { type: 'event', id: 'e64_romance', age: 64 },
   { type: 'chapter', chapter: 4, age: 65 },
   { type: 'event', id: 'e65_atm', age: 65 },
+  { type: 'event', id: 'e66_hobby', age: 66 },
   { type: 'event', id: 'e67_winter', age: 67 },
   { type: 'event', id: 'e68_crash', age: 68 },
   { type: 'chapter', chapter: 5, age: 70 },
   { type: 'event', id: 'e70_premium', age: 70 },
+  { type: 'event', id: 'e71_dog', age: 71 },
   { type: 'event', id: 'e72_wall', age: 72 },
   { type: 'reunion', age: 73, act: 4, imageId: 'img_reunion_73', title: '七十三歳の同窓会', place: '雨の午後の和食店' },
+  { type: 'event', id: 'e74_care', age: 74 },
+  { type: 'event', id: 'e74_hobby', age: 74 },
   { type: 'chapter', chapter: 6, age: 75 },
   { type: 'event', id: 'e75_late', age: 75 },
   { type: 'event', id: 'e77_license', age: 77 },
   { type: 'event', id: 'e78_daily', age: 78 },
+  { type: 'event', id: 'e79_care', age: 79 },
+  { type: 'event', id: 'e79_stage', age: 79 },
   { type: 'chapter', chapter: 7, age: 80 },
   { type: 'event', id: 'e82_housing', age: 82 },
   { type: 'reunion', age: 82, act: 5, imageId: 'img_reunion_82', title: '八十二歳、最後の同窓会', place: 'ホテルのティーラウンジ' },
+  { type: 'event', id: 'e83_days', age: 83 },
   { type: 'ending', age: 85 },
 ]
 
@@ -55,6 +67,8 @@ const total = (s) => s.assets + (s.invest || 0)
 const man = (v) => `${Math.round(v).toLocaleString()}万円`
 
 export const EVENTS = {
+  ...HOBBY_EVENTS,
+
   // ---- 第1章 ----
   e52_dock: {
     chapter: 1, act: 1, imageId: 'img_start_50',
@@ -139,6 +153,26 @@ export const EVENTS = {
         id: 'keep', label: '見栄と快適さを優先し、今の生活水準を維持する', detail: '資産-150万 / 心+10',
         effect: { assets: -150, heart: 10 },
         fragment: '五十七歳の夏、ディーラーで新しい車の契約書に判を押した。新車の匂いのするシートに身を沈めると、まだ自分は終わっていないという気がした。見栄だと笑われてもいい。あの革の匂いは、確かに私を一年ぶん若くした。',
+      },
+    ],
+  },
+
+  e58_dog: {
+    chapter: 2, act: 1, imageId: 'img_dog_58',
+    title: '五十八歳、保護犬の譲渡会',
+    body: () => [
+      '日曜日の公園で、保護犬の譲渡会が開かれていた。ケージの中から、片耳だけ折れた茶色い雑種が、じっとこちらを見ている。二歳くらいだという。',
+      `犬の平均寿命は約${DOG_LIFESPAN}歳（ペットフード協会 2024年）。迎えれば、七十代のはじめまで一緒に暮らすことになる。東京都健康長寿医療センターなどの研究では、犬を飼っている高齢者は認知症の発症リスクが約4割低かった（散歩や人との交流が増えるためと考えられている。観察研究なので因果関係までは断定できない）。`,
+    ],
+    choices: () => [
+      {
+        id: 'adopt', label: 'この子を家族に迎える', detail: '餌代・医療費などで生活費+15万/年（目安） / 心+12 / 思い出+8 / 散歩で健康が保たれやすい・孤独がやわらぐ',
+        effect: { heart: 12, memory: 8, extraLiving: 15, flags: { dog: 'alive' } },
+        fragment: '五十八歳の秋、保護犬の譲渡会で、一匹の雑種と目が合った。片耳だけ折れた、茶色い二歳の犬だった。名前は「こむぎ」にした。翌朝から、私の一日は、散歩のリードを握るところから始まるようになった。',
+      },
+      {
+        id: 'nodog', label: '最後まで面倒を見られるか自信がなく、見送る', detail: '変化なし',
+        fragment: '五十八歳の秋、保護犬の譲渡会で、片耳の折れた茶色い犬と目が合った。十数年先の自分の身体を思うと、私はリードを受け取る勇気が出なかった。帰り道、なぜか何度も後ろを振り返った。',
       },
     ],
   },
@@ -249,11 +283,8 @@ export const EVENTS = {
 
   e63_illness: {
     chapter: 3, act: 2, imageId: 'img_illness_63',
-    // 63歳で病に倒れる確率：基本7% ＋ 健康60未満で+6% ＋ 満身創痍(D4)で+5% ＋ 飲み続けた人は+3%
-    when: (s, ctx, rand) => {
-      const p = 0.07 + (s.health < 60 ? 0.06 : 0) + (ctx.body.id === 'D4' ? 0.05 : 0) + (s.flags.drinker ? 0.03 : 0)
-      return rand() < p
-    },
+    // 60〜64歳の脳卒中罹患率は年149.9人/10万人（福島県循環器疾患発症登録 2020年）。5年分で約0.75%
+    when: (s, ctx, rand) => rand() < STROKE_RATE_60S,
     title: '六十三歳、突然の病と「障害年金」',
     body: (s) => [
       '冬の朝、洗面所で倒れた。脳梗塞だった。命は助かったが、右手と右足に麻痺が残り、仕事はもう続けられない。',
@@ -443,6 +474,28 @@ export const EVENTS = {
     ],
   },
 
+  e71_dog: {
+    chapter: 5, act: 4, imageId: 'img_dog_71',
+    when: (s) => s.flags.dog === 'alive',
+    title: '七十一歳、こむぎの介護',
+    body: () => [
+      'こむぎは十五歳になった。犬の平均寿命を少し越えた。後ろ足が立たなくなり、夜中に暗闇の中で細く鳴くようになった。',
+      'おむつ、床ずれを防ぐマット、二時間おきの寝返り。犬の介護は、人の介護とよく似ている。',
+    ],
+    choices: () => [
+      {
+        id: 'athome', label: '居間に布団を移し、最期まで自分で看る', detail: '資産-15万 / 健康-8（睡眠不足） / 心-5 / 思い出+15',
+        effect: { assets: -15, health: -8, heart: -5, memory: 15, extraLiving: -15, flags: { dog: 'passed' } },
+        fragment: '七十一歳の冬、こむぎは後ろ足で立てなくなった。夜中になると、暗闇の中で細く鳴く。私は居間に布団を移し、こむぎの隣で眠った。二時間おきに体の向きを変え、おむつを替え、スポイトで水を飲ませる。春の終わり、こむぎは私の膝の上で、静かに息を引き取った。十三年分の散歩道が、その小さな体の温もりの中に、まだ残っていた。',
+      },
+      {
+        id: 'withhelp', label: '動物病院の預かりやペットシッターにも頼りながら看る', detail: '資産-35万 / 健康-3 / 心-5 / 思い出+12',
+        effect: { assets: -35, health: -3, heart: -5, memory: 12, extraLiving: -15, flags: { dog: 'passed' } },
+        fragment: '七十一歳の冬、こむぎの介護が始まった。私ひとりでは夜を越えられず、ときどき動物病院に預け、ペットシッターにも来てもらった。後ろめたさがなかったと言えば嘘になる。けれど、そうして眠れた夜があったから、最期の朝、私は穏やかな顔でこむぎを撫でてやることができた。',
+      },
+    ],
+  },
+
   e72_wall: {
     chapter: 5, act: 4, imageId: 'img_health_wall_72',
     title: '【運命の審判】七十二歳の朝、身体の異変',
@@ -566,6 +619,9 @@ export const EVENTS = {
     ],
   },
 
+  e74_care: spouseCareEvent(74, CARE_RATE_74, 'img_care_74', 5, 4),
+  e79_care: spouseCareEvent(79, CARE_RATE_79, 'img_care_74', 6, 5),
+
   // ---- 最終章 ----
   e82_housing: {
     chapter: 7, act: 5, imageId: 'img_final_85',
@@ -596,6 +652,80 @@ export const EVENTS = {
       },
     ],
   },
+}
+
+// 配偶者の介護（確率は要介護認定率、費用は生命保険文化センター 2024年度調査）
+function spouseCareEvent(age, rate, imageId, chapter, act) {
+  const ageK = age === 74 ? '七十四' : '七十九'
+  const facilityTotal = Math.round(CARE_COST.oneTime + CARE_COST.facilityMonthly * CARE_COST.months)
+  const years = Math.round((CARE_COST.months / 12) * 10) / 10
+  return {
+    chapter, act, imageId,
+    when: (s, ctx, rand) => ctx.married && !s.flags.spouseCare && rand() < rate,
+    title: `${ageK}歳、${age === 74 ? '健康寿命の向こう側で' : 'ふたたびの試練'}──配偶者の介護`,
+    body: (s, ctx) => [
+      `冬の朝、${spouse(ctx)}が台所で倒れた。命に別状はなかったが、要介護2と認定された。`,
+      `介護の費用は、一時費用が平均${CARE_COST.oneTime}万円、月々は在宅で平均${CARE_COST.homeMonthly}万円、施設なら平均${CARE_COST.facilityMonthly}万円。介護の期間は平均${CARE_COST.months}か月（約${years}年）続く（生命保険文化センター 2024年度調査）。`,
+    ],
+    choices: (s, ctx) => [
+      {
+        id: 'homecare', label: '自宅で自分が介護する（老老介護）', requiresHealth: true,
+        healthLockReason: '自分の足腰も弱っていて、ひとりで介護するのは難しい',
+        detail: `一時費用-${CARE_COST.oneTime}万 / 在宅介護費 月${CARE_COST.homeMonthly}万×約${years}年 / 健康-15 / 心-10 / 思い出+8`,
+        effect: { assets: -CARE_COST.oneTime, health: -15, heart: -10, memory: 8, tempCost: { perYear: CARE_COST.homeMonthly * 12, years }, flags: { spouseCare: 'home' } },
+        fragment: `${ageK}歳の冬、${spouse(ctx)}が台所で倒れた。要介護二。私は、自分も七十を過ぎた身体で、${spouse(ctx)}の介護を始めた。朝は着替えを手伝い、昼は粥を炊き、夜は二時間おきに寝返りを打たせる。老老介護という言葉を、私はニュースの中だけのものだと思っていた。ある晩、${spouse(ctx)}がかすれた声で「ごめんね」と言った。私は返事のかわりに、その手を握った。骨ばった手は、それでも若い頃と同じ形をしていた。`,
+      },
+      {
+        id: 'service', label: 'デイサービスや訪問介護を組み合わせて、在宅で支える',
+        detail: `一時費用-${CARE_COST.oneTime}万 / 在宅介護費 月${CARE_COST.homeMonthly}万×約${years}年 / 健康-6 / 心-5 / 思い出+5`,
+        effect: { assets: -CARE_COST.oneTime, health: -6, heart: -5, memory: 5, tempCost: { perYear: CARE_COST.homeMonthly * 12, years }, flags: { spouseCare: 'service' } },
+        fragment: `${ageK}歳の冬から、${spouse(ctx)}は週に三日、デイサービスに通うようになった。朝九時、送迎の車が家の前に停まる。スタッフさんが「お預かりしますね」と笑い、${spouse(ctx)}は窓の向こうから小さく手を挙げた。その数時間が、私が息をつける時間だった。ケアマネジャーという人がいなければ、私たちはきっと、二人とも倒れていた。`,
+      },
+      {
+        id: 'facility', label: '介護付きの施設に入ってもらう', minAssets: facilityTotal,
+        lockReason: `施設の費用（月${CARE_COST.facilityMonthly}万円×平均${CARE_COST.months}か月＋一時費用）の約${facilityTotal}万円が用意できず、施設には入れない`,
+        detail: `一時費用-${CARE_COST.oneTime}万 / 施設費 月${CARE_COST.facilityMonthly}万×約${years}年 / 心-5`,
+        effect: { assets: -CARE_COST.oneTime, heart: -5, tempCost: { perYear: CARE_COST.facilityMonthly * 12, years }, flags: { spouseCare: 'facility' } },
+        fragment: `${ageK}歳の冬、${spouse(ctx)}は介護付きの施設に入った。月々の請求書が届くたび、通帳の数字は目に見えて減っていく。週に二度、私はバスを乗り継いで面会に通った。帰り際、${spouse(ctx)}が窓辺で小さく手を振る。その姿がガラスに映る夕焼けに溶けていくのを、私は毎回、見えなくなるまで見ていた。`,
+      },
+    ],
+  }
+}
+
+// 80代の日々（デイサービス／地域のサロン）。暗い話で終わらせず、楽しい日常を描く
+EVENTS.e83_days = {
+  chapter: 7, act: 5, imageId: 'img_days_83',
+  title: '八十三歳、楽しみのある一週間',
+  body: (s) => (s.flags.mobilityLimited || s.health < 45
+    ? ['足腰が弱り、ケアマネジャーから、週に二回のデイサービスをすすめられた。送迎つきで、昼食とお風呂、レクリエーションがある。', '要介護1で1割負担なら、週2回通っても自己負担は月1万円前後（食費は別）が目安だ。']
+    : ['八十三歳。足はまだ自分のものだ。公民館では、老人クラブのサロンが毎週ひらかれている。', 'お茶とおしゃべり、ときどき体操と、季節の小旅行。参加費は一回数百円ほど。'])
+  ,
+  choices: (s) => (s.flags.mobilityLimited || s.health < 45
+    ? [
+      {
+        id: 'dayservice', label: '週二回、デイサービスに通う', detail: '資産-12万/年 / 心+15 / 思い出+8',
+        effect: { heart: 15, memory: 8, tempCost: { perYear: 12, years: 3 } },
+        fragment: '八十三歳の私の楽しみは、火曜と金曜のデイサービスだ。朝、送迎の車が来ると、近所の誰かが窓から手を振る。大きなお風呂で手足を伸ばし、昼は季節の献立。午後のカラオケ大会で、私は「青い山脈」を歌って、九十点を出した。拍手をくれたのは、昨日会ったばかりの、八十九歳の元大工だった。',
+      },
+      {
+        id: 'stayhome', label: '人に会うのが億劫で、家で過ごす', detail: '心-5',
+        effect: { heart: -5 },
+        fragment: '八十三歳、デイサービスの案内は、テーブルの上で少しずつ黄ばんでいった。家にいれば誰にも気を遣わずに済む。けれど夕方、時計の秒針の音ばかりが大きく聞こえる日が、少しずつ増えていった。',
+      },
+    ]
+    : [
+      {
+        id: 'salon', label: '老人クラブのサロンに通い、季節の日帰り旅行にも参加する', detail: '資産-5万 / 心+15 / 思い出+10',
+        effect: { assets: -5, heart: 15, memory: 10 },
+        fragment: '八十三歳の私は、毎週水曜、公民館のサロンに通っている。お茶を淹れるのは、いちばん若い七十六歳の係だ。春には貸切バスで藤の花を見に行った。帰りの車内でマイクが回ってきて、私は照れながら一曲歌った。窓の外を流れる田植え前の水田が、夕日を映して金色に光っていた。',
+      },
+      {
+        id: 'own', label: 'これまでの趣味を、自分のペースで続ける', detail: '心+10 / 思い出+6',
+        effect: { heart: 10, memory: 6 },
+        fragment: (st) => `八十三歳。${st.hobbies?.length ? `${st.hobbies.join('、')}——` : ''}長く続けてきた楽しみが、私の一週間にちゃんと目盛りを刻んでくれる。「今日は何の日だったかな」とカレンダーを見るのが、毎朝の小さな楽しみになった。`,
+      },
+    ])
+  ,
 }
 
 const PENSION_FRAGMENTS = {

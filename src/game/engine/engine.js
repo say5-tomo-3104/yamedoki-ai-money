@@ -7,7 +7,7 @@ import {
 import { STEPS, EVENTS } from '../data/events.js'
 import { NPC_DATA, assignNpcAges, npcCumulative, npcHeart, npcPresent, reunionScene } from '../data/npcs.js'
 
-export const SAVE_VERSION = 3
+export const SAVE_VERSION = 4
 const ASSET_FLOOR = -300
 // NISA運用：年平均5%・標準偏差15%の値動き。暴落直後の2年は平均+12%の戻り相場
 const INVEST_MEAN = 0.05
@@ -88,6 +88,8 @@ export function createGame(seed = Date.now()) {
     spousePensionAge: 65,
     invest: 0,
     investPrincipal: 0,
+    hobbies: [],
+    tempCosts: [],
     returns: [],
     work: { perYear: 0, until: 0 },
     extraLiving: 0,
@@ -137,6 +139,10 @@ function simulateYear(s) {
     const living = BASE_RETIRE_LIVING * region.price * family.livingMult + family.rent + s.extraLiving
     s.assets -= living + medical
   }
+  // 期間限定の支出（介護費など）
+  for (const c of s.tempCosts || []) {
+    if (a < c.until) s.assets -= c.perYear
+  }
 
   // NISA：その年の値動き → 現金が足りなければ取り崩して生活費に充てる
   if (s.invest > 0) {
@@ -156,6 +162,8 @@ function simulateYear(s) {
   let dh = a < 60 ? -0.3 : a < 70 ? -0.6 : a < 80 ? -1.0 : -1.5
   if (s.flags.gym && a < 70) dh += 0.4
   if (s.flags.drinker && a < 70) dh -= 0.4
+  if (s.flags.exercise) dh += 0.2 // 体を動かす趣味
+  if (s.flags.dog === 'alive') dh += 0.2 // 犬の散歩
   if (family.oldHouse && a >= 75) dh -= 1.5
   const hardship = s.assets < 0
   if (hardship) dh -= 1
@@ -167,6 +175,7 @@ function simulateYear(s) {
   if (family.lonely && a >= 70 && s.flags.partner !== 'married') {
     let lonely = s.flags.hobby ? 0.75 : 1.5
     if (s.flags.partner === 'visit') lonely /= 2
+    if (s.flags.social || s.flags.dog === 'alive') lonely /= 2
     dHeart -= lonely
   }
   if (hardship) dHeart -= 2
@@ -228,6 +237,13 @@ function applyEffect(s, effect = {}) {
     d.invest = (d.invest || 0) + amount
   }
   if (effect.flags) Object.assign(s.flags, effect.flags)
+  if (effect.hobby) {
+    s.hobbies = [...(s.hobbies || []), effect.hobby.name]
+    for (const tag of effect.hobby.tags) s.flags[tag] = true
+  }
+  if (effect.tempCost) {
+    s.tempCosts = [...(s.tempCosts || []), { perYear: effect.tempCost.perYear, until: s.age + effect.tempCost.years }]
+  }
   if (effect.work) s.work = { ...effect.work }
   if (effect.pensionAge) {
     // 同級生の割り振りは最初に決めた年齢で固定する（障害年金で繰下げを諦めても入れ替わらない）
@@ -262,13 +278,13 @@ export function eventContext(state) {
 // ---- 選択肢の可否 ----
 export function choiceAvailability(state, choice) {
   if (choice.requiresHealth && state.flags.mobilityLimited) {
-    return { ok: false, reason: '行きたい場所があったのに、もう足が動かない' }
+    return { ok: false, reason: choice.healthLockReason || '行きたい場所があったのに、もう足が動かない' }
   }
   if (choice.minHealth && state.health < choice.minHealth) {
     return { ok: false, reason: `健康値${choice.minHealth}以上で選べる（いまの身体では難しい）` }
   }
   if (choice.minAssets != null && totalAssets(state) < choice.minAssets) {
-    return { ok: false, reason: `資産${choice.minAssets.toLocaleString()}万円以上が必要` }
+    return { ok: false, reason: choice.lockReason || `資産${choice.minAssets.toLocaleString()}万円以上が必要` }
   }
   return { ok: true }
 }

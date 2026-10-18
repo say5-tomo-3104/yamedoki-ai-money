@@ -88,6 +88,33 @@ const SHAPES = {
       {ground}
     </>
   ),
+  dog: (
+    <>
+      <path d="M120 150v-34c0-14 10-24 24-26l36-4c8-1 14-6 16-14l4-14c2-6 8-10 14-8l10 4 6-8 4 10c6 4 8 12 4 18l-6 8c-4 6-10 8-16 8l-2 20v40h-10v-30h-44v30h-10v-30l-8-2v32z" />
+      <path d="M120 116c-12-2-20-12-18-24 4 8 10 12 18 12z" />
+      <circle cx="262" cy="44" r="16" opacity="0.35" />
+      {ground}
+    </>
+  ),
+  easel: (
+    <>
+      <path d="M150 30l-46 120h8l18-46h60l18 46h8L170 30z" />
+      <path d="M118 44h84v62h-84z" opacity="0.75" />
+      <path d="M126 92c14-20 24-24 36-12s22 8 32-8v30h-68z" fill="#fff" opacity="0.3" />
+      <circle cx="240" cy="120" r="10" opacity="0.6" />
+      <path d="M232 128l8 22h-4l-8-20z" opacity="0.6" />
+      {ground}
+    </>
+  ),
+  stage: (
+    <>
+      <path d="M110 0h100l40 150H70z" opacity="0.18" />
+      <path d="M40 132h240v18H40z" />
+      <path d="M126 96a10 10 0 1 1 0.1 0zm-10 14h20v22h-20zM186 96a10 10 0 1 1 0.1 0zm-10 14h20v22h-20z" />
+      <path d="M156 88a10 10 0 1 1 0.1 0zm-10 14h20v30h-20z" />
+      {ground}
+    </>
+  ),
   sea: (
     <>
       <circle cx="200" cy="104" r="26" opacity="0.5" />

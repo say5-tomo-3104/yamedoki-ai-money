@@ -17,6 +17,7 @@ export function buildTitle(state) {
   if (f.housing === 'drafty' && state.memory >= 50) return `${region.motif}と、色褪せない写真`
   if (f.mobilityLimited && state.memory < 40) return '八十二歳の通帳と、開かれなかった旅行鞄'
   if (f.mobilityLimited) return '七十二歳の朝と、引き出しの中の海'
+  if ((state.hobbies || []).length >= 3) return `${region.motif}と、楽しみのある一週間`
   if (state.memory >= 50) return `${region.motif}と、六十二歳の乾杯`
   if (totalAssets(state) >= 1500) return '八十二歳の通帳と、静かな紅茶'
   if (state.pensionAge >= 70) return `${region.motif}と、待ち続けた年金`
@@ -56,6 +57,13 @@ function closingMonologue(state) {
     } else {
       p.push('六十の春に始めたNISAは、生活費の穴を埋めるために少しずつ取り崩され、いつの間にか空になった。それでも、あの口座がなければ、私の通帳はもっと早く赤くなっていただろう。')
     }
+  }
+
+  if (state.flags.dog === 'passed') {
+    p.push('居間の柱には、こむぎの赤い首輪が、今も掛けてある。散歩の時間になると、私の足は今でも、ひとりでに玄関のほうを向く。')
+  }
+  if (state.flags.spouseCare) {
+    p.push(`${gender === 'male' ? '妻' : '夫'}の介護をした日々のことを、私はあまり人に話さない。つらかったからではない。あの時間の中にしかなかった言葉や、手の温もりを、誰にも分けずに持っていたいからだ。`)
   }
 
   if (state.flags.partner === 'married') {

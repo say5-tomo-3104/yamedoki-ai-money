@@ -227,6 +227,26 @@ export const PENSION_CAVEATS = {
 // 障害年金（2級相当）の手取り月額。障害基礎年金に障害厚生年金が少し上乗せされる想定
 export const DISABILITY_PENSION_MONTHLY = 7
 
+// 60〜64歳の5年間に脳卒中を発症する確率
+// 福島県循環器疾患発症登録（2020年）の60〜64歳の罹患率 149.9人/10万人年 × 5年 ≒ 0.75%
+export const STROKE_RATE_60S = 0.0075
+
+// 配偶者が介護を必要とする確率（要支援・要介護の認定率、松江市 令和3年度・練馬区 令和2年3月末の実績からの計算値）
+// 70〜74歳 約6% / 75〜79歳 約13%。75〜79歳は「74歳までに認定されていない人」が新たに認定される割合に換算
+export const CARE_RATE_74 = 0.06
+export const CARE_RATE_79 = (0.13 - 0.06) / (1 - 0.06)
+
+// 介護費用（生命保険文化センター 2024年度調査）
+export const CARE_COST = {
+  oneTime: 47.2, // 住宅改修・介護用ベッドなどの一時費用（万円）
+  homeMonthly: 5.3, // 在宅介護の月額（万円）
+  facilityMonthly: 13.8, // 施設介護の月額（万円）
+  months: 55, // 平均介護期間（55か月＝4年7か月）
+}
+
+// 犬の平均寿命（ペットフード協会 2024年 全国犬猫飼育実態調査）
+export const DOG_LIFESPAN = 14.9
+
 // 72歳の壁の基準値（男性の全国健康寿命）
 export const WALL_BASE_HEALTHY = 72.68
 
