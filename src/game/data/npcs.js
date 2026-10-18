@@ -199,7 +199,7 @@ function scene82({ state, ages, fate, playerCum }) {
   }[state.flags.housing || 'home']
   const memory = state.memory >= 50
     ? 'けれど私の胸には、通帳には印字されない残高があった。'
-    : state.assets < 0
+    : state.assets + (state.invest || 0) < 0
       ? '通帳の数字は心許ない。そして胸の中の引き出しを開けると、そこも思ったより空っぽだった。'
       : '数字のほうは、人に見せられないほどではない。けれど胸の中の引き出しを開けると、そこは思ったより空っぽだった。'
   p.push(`私の通帳には、${kanjiNumber(state.pensionAge)}歳から受け取り続けてきた年金の、手取りの累計が印字されている。${kanjiNumber(playerCum)}万円。${housing}${memory}`)

@@ -3,7 +3,7 @@ import { CHAPTERS, EVENTS } from '../data/events.js'
 import { PENSION_TABLE } from '../data/tables.js'
 import { NPC_DATA } from '../data/npcs.js'
 import {
-  getProfile, eventContext, choiceAvailability, compareAt, getReunion,
+  getProfile, eventContext, choiceAvailability, compareAt, getReunion, totalAssets,
 } from '../engine/engine.js'
 import Illustration from './Illustration.jsx'
 import CompareChart from './CompareChart.jsx'
@@ -12,7 +12,8 @@ const sign = (v) => (v > 0 ? `+${v}` : `${v}`)
 
 function Deltas({ deltas }) {
   const items = [
-    ['資産', Math.round(deltas.assets), '万'],
+    ['現金', Math.round(deltas.assets), '万'],
+    ['NISA', Math.round(deltas.invest || 0), '万'],
     ['健康', Math.round(deltas.health), ''],
     ['心', Math.round(deltas.heart), ''],
     ['思い出', deltas.memory, ''],
@@ -239,7 +240,17 @@ export function EndingScreen({ state, onRead, onRestart }) {
         <div><dt>働き方</dt><dd>{job.name}</dd></div>
         <div><dt>家族と住まい</dt><dd>{family.name}</dd></div>
         <div><dt>年金</dt><dd>{state.pensionAge}歳から受給</dd></div>
-        <div><dt>最終資産</dt><dd>{Math.round(state.assets).toLocaleString()}万円</dd></div>
+        <div><dt>最終資産</dt><dd>{Math.round(totalAssets(state)).toLocaleString()}万円</dd></div>
+        <div>
+          <dt>NISA運用</dt>
+          <dd>
+            {state.investPrincipal > 0
+              ? `${state.flags.panicSold ? '暴落時に売却' : `評価額 ${Math.round(state.invest).toLocaleString()}万円`}（元本 ${state.investPrincipal.toLocaleString()}万円）`
+              : '運用なし'}
+          </dd>
+        </div>
+        {family.married && <div><dt>配偶者の年金</dt><dd>{state.spousePensionAge}歳から受給</dd></div>}
+        {state.flags.partner && <div><dt>六十四歳の出会い</dt><dd>{state.flags.partner === 'married' ? '熟年結婚' : '通い婚'}</dd></div>}
         <div><dt>72歳の壁</dt><dd>{state.flags.mobilityLimited ? '激突（要支援）' : '突破'}</dd></div>
       </dl>
       <CompareChart rows={rows} age={85} />

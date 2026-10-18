@@ -9,12 +9,15 @@
 | img_care_55 | 実家の長い廊下（55歳・親の介護／C4のみ） |
 | img_countdown_57 | 住まいと車のダウンサイジング（57歳・第2章） |
 | img_pension_60 | 年金事務所の窓口（60歳・受給開始年齢の選択） |
+| img_nisa_60 | 退職金と新NISAの口座（60歳） |
+| img_romance_64 | 思いがけない出会い（64歳・独身のみ） |
 | img_work_60_office | 定年再雇用・同じデスク（60歳） |
 | img_work_60_free | 完全リタイア・平日の午前十時（60歳） |
 | img_reunion_62 | 62歳の同窓会（居酒屋） |
 | img_bankbook | 偶数月15日の通帳（65歳・70歳） |
 | img_travel_67 | 動けるうちの最後の遠出（67歳） |
 | img_work_65_senior | 冬の早朝ワーク（67歳） |
+| img_crash_68 | 世界同時株安（68歳・NISA運用中のみ） |
 | img_health_wall_72 | 72歳の朝・健康寿命の壁 |
 | img_reunion_73 | 73歳の同窓会（和食店） |
 | img_late_75_home | 後期高齢者の現実（75〜78歳） |

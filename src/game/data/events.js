@@ -26,11 +26,15 @@ export const STEPS = [
   { type: 'event', id: 'e57_downsize', age: 57 },
   { type: 'chapter', chapter: 3, age: 60 },
   { type: 'event', id: 'e60_pension', age: 60 },
+  { type: 'event', id: 'e60_spouse', age: 60 },
   { type: 'event', id: 'e60_work', age: 60 },
+  { type: 'event', id: 'e60_invest', age: 60 },
   { type: 'reunion', age: 62, act: 2, imageId: 'img_reunion_62', title: '六十二歳の同窓会', place: '駅前の居酒屋「ほたる」' },
+  { type: 'event', id: 'e64_romance', age: 64 },
   { type: 'chapter', chapter: 4, age: 65 },
   { type: 'event', id: 'e65_atm', age: 65 },
   { type: 'event', id: 'e67_winter', age: 67 },
+  { type: 'event', id: 'e68_crash', age: 68 },
   { type: 'chapter', chapter: 5, age: 70 },
   { type: 'event', id: 'e70_premium', age: 70 },
   { type: 'event', id: 'e72_wall', age: 72 },
@@ -46,6 +50,8 @@ export const STEPS = [
 ]
 
 const receiving = (s) => s.pensionAge && s.age >= s.pensionAge
+const total = (s) => s.assets + (s.invest || 0)
+const man = (v) => `${Math.round(v).toLocaleString()}万円`
 
 export const EVENTS = {
   // ---- 第1章 ----
@@ -157,6 +163,25 @@ export const EVENTS = {
     }),
   },
 
+  e60_spouse: {
+    chapter: 3, act: 2, imageId: 'img_pension_60',
+    when: (s, ctx) => ctx.family.married,
+    title: '配偶者の年金は、いつから受け取る？',
+    body: (s, ctx) => [
+      `${spouse(ctx)}にも、自分の年金がある。65歳から受け取れば手取りで月${ctx.family.spousePension}万円。`,
+      `夫婦の受け取り方は、別々に決められる。たとえば${spouse(ctx)}だけ60歳から受け取って、${s.pensionAge}歳までの家計の谷間を埋めるという手もある。`,
+    ],
+    choices: (s, ctx) => [60, 65, 70].map((age) => {
+      const net = Math.round(ctx.family.spousePension * PENSION_TABLE[age].realMult * 10) / 10
+      return {
+        id: `sp${age}`, label: `${spouse(ctx)}は${age}歳から受け取る`,
+        detail: `${spouse(ctx)}の手取り 月${net}万円（${age}歳から）`,
+        effect: { spousePensionAge: age },
+        fragment: SPOUSE_FRAGMENTS[age](ctx, s),
+      }
+    }),
+  },
+
   e60_work: {
     chapter: 3, act: 2, imageId: 'img_work_60_office',
     title: '六十歳定年、月曜日の朝の働き方',
@@ -188,6 +213,68 @@ export const EVENTS = {
     ],
   },
 
+  e60_invest: {
+    chapter: 3, act: 2, imageId: 'img_nisa_60',
+    title: '退職金と、新NISAの口座',
+    body: (s, ctx) => [
+      ctx.job.retire60 > 0
+        ? `退職金が振り込まれ、通帳の残高は${man(s.assets)}になった。銀行の窓口では、若い行員が投資信託のパンフレットを三枚並べた。`
+        : `私には退職金がない。通帳の残高は${man(s.assets)}。それでも銀行の窓口で、若い行員は投資信託のパンフレットを三枚並べた。`,
+      '新NISAなら運用益に税金はかからない。全世界株式の投資信託は、過去の平均で年5%ほど。ただし、それはあくまで平均で、一年で三割下がる年もある。',
+    ],
+    choices: (s) => {
+      const half = Math.min(1800, Math.floor((s.assets * 0.5) / 10) * 10)
+      const full = Math.min(1800, Math.floor((s.assets - 300) / 10) * 10)
+      return [
+        {
+          id: 'deposit', label: '預金のまま置いておく（増えないが減らない）', detail: '運用なし',
+          fragment: '六十歳の春、退職金の振り込まれた通帳を、私はそのまま引き出しにしまった。窓口の若い行員はパンフレットをもう一度こちらへ滑らせたが、私は首を振った。増えなくていい。減らないことのほうが、この歳の私には大事に思えた。',
+        },
+        {
+          id: 'half', label: '半分を新NISAで運用する', minAssets: 100,
+          detail: `${man(half)}を全世界株式の投資信託へ（年平均5%・値動き±15%程度／運用益は非課税）`,
+          effect: { invest: half },
+          fragment: '六十歳の春、私は退職金の半分を新しいNISAの口座に移した。スマホの画面で「購入」のボタンを押す指先が、少しだけ震えた。年に五パーセント。それはパンフレットの中の平均であって、約束ではない。わかっていて、私は老後の一部を、世界の景気という見知らぬ海に浮かべた。',
+        },
+        {
+          id: 'full', label: '生活費の予備300万円だけ残し、ほぼ全額を新NISAへ', minAssets: 500,
+          detail: `${man(Math.max(0, full))}を投資信託へ（生涯投資枠1,800万円まで）`,
+          effect: { invest: Math.max(0, full) },
+          fragment: '六十歳の春、私は生活費の一年ぶんだけを手元に残し、残りのすべてをNISAに注ぎ込んだ。「時間を味方につけるんです」と、動画の中の誰かが言っていた。六十歳の私に、味方になってくれる時間がどれほど残っているのか。その計算だけは、どのアプリも教えてくれなかった。',
+        },
+      ]
+    },
+  },
+
+  e64_romance: {
+    chapter: 3, act: 2, imageId: 'img_romance_64',
+    when: (s, ctx) => !ctx.family.married,
+    title: '六十四歳、思いがけない出会い',
+    body: (s, ctx) => [
+      `公民館の${s.flags.hobby ? '文章教室' : '健康体操の教室'}で、帰り道が同じ方向の人と、なんとなく話すようになった。${g(ctx, '同い年の、笑うと目尻に深い皺の寄る女性', '二つ年上の、穏やかに話す男性')}だった。`,
+      '相手も長くひとりで暮らしてきたという。すでに年金を受け取っていて、手取りは月7万円ほど。「この歳で、また誰かと暮らすなんてね」と、その人は照れくさそうに笑った。',
+    ],
+    choices: () => [
+      {
+        id: 'marry', label: '入籍して、一緒に暮らす（熟年結婚）',
+        detail: '心+25 / 思い出+10 / 相手の年金（月7万）が家計に入るが、生活費も増える / 孤独ペナルティ解消',
+        effect: { heart: 25, memory: 10, extraLiving: 40, flags: { partner: 'married', partnerPension: 7 } },
+        fragment: (st, c) => `六十四歳の秋、私は区役所の窓口で婚姻届を出した。証人欄には、${c.region.id === 'A1' ? '駅前の' : '近所の'}喫茶店のマスターが名前を書いてくれた。二人分の湯呑みが並ぶ食器棚を見たとき、私は自分がどれほど長く、ひとりぶんの食器だけで暮らしてきたのかを知った。遅すぎる春だと笑う人もいるだろう。けれど、春に遅すぎるということはない。`,
+      },
+      {
+        id: 'visit', label: '籍は入れず、週末だけ行き来する「通い婚」にする',
+        detail: '心+15 / 思い出+5 / 家計はそれぞれ / 孤独ペナルティ半減',
+        effect: { heart: 15, memory: 5, flags: { partner: 'visit' } },
+        fragment: '六十四歳の秋から、私たちは籍を入れないまま、週末だけ互いの部屋を行き来するようになった。相続のことも、年金のことも、それぞれの子や親戚のことも、そのほうが面倒が少ない。土曜の夕方、合鍵で開けたドアの向こうから煮物の匂いがしてくる。それだけで、一週間はちゃんと一週間の形になった。',
+      },
+      {
+        id: 'alone', label: 'ありがたいが、一人の暮らしを続ける',
+        detail: '変化なし',
+        fragment: '六十四歳の秋、私はその人の誘いを、丁寧に断った。ひとりの暮らしには、ひとりの暮らしの静けさがある。帰り道、公民館の前の銀杏が、音もなく葉を落としていた。あの日の選択を、私は今も間違いだったとは思っていない。ただ、ときどき思い出すだけだ。',
+      },
+    ],
+  },
+
   // ---- 第4章 ----
   e65_atm: {
     chapter: 4, act: 3, imageId: 'img_bankbook',
@@ -204,7 +291,7 @@ export const EVENTS = {
       }
       return [
         '偶数月の十五日。ATMの列に並ぶ同年代の人たちを、私は少し離れたところから眺めていた。',
-        `私の年金は、まだ${s.pensionAge - s.age}年先だ。無年金のまま、貯金が毎年200万円前後ずつ溶けていく。現在の資産は${Math.round(s.assets).toLocaleString()}万円。`,
+        `私の年金は、まだ${s.pensionAge - s.age}年先だ。無年金のまま、貯金が毎年200万円前後ずつ溶けていく。現在の資産は${man(total(s))}${s.invest > 0 ? `（うちNISA ${man(s.invest)}）` : ''}。`,
       ]
     },
     choices: () => [
@@ -226,14 +313,14 @@ export const EVENTS = {
     ],
     choices: (s, ctx) => {
       const cost = s.flags.downsized ? 80 : 120
-      const bonus = ctx.family.married ? 5 : 0
+      const bonus = ctx.married ? 5 : 0
       return [
         {
           id: 'travel', label: '貯金を切り崩して、憧れの場所へ長期旅行に出る', requiresHealth: true, minHealth: 50,
           detail: `資産-${cost}万 / 心+${35 + bonus} / 思い出+30${bonus ? '（夫婦旅行ボーナス）' : ''}`,
           imageId: 'img_travel_67',
           effect: { assets: -cost, heart: 35 + bonus, memory: 30 },
-          fragment: (st, c) => `六十七歳の秋、まだ自分の足で階段を駆け上がれるうちに、と遠くの海へ旅に出た。${c.family.married ? `旅館の窓辺で、${spouse(c)}が「来てよかったね」と小さく言った。` : ''}潮風に吹かれながら食べた刺身の歯ごたえと、水平線に沈む夕日の眩しさ。あの数日は、一生消えない宝石になった。`,
+          fragment: (st, c) => `六十七歳の秋、まだ自分の足で階段を駆け上がれるうちに、と遠くの海へ旅に出た。${c.married ? `旅館の窓辺で、${spouse(c)}が「来てよかったね」と小さく言った。` : ''}潮風に吹かれながら食べた刺身の歯ごたえと、水平線に沈む夕日の眩しさ。あの数日は、一生消えない宝石になった。`,
         },
         {
           id: 'work', label: '老後資金を守るため、早朝の清掃・警備パートに出て節約する', detail: '資産+350万（3年間） / 健康-15 / 心-10',
@@ -250,6 +337,42 @@ export const EVENTS = {
     },
   },
 
+  e68_crash: {
+    chapter: 4, act: 3, imageId: 'img_crash_68',
+    when: (s) => s.invest > 0,
+    title: '六十八歳、世界同時株安',
+    body: (s) => [
+      'ある朝のニュースが、世界の株価がこの一年で三割下がったと告げていた。アナウンサーの声は、いつもより少しだけ早口だった。',
+      `NISAの評価額は${man(s.invest)}から、およそ${man(s.invest * 0.7)}へ。（投資した元本は${man(s.investPrincipal)}）`,
+    ],
+    choices: (s) => {
+      const buy = Math.min(300, Math.floor((s.assets - 100) / 10) * 10)
+      const list = [
+        {
+          id: 'hold', label: '何もせず、持ち続ける', detail: '評価額-30%のまま耐える',
+          effect: { investMult: 0.7, flags: { recoveryYears: 2 } },
+          note: '評価額は三割下がった。ここから戻るかどうかは、誰にもわからない。',
+          fragment: '六十八歳の冬、ニュースは連日、株価の暴落を伝えていた。アプリを開くと、評価額の数字が赤く染まっている。私はそっとアプリを閉じ、スマホを伏せて、台所でお湯を沸かした。やかんが鳴るまでの数分間、何もしないことが、こんなにも難しいとは思わなかった。',
+        },
+        {
+          id: 'sell', label: '怖くなって、全部売って現金に戻す', detail: '-30%で損失を確定。以後は運用なし / 心+5',
+          effect: { investMult: 0.7, sellAll: true, heart: 5, flags: { panicSold: true } },
+          note: '損失が確定した。そのかわり、もう値動きに眠れない夜はない。',
+          fragment: '六十八歳の冬、私は耐えきれずに、すべての投資信託を売った。損失の確定した数字を見て、不思議と胸が軽くなった。もう眠れない夜を過ごさなくていい。けれど翌年の春、株価が静かに戻り始めたというニュースを、私は少し離れたところから聞いていた。',
+        },
+      ]
+      if (buy >= 50) {
+        list.push({
+          id: 'buy', label: '安くなった今こそ、手元の現金で買い増す', detail: `評価額-30% ＋ 現金から${man(buy)}を追加投資`,
+          effect: { investMult: 0.7, invest: buy, flags: { recoveryYears: 2 } },
+          note: '安値で買い増した。吉と出るかは、まだわからない。',
+          fragment: '六十八歳の冬、誰もが売りに走る画面を見ながら、私はなけなしの現金で買い増しのボタンを押した。安売りの日にこそ買う。八百屋の店先なら当たり前のことが、数字の上ではこんなにも怖い。押したあと、私はしばらく自分の手のひらを眺めていた。',
+        })
+      }
+      return list
+    },
+  },
+
   // ---- 第5章 ----
   e70_premium: {
     chapter: 5, act: 4, imageId: 'img_bankbook',
@@ -262,7 +385,7 @@ export const EVENTS = {
     },
     choices: (s, ctx) => [
       {
-        id: 'onsen', label: `${ctx.family.married ? '夫婦で' : 'ひとりで'}近場の温泉に一泊する`, requiresHealth: true,
+        id: 'onsen', label: `${ctx.married ? '夫婦で' : 'ひとりで'}近場の温泉に一泊する`, requiresHealth: true,
         detail: '資産-15万 / 心+12 / 思い出+8',
         effect: { assets: -15, heart: 12, memory: 8 },
         fragment: (st) => `${PREFIX_70[st.pensionAge]}その秋、近くの温泉に一泊した。湯船の縁に頭を預けると、天井の湯気の向こうで、裸電球がぼんやりと滲んでいる。七十という数字が、湯の中では少しだけ軽くなった。`,
@@ -320,7 +443,7 @@ export const EVENTS = {
         ? {
           id: 'repair', label: '見積書に判を押す', detail: '資産-150万（持ち家の修繕は避けられない）',
           effect: { assets: -150 },
-          fragment: (st) => `${st.pensionAge === 75 ? PREFIX_75 : ''}七十五歳の梅雨、天井の染みがじわじわと広がり、同じ週に給湯器が止まった。業者の見積書には百五十万円とあった。私は判を押しながら、この家が私と同じ速さで老いていたことを知った。${st.assets < 0 ? '通帳の残高は、その日、ついにマイナスの領域へ足を踏み入れた。' : ''}`,
+          fragment: (st) => `${st.pensionAge === 75 ? PREFIX_75 : ''}七十五歳の梅雨、天井の染みがじわじわと広がり、同じ週に給湯器が止まった。業者の見積書には百五十万円とあった。私は判を押しながら、この家が私と同じ速さで老いていたことを知った。${total(st) < 0 ? '通帳の残高は、その日、ついにマイナスの領域へ足を踏み入れた。' : ''}`,
         }
         : {
           id: 'card', label: '保険証を財布にしまう', detail: '',
@@ -404,7 +527,7 @@ export const EVENTS = {
     title: '八十二歳、損益分岐点と住まいの終着駅',
     body: (s) => [
       '八十二歳。年金事務所から届いた「ねんきん定期便」の累計欄を、私は虫眼鏡で読んだ。',
-      `これまでに受け取った年金の手取り累計は${Math.round(s.cumPension).toLocaleString()}万円。いまの資産は${Math.round(s.assets).toLocaleString()}万円。65歳・70歳受給組の累計が、ついに60歳受給組を追い抜く頃だ。`,
+      `これまでに受け取った年金の手取り累計は${Math.round(s.cumPension).toLocaleString()}万円。いまの資産は${man(total(s))}。65歳・70歳受給組の累計が、ついに60歳受給組を追い抜く頃だ。`,
     ],
     choices: (s, ctx) => [
       {
@@ -413,8 +536,8 @@ export const EVENTS = {
         fragment: `八十二歳の春、私は見晴らしのいいケア付きの住宅に移った。荷物は段ボール八箱に収まった。新しい部屋の窓からは、${ctx.region.motif}が見える。夜中に呼び鈴を押せば、誰かが来てくれる。その安心を、私は通帳の数字と引き換えに手に入れた。`,
       },
       {
-        id: 'stay', label: '住み慣れた家（部屋）に残る', detail: s.assets < 300 ? '資産が心細い。節約生活になる' : '資産±0',
-        resolve: (st) => (st.assets < 300
+        id: 'stay', label: '住み慣れた家（部屋）に残る', detail: total(s) < 300 ? '資産が心細い。節約生活になる' : '資産±0',
+        resolve: (st) => (total(st) < 300
           ? {
             effect: { heart: -5, flags: { housing: 'drafty' } },
             fragment: '八十二歳の春、私の部屋には隙間風が吹いていた。灯油の残量を確かめながら、ストーブを一時間だけ点ける。毛布を肩までかぶると、どこか遠くで、まだ若かった頃の自分が笑っているような気がした。',
@@ -435,6 +558,12 @@ const PENSION_FRAGMENTS = {
   65: '六十歳の春、私は結局、いちばん普通の「六十五歳から」を選んだ。増やしもせず、減らしもしない。役所の白い封筒を鞄にしまうと、少しだけ肩の荷が下りた。平凡を選ぶのにも勇気が要るのだと、その日の夕焼けが教えてくれた。',
   70: '六十歳の春、私は「七十歳まで待つ」と決めた。一・四二倍。電卓を叩くたびに、その数字は私を励ました。ただ、十年という時間の長さだけは、どの電卓にも表示されなかった。窓口の職員が差し出したボールペンは、思ったより冷たかった。',
   75: '六十歳の春、私は「七十五歳まで待つ」という、いちばん遠い欄に丸をつけた。一・八四倍。八十代で金が尽きる恐怖から、私は自分を守りたかった。窓口を出ると、春の風が書類の端をめくった。十五年。その歳月の向こう岸は、霞んでまったく見えなかった。',
+}
+
+const SPOUSE_FRAGMENTS = {
+  60: (ctx, s) => `${spouse(ctx)}の年金は、六十歳から受け取ることにした。少し減っても、${s.pensionAge > 60 ? '私の年金が始まるまでの谷間を、二人で渡りきるための橋になる。' : '二人とも早く受け取って、動けるうちに使えばいい。'}食卓で電卓を叩く私の横で、${spouse(ctx)}は「${g(ctx, 'どっちでもいいわよ、あなたが決めて', 'どっちでもいいよ、お前が決めてくれ')}」と笑った。`,
+  65: (ctx) => `${spouse(ctx)}の年金は、普通に六十五歳から受け取ることにした。夫婦で別々の数字を選ぶほどの度胸は、私たちにはなかった。それでいいのだと思う。`,
+  70: (ctx) => `${spouse(ctx)}の年金は、七十歳まで待つことにした。${spouse(ctx)}のほうが長生きする家系だから、と二人で笑った。その笑いの奥に、どちらかが先に逝く日のことが、薄く透けて見えた。`,
 }
 
 const PREFIX_70 = {

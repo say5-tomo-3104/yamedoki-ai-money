@@ -1,5 +1,5 @@
 // エンディング時の短編小説ビルド＆出力エンジン（SPEC.md 第8章）
-import { getProfile, compareAt } from './engine.js'
+import { getProfile, compareAt, totalAssets } from './engine.js'
 import { kanjiNumber } from './kanji.js'
 
 export const ACTS = [
@@ -18,7 +18,7 @@ export function buildTitle(state) {
   if (f.mobilityLimited && state.memory < 40) return '八十二歳の通帳と、開かれなかった旅行鞄'
   if (f.mobilityLimited) return '七十二歳の朝と、引き出しの中の海'
   if (state.memory >= 50) return `${region.motif}と、六十二歳の乾杯`
-  if (state.assets >= 1500) return '八十二歳の通帳と、静かな紅茶'
+  if (totalAssets(state) >= 1500) return '八十二歳の通帳と、静かな紅茶'
   if (state.pensionAge >= 70) return `${region.motif}と、待ち続けた年金`
   return `${region.motif}と、それからの日々`
 }
@@ -30,7 +30,7 @@ function openingParagraphs(state) {
 }
 
 function closingMonologue(state) {
-  const { region, family } = getProfile(state)
+  const { region, family, gender } = getProfile(state)
   const rows = compareAt(state, 85)
   const me = rows[0]
   const others = rows.slice(1).filter((r) => r.present)
@@ -40,13 +40,29 @@ function closingMonologue(state) {
   const place = state.flags.housing === 'care' ? '新しい部屋の' : family.rent ? '古いアパートの' : '古い家の'
   p.push(`八十五歳の秋、私は${place}窓辺で、通帳とアルバムを並べて膝の上に置いた。西日が写真立ての硝子を照らし、その光が天井に小さな四角い窓をつくっている。`)
 
-  const money = Math.round(state.assets)
+  const money = Math.round(totalAssets(state))
   const ledger = money >= 1000
     ? `通帳の最後の行には、${kanjiNumber(money)}万円という数字が印字されていた。使い切れなかった数字だ。`
     : money >= 0
       ? `通帳の最後の行には、${kanjiNumber(money)}万円という数字が印字されていた。足りるとも、足りないとも言えない、私らしい数字だった。`
       : '通帳の最後の行は、とうに赤い数字になっていた。それでも私は、こうして秋の光の中にいる。'
   p.push(`${ledger}受け取った年金の手取りは、累計で${kanjiNumber(me.cum)}万円。${richer === 0 ? '同級生の誰よりも多い。' : `同級生のうち${kanjiNumber(richer)}人が、私より多くを受け取っている。`}けれど、その順位を気にしている自分は、もうどこにもいなかった。`)
+
+  if (state.investPrincipal > 0) {
+    if (state.flags.panicSold) {
+      p.push('あの冬に手放した投資信託のことを、今もときどき思い出す。持ち続けていれば、と考えかけて、私はいつもそこで考えるのをやめる。あの夜の眠りを買ったのだと思えば、高すぎる値段でもなかった。')
+    } else if (state.invest >= 1) {
+      p.push(`NISAの口座には、まだ${kanjiNumber(state.invest)}万円が眠っている。世界のどこかの工場や店が、私の知らないところで、私の老後を少しずつ支えてくれていたことになる。`)
+    } else {
+      p.push('六十の春に始めたNISAは、生活費の穴を埋めるために少しずつ取り崩され、いつの間にか空になった。それでも、あの口座がなければ、私の通帳はもっと早く赤くなっていただろう。')
+    }
+  }
+
+  if (state.flags.partner === 'married') {
+    p.push(`台所から、六十四で籍を入れた${gender === 'male' ? '妻' : '夫'}が、湯呑みを二つ盆に載せて運んでくる。遅く始まった二人の暮らしは、短いぶんだけ、一日一日の目盛りが細かかった。`)
+  } else if (state.flags.partner === 'visit') {
+    p.push('今日は土曜日だ。夕方になれば、合鍵の回る音がする。籍も入れず、同じ屋根の下にも住まなかった私たちの二十年は、それでも確かに、二人で過ごした二十年だった。')
+  }
 
   if (state.memory >= 50) {
     p.push('アルバムをめくると、潮風の匂いが、旅館の畳の感触が、まだ脚の動いた頃の坂道が、次々に立ち上がってくる。身体が動かなくなってからも、この思い出たちは毎年、少しずつ利息をつけて私のもとへ戻ってきた。通帳には印字されない、もうひとつの残高だった。')

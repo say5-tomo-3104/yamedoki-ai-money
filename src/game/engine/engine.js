@@ -7,8 +7,12 @@ import {
 import { STEPS, EVENTS } from '../data/events.js'
 import { NPC_DATA, assignNpcAges, npcCumulative, npcHeart, npcPresent, reunionScene } from '../data/npcs.js'
 
-export const SAVE_VERSION = 1
+export const SAVE_VERSION = 2
 const ASSET_FLOOR = -300
+// NISA運用：年平均5%・標準偏差15%の値動き。暴落直後の2年は平均+12%の戻り相場
+const INVEST_MEAN = 0.05
+const INVEST_SD = 0.15
+const RECOVERY_MEAN = 0.12
 
 // ---- 乱数（mulberry32）----
 function nextRandom(state) {
@@ -29,6 +33,13 @@ function weightedPick(state, table) {
 }
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v))
+
+// 一様乱数4つの和で近似した標準正規分布
+function normalRandom(state) {
+  let sum = 0
+  for (let i = 0; i < 4; i++) sum += nextRandom(state)
+  return (sum - 2) * Math.sqrt(3)
+}
 const round1 = (v) => Math.round(v * 10) / 10
 
 // ---- プロフィール参照 ----
@@ -74,6 +85,10 @@ export function createGame(seed = Date.now()) {
     memory: 0,
     pensionAge: null,
     cumPension: 0,
+    spousePensionAge: 65,
+    invest: 0,
+    investPrincipal: 0,
+    returns: [],
     work: { perYear: 0, until: 0 },
     extraLiving: 0,
     flags: {},
@@ -85,7 +100,7 @@ export function createGame(seed = Date.now()) {
     },
     fragments: [],
     log: [],
-    yearly: [{ age: 50, assets: job.savings50, health: body.health, heart: 50 }],
+    yearly: [{ age: 50, assets: job.savings50, invest: 0, health: body.health, heart: 50 }],
     stepIndex: 0,
     pending: null,
     finished: false,
@@ -103,19 +118,36 @@ function simulateYear(s) {
     const rate = clamp(job.saveRate + family.saveAdj + eduAdj - (region.price - 1) * 0.2, -0.1, 0.4)
     s.assets += job.income50s * rate
   } else {
-    if (a === 60) s.assets += job.retire60
     if (a < s.work.until) s.assets += s.work.perYear
     if (s.pensionAge && a >= s.pensionAge) {
       const annual = playerMonthly(s).net * 12
       s.assets += annual
       s.cumPension += annual
     }
-    if (family.spousePension && a >= 65) s.assets += family.spousePension * 12
+    // 配偶者自身の年金（開始年齢は60歳の選択で決める）
+    const spouseAge = s.spousePensionAge || 65
+    if (family.spousePension && a >= spouseAge) s.assets += family.spousePension * PENSION_TABLE[spouseAge].realMult * 12
+    // 熟年結婚した相手の年金（すでに受給中）
+    if (s.flags.partnerPension) s.assets += s.flags.partnerPension * 12
     let medical = a < 70 ? 6 : a < 75 ? 12 : 18
     if (a >= 70 && pen) medical += pen.copayExtra
     if (s.flags.mobilityLimited) medical += 24
     const living = BASE_RETIRE_LIVING * region.price * family.livingMult + family.rent + s.extraLiving
     s.assets -= living + medical
+  }
+
+  // NISA：その年の値動き → 現金が足りなければ取り崩して生活費に充てる
+  if (s.invest > 0) {
+    const recovering = s.flags.recoveryYears > 0
+    const r = Math.max(-0.4, (recovering ? RECOVERY_MEAN : INVEST_MEAN) + INVEST_SD * normalRandom(s))
+    if (recovering) s.flags.recoveryYears -= 1
+    s.invest *= 1 + r
+    s.returns.push({ age: a, rate: Math.round(r * 1000) / 10 })
+    if (s.assets < 0) {
+      const sell = Math.min(s.invest, -s.assets)
+      s.invest -= sell
+      s.assets += sell
+    }
   }
 
   // 身体
@@ -130,7 +162,11 @@ function simulateYear(s) {
   // 心
   let dHeart = 0
   if (a >= 75) dHeart += s.memory * 0.04 // アルバム配当（5年で memoryPoints × 0.2）
-  if (family.lonely && a >= 70) dHeart -= s.flags.hobby ? 0.75 : 1.5
+  if (family.lonely && a >= 70 && s.flags.partner !== 'married') {
+    let lonely = s.flags.hobby ? 0.75 : 1.5
+    if (s.flags.partner === 'visit') lonely /= 2
+    dHeart -= lonely
+  }
   if (hardship) dHeart -= 2
   s.heart = Math.max(0, s.heart + dHeart)
   if (hardship) s.flags.hardship = true
@@ -141,7 +177,8 @@ function simulateYear(s) {
   }
 
   s.age = a + 1
-  s.yearly.push({ age: s.age, assets: Math.round(s.assets), health: Math.round(s.health), heart: Math.round(s.heart) })
+  if (s.age === 60) s.assets += job.retire60 // 退職金は60歳の誕生日に入る
+  s.yearly.push({ age: s.age, assets: Math.round(s.assets), invest: Math.round(s.invest), health: Math.round(s.health), heart: Math.round(s.heart) })
 }
 
 function advanceTo(s, age) {
@@ -169,11 +206,36 @@ function applyEffect(s, effect = {}) {
     s.memory += effect.memory
     d.memory = effect.memory
   }
+  if (effect.investMult) {
+    const before = s.invest
+    s.invest *= effect.investMult
+    d.invest = Math.round(s.invest - before)
+  }
+  if (effect.sellAll) {
+    s.assets += s.invest
+    d.assets += Math.round(s.invest)
+    d.invest = (d.invest || 0) - Math.round(s.invest)
+    s.invest = 0
+  }
+  if (effect.invest) {
+    const amount = Math.max(0, Math.min(effect.invest, s.assets))
+    s.assets -= amount
+    s.invest += amount
+    s.investPrincipal += amount
+    d.assets -= amount
+    d.invest = (d.invest || 0) + amount
+  }
   if (effect.flags) Object.assign(s.flags, effect.flags)
   if (effect.work) s.work = { ...effect.work }
   if (effect.pensionAge) s.pensionAge = effect.pensionAge
+  if (effect.spousePensionAge) s.spousePensionAge = effect.spousePensionAge
   if (effect.extraLiving) s.extraLiving += effect.extraLiving
   return d
+}
+
+// 現金＋運用評価額
+export function totalAssets(state) {
+  return state.assets + (state.invest || 0)
 }
 
 // 72歳の壁の突破確率（SPEC.md 4-②）
@@ -185,7 +247,10 @@ export function wallProbability(state) {
 
 // イベント文面・選択肢の生成に渡す文脈
 export function eventContext(state) {
-  return { ...getProfile(state), wallProb: wallProbability(state) }
+  const profile = getProfile(state)
+  // 熟年結婚した場合も「既婚」として扱う
+  const married = profile.family.married || state.flags.partner === 'married'
+  return { ...profile, married, wallProb: wallProbability(state) }
 }
 
 // ---- 選択肢の可否 ----
@@ -196,7 +261,7 @@ export function choiceAvailability(state, choice) {
   if (choice.minHealth && state.health < choice.minHealth) {
     return { ok: false, reason: `健康値${choice.minHealth}以上で選べる（いまの身体では難しい）` }
   }
-  if (choice.minAssets != null && state.assets < choice.minAssets) {
+  if (choice.minAssets != null && totalAssets(state) < choice.minAssets) {
     return { ok: false, reason: `資産${choice.minAssets.toLocaleString()}万円以上が必要` }
   }
   return { ok: true }

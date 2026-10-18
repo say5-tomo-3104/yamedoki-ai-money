@@ -71,6 +71,23 @@ const SHAPES = {
       {ground}
     </>
   ),
+  graph: (
+    <>
+      <path d="M50 30v116h230v-6H56V30z" />
+      <path d="M64 128l40-26 30 12 40-40 30 16 44-50 4 4-48 56-30-16-40 40-30-12-36 24z" />
+      <path d="M90 140v-16h10v16zm40 0v-22h10v22zm40 0v-40h10v40zm40 0v-30h10v30zm40 0v-60h10v60z" opacity="0.5" />
+      {ground}
+    </>
+  ),
+  crash: (
+    <>
+      <path d="M50 30v116h230v-6H56V30z" />
+      <path d="M64 50l40 16 30-10 40 30 30-6 44 54-4 4-42-50-30 6-40-30-30 10-36-14z" />
+      <path d="M248 128l20 8-4-22z" />
+      <path d="M90 140V96h10v44zm40 0v-60h10v60zm40 0v-44h10v44zm40 0v-30h10v30zm40 0v-14h10v14z" opacity="0.5" />
+      {ground}
+    </>
+  ),
   sea: (
     <>
       <circle cx="200" cy="104" r="26" opacity="0.5" />

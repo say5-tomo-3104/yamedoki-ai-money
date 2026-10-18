@@ -1,10 +1,11 @@
-import { getProfile } from '../engine/engine.js'
+import { getProfile, totalAssets } from '../engine/engine.js'
 
 // 常時表示ヘッダー（SPEC.md 第9章-1）
 export default function Header({ state }) {
   const { region, gender } = getProfile(state)
   const health = Math.round(state.health)
-  const assets = Math.round(state.assets)
+  const assets = Math.round(totalAssets(state))
+  const invest = Math.round(state.invest || 0)
   return (
     <header className="hud">
       <div className="hud-age">
@@ -22,7 +23,7 @@ export default function Header({ state }) {
         </div>
         <div>
           <dt>資産</dt>
-          <dd className={assets < 0 ? 'is-minus' : ''}>{assets.toLocaleString()}<small>万円</small></dd>
+          <dd className={assets < 0 ? 'is-minus' : ''}>{assets.toLocaleString()}<small>万円{invest > 0 && `（うちNISA ${invest.toLocaleString()}）`}</small></dd>
         </div>
         <div>
           <dt>身体{state.flags.mobilityLimited ? '（要支援）' : ''}</dt>
