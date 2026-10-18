@@ -165,6 +165,7 @@ def convert_careers(wb):
             'econ': text(d.get('景気の影響')),
             'heading': text(d.get('求人の見出し')),
             'faculties': text(d.get('学部')),
+            'female': num(d.get('女性の割合')),
             'examples': [x.strip() for x in text(d.get('会社の例')).replace('、', ',').split(',') if x.strip()],
             'source': text(d.get('出典')),
         })

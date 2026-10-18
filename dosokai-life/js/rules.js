@@ -23,6 +23,7 @@
 
   // 条件の左辺（=, != で比べるもの） → [状態から値を取り出す関数, 取りうる値（null なら自由）]
   const KEYS = {
+    性別: [(s) => s.sex, ['男', '女']],
     進路: [(s) => s.path, ['大学', '就職']],
     学部: [(s) => s.faculty || '', FACULTIES],
     景気: [(s) => s.economy[s.age - 18], ECONOMY],
@@ -58,6 +59,8 @@
     父の年齢: (s) => parentAge(s, '父'),
     母の年齢: (s) => parentAge(s, '母'),
     パートナーの年齢: partnerAge,
+    // 子を産む人の年齢（主人公が女性なら主人公、男性ならパートナー）。出産の確率表の基準に使う
+    産む人の年齢: (s) => (s.sex === '女' ? s.age : partnerAge(s)),
     がんの診断からの年数: (s) => (s.flags.has('持病がん') ? s.age - s.flagAge['持病がん'] : undefined),
   };
   // 確率表の「基準」に使えるもの
@@ -376,12 +379,15 @@
       if ((m = str.match(/^平均:(.+)$/))) {
         metric = { kind: 'mean', name: m[1].trim() };
       } else if ((m = str.match(/^(.+?)@(\d+)(?:\|(.+))?$/))) {
+        // 母集団に「全員」が入っていれば、亡くなった人も含める（例：全員;性別=男）
+        const parts = (m[3] || '').split(/[;；]/).map((x) => x.trim()).filter(Boolean);
+        const rest = parts.filter((x) => x !== '全員').join(';');
         metric = {
           kind: 'share',
           age: Number(m[2]),
           cond: compileCond(m[1], `統計「${t.name}」`, '測り方'),
-          all: (m[3] || '').trim() === '全員', // 亡くなった人も含める
-          pop: m[3] && m[3].trim() !== '全員' ? compileCond(m[3], `統計「${t.name}」`, '母集団') : null,
+          all: parts.includes('全員'),
+          pop: rest ? compileCond(rest, `統計「${t.name}」`, '母集団') : null,
         };
       } else {
         warnings.push(`統計「${t.name}」の測り方が読めません（${t.measure}）`);

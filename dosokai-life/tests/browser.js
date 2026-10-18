@@ -64,8 +64,11 @@ function findEarlyDeathSeed() {
 
   const url = 'file://' + path.join(ROOT, 'index.html') + `?seed=${seed}&speed=fastest&debug=1`;
   await page.goto(url);
+  await page.check('#sex-select input[value="女"]'); // 性別を選んで始める
   await page.screenshot({ path: path.join(shots, '01-title.png') });
   await page.click('#start-form button[type=submit]');
+  assert.strictEqual(await page.evaluate(() => window.__dosokai.state.sex), '女', 'タイトルで選んだ性別にならない');
+  assert.ok((await page.textContent('#feed')).includes('女'), '生まれのカードに性別が出ない');
   await page.click('#debug > button'); // 確認用パネルはたたんでおく
 
   let checkedGrey = false;

@@ -11,7 +11,10 @@
       place: [['都市', 0.4], ['地方', 0.6]],
       wealth: [['ゆとり', 0.25], ['ふつう', 0.5], ['きびしい', 0.25]],
       parent: [['若い', 0.3], ['ふつう', 0.5], ['高め', 0.2]],
+      sex: [['男', 0.512], ['女', 0.488]], // 出生性比 105：100（人口動態統計）
     },
+    // キャリアシートの「女性の割合」を、新卒全体の女性の割合で割って、求人の届きやすさにする（推計：学校基本調査）
+    femaleShare: 0.45,
     birthEffects: { 都市: '手応え+5', 地方: 'つながり+5', ゆとり: 'お金+15 余白+5', きびしい: 'お金-15' },
     hidden: {
       body: [['丈夫', 0.3], ['ふつう', 0.55], ['弱い', 0.15]],
@@ -103,10 +106,13 @@
     const mortality = (age) => C.tableRate('死亡', age);
 
     // ---- 人生の始まり：生まれ・隠れた運命・景気・同級生・家族の寿命を最初に全部決める ----
-    function newLife(seed) {
+    // opts.sex：'男' か '女'。なければ運命で決める（ほかの運命の並びを変えないよう、別の乱数の流れで引く）
+    function newLife(seed, opts = {}) {
       seed = String(seed);
       const fate = DL.makeRng(seed, 'fate');
+      const sex = ['男', '女'].includes(opts.sex) ? opts.sex : DL.makeRng(seed, 'sex').weighted(CONFIG.birth.sex);
       const birth = {
+        sex,
         place: fate.weighted(CONFIG.birth.place),
         wealth: fate.weighted(CONFIG.birth.wealth),
         parent: fate.weighted(CONFIG.birth.parent),
@@ -143,7 +149,7 @@
       const stats = {};
       for (const k of DL.STATS) stats[k] = CONFIG.startStat;
       const s = {
-        seed, age: CONFIG.firstAge, stats, flags: new Set(), flagAge: {}, career: '学生', path: '',
+        seed, sex, age: CONFIG.firstAge, stats, flags: new Set(), flagAge: {}, career: '学生', path: '',
         birth, hidden, economy, company: null, companyHistory: [], parents,
         partner: null, partners: [], children: [], home: '実家', region: '地元', loan: 0,
         jobHuntAge: null, pending: [], used: {}, firedThisYear: new Set(), jobHistory: [], lastSeen: {},
@@ -308,12 +314,18 @@
         const m = hit.match(/×([\d.]+)/);
         return m ? Number(m[1]) : 1;
       };
+      // キャリアシートの「女性の割合」：その仕事に就く新人のうち女性の割合。男女で求人の届きやすさを変える
+      const sexW = (c) => {
+        if (typeof c.female !== 'number') return 1;
+        const base = CONFIG.femaleShare;
+        return s.sex === '女' ? c.female / base : (1 - c.female) / (1 - base);
+      };
       const pool = Object.values(C.careers).filter((c) => typeof c[key] === 'number' && c[key] > 0 && !(highSchool && c.uniOnly) && boost(c) > 0);
       const out = [];
       const taken = new Set();
       const n = CONFIG.job.offers[highSchool ? '高卒' : '大学'];
       for (let i = 0; i < n && pool.length; i++) {
-        const c = s.rng.weighted(pool.map((x) => [x, (x[key] * boost(x)) / (typeof x.pass === 'number' ? x.pass : 0.5)]));
+        const c = s.rng.weighted(pool.map((x) => [x, (x[key] * boost(x) * sexW(x)) / (typeof x.pass === 'number' ? x.pass : 0.5)]));
         const co = companyName(s, c.name, taken);
         taken.add(co.name);
         out.push({ career: c, label: co.name, shown: co.shown });

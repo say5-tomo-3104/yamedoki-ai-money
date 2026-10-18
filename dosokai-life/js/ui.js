@@ -13,7 +13,7 @@
   };
   const STAT_LABEL = { お金: 'お金', 健康: '健康', 手応え: '手応え', つながり: 'つながり', 余白: '心の余白' };
   const SERIES_COLOR = { お金: 'var(--series-1)', 健康: 'var(--series-2)', 手応え: 'var(--series-3)', つながり: 'var(--series-4)', 余白: 'var(--series-5)' };
-  const BIRTH_LABEL = { place: '育った場所', wealth: '家庭のゆとり', parent: '親の年齢' };
+  const BIRTH_LABEL = { sex: '性別', place: '育った場所', wealth: '家庭のゆとり', parent: '親の年齢' };
   const STARS = (n) => '★'.repeat(n) + '☆'.repeat(Math.max(0, 5 - n));
   const ZUKAN_KEY = 'dosokai-zukan';
 
@@ -227,7 +227,7 @@
 
   async function showBirth(scene) {
     setSeason('winter');
-    const fx = { place: { 都市: '手応え+5', 地方: 'つながり+5' }, wealth: { ゆとり: 'お金+15 心の余白+5', きびしい: 'お金-15' }, parent: {} };
+    const fx = { place: { 都市: '手応え+5', 地方: 'つながり+5' }, wealth: { ゆとり: 'お金+15 心の余白+5', きびしい: 'お金-15' }, parent: {}, sex: {} };
     const next = el('button', { class: 'next', type: 'button', text: '18歳の春へ' });
     const card = el('div', { class: 'card' },
       el('div', { class: 'kind fate', text: '生まれ ― 選べなかったこと' }),
@@ -571,7 +571,7 @@
           el('div', { class: 'hint', text: deltaText(t.deltas) })))) : el('p', { text: '大きく人生を動かした出来事はなかった。' })),
       section('4', '最初から決まっていたこと',
         el('dl', { class: 'reveal' },
-          el('dt', { text: '生まれ' }), el('dd', { text: `${e.hidden.birth.place}・家庭は${e.hidden.birth.wealth}・親の年齢は${e.hidden.birth.parent}` }),
+          el('dt', { text: '生まれ' }), el('dd', { text: `${e.hidden.birth.sex}・${e.hidden.birth.place}・家庭は${e.hidden.birth.wealth}・親の年齢は${e.hidden.birth.parent}` }),
           el('dt', { text: '体質' }), el('dd', { text: e.hidden.body }),
           el('dt', { text: '出会い運' }), el('dd', { text: e.hidden.love }),
           el('dt', { text: '土地の災害の起きやすさ' }), el('dd', { text: e.hidden.disaster }),
@@ -638,9 +638,9 @@
 
   // ---- 進行 ----
   let running = 0;
-  async function start(seed) {
+  async function start(seed, sex) {
     const my = ++running;
-    state = game.newLife(seed);
+    state = game.newLife(seed, { sex });
     shownStats = null;
     feed().textContent = '';
     buildHud();
@@ -711,8 +711,12 @@
     $('#start-form').addEventListener('submit', (ev) => {
       ev.preventDefault();
       if (!/^\d{6}$/.test(input.value)) { input.focus(); return; }
-      start(input.value);
+      const sex = (document.querySelector('#sex-select input:checked') || {}).value || '';
+      start(input.value, sex);
     });
+    // 性別は ?sex=女 でも渡せる
+    const givenSex = params.get('sex');
+    if (['男', '女'].includes(givenSex)) document.querySelector(`#sex-select input[value="${givenSex}"]`).checked = true;
     $('#zukan-open').addEventListener('click', showZukan);
     if (params.get('debug')) buildDebug();
   }

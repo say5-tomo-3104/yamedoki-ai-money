@@ -27,6 +27,12 @@
         <label for="seed-input">運命の番号（6桁）</label>
         <input id="seed-input" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off" required>
         <p class="hint">同じ番号なら、同じ運命。友達と同じ番号で遊ぶと「同じ運命で違う選択」を比べられます。</p>
+        <fieldset id="sex-select">
+          <legend>生まれる性別</legend>
+          <label><input type="radio" name="sex" value="男"> 男</label>
+          <label><input type="radio" name="sex" value="女"> 女</label>
+          <label><input type="radio" name="sex" value="" checked> 運命にまかせる</label>
+        </fieldset>
         <button type="submit" class="primary">人生を始める</button>
       </form>
       <p class="hint">やり直しはできません。1回のプレイが、1つの人生です。</p>
