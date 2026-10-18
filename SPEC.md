@@ -258,3 +258,27 @@ project-root/
 1. **常時表示ヘッダー**：現在の年齢、居住地・性別、選択した年金受給開始年齢、現在の資産残高（万円）、身体コンディション（健康値バー）、心の充実度（思い出スコア）。
 2. **「4人の累積年金手取り額＆幸福度」比較チャート**：
    同窓会イベント時およびエンディング時に、プレイヤーとNPC 3人（60/65/70/75歳受給）の「現在までの累積年金受取額（手取り）」と「幸福度（思い出）」を視覚的に比較できるグラフまたはテーブルを表示する。
+
+---
+
+## 10. 実装メモ（React + Vite 版）
+
+既存の「やめどきAI Money」（`/`）と同じ Vite プロジェクト内に、別ページ `/game/` として実装している。第2章のバニラJS構成との対応は次のとおり。
+
+| 仕様書の想定 | 実装 |
+| --- | --- |
+| `index.html` | `game/index.html`（エントリ `src/game/main.jsx`） |
+| `css/style.css` | `src/game/game.css` |
+| `js/main.js` | `src/game/App.jsx` ＋ `src/game/components/` |
+| `js/engine.js` | `src/game/engine/engine.js`（収支・72歳の壁・NPC比較）、`storage.js`（セーブ・本棚） |
+| `js/novel.js` | `src/game/engine/novel.js` |
+| `js/data/tables.js` | `src/game/data/tables.js` |
+| `js/data/npcs.js` | `src/game/data/npcs.js` |
+| `js/data/events.js` | `src/game/data/events.js` |
+| `assets/images/` | `public/assets/images/`（スロット一覧は同フォルダの README.md） |
+
+仕様に無い数値は次のように置いている（調整は `tables.js` / `engine.js`）。
+- 50代の貯蓄：手取り年収 × 職業別の貯蓄率（家族構成・物価で補正）
+- 60歳以降の生活費：年150万円 × 物価係数 × 生活費倍率 ＋ 家賃 ＋ 医療費（60代6万・70代前半12万・75歳以上18万、繰下げ組は窓口負担分を加算）
+- 既婚（C1/C2）は配偶者自身の年金（手取り月6万円）が65歳から家計に入る（プレイヤーの累計受給額には含めない）
+- 資産がマイナスになると困窮扱い（健康・心が毎年減る）。-300万円で生活保護等のセーフティネットが下支えする

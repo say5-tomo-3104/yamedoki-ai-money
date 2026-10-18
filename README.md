@@ -1,3 +1,17 @@
+# やめどきAI Money
+
+- `/` … サブスク管理アプリ「やめどきAI Money」
+- `/game/` … 後半生シミュレーション＆短編小説生成ゲーム『黄金の夕暮れと同窓会（仮）』（仕様は [SPEC.md](SPEC.md)）
+
+```bash
+npm install
+npm run dev   # http://localhost:5173/ と http://localhost:5173/game/
+```
+
+イラストは `public/assets/images/` に `スロットID.jpg` で置くと自動で表示されます（一覧は同フォルダの README.md）。
+
+---
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
