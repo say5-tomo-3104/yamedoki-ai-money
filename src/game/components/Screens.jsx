@@ -162,6 +162,7 @@ export function EventScreen({ state, step, onChoose, onNext }) {
               >
                 <span className="choice-label">{c.label}</span>
                 {c.detail && <span className="choice-detail">{c.detail}</span>}
+                {c.tip && <span className="choice-tip">参考：{c.tip}</span>}
                 {!av.ok && <span className="choice-lock">{av.reason}</span>}
               </button>
             )

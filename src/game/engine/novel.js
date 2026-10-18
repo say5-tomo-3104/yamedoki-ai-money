@@ -14,6 +14,8 @@ export const ACTS = [
 export function buildTitle(state) {
   const { region } = getProfile(state)
   const f = state.flags
+  if (f.housing === 'capsule') return `${region.motif}と、窓のない部屋`
+  if (f.abroad && !f.returned) return '南の国の朝市と、遠いふるさと'
   if (f.housing === 'drafty' && state.memory >= 50) return `${region.motif}と、色褪せない写真`
   if (f.mobilityLimited && state.memory < 40) return '八十二歳の通帳と、開かれなかった旅行鞄'
   if (f.mobilityLimited) return '七十二歳の朝と、引き出しの中の海'
@@ -38,7 +40,10 @@ function closingMonologue(state) {
   const richer = others.filter((r) => r.cum > me.cum).length
   const p = []
 
-  const place = state.flags.housing === 'care' ? '新しい部屋の' : family.rent ? '古いアパートの' : '古い家の'
+  const place = state.flags.abroad && !state.flags.returned ? `${state.flags.abroad}の部屋の`
+    : state.flags.housing === 'capsule' ? 'カプセルホテルのロビーの'
+      : state.flags.housing === 'welfare' ? '小さな一階の部屋の'
+        : state.flags.housing === 'care' ? '新しい部屋の' : family.rent ? '古いアパートの' : '古い家の'
   p.push(`八十五歳の秋、私は${place}窓辺で、通帳とアルバムを並べて膝の上に置いた。西日が写真立ての硝子を照らし、その光が天井に小さな四角い窓をつくっている。`)
 
   const money = Math.round(totalAssets(state))

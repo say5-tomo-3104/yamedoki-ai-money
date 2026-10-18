@@ -114,7 +114,7 @@ function scene62({ state, profile, ages }) {
   return p
 }
 
-function scene73({ state, ages, fate }) {
+function scene73({ state, profile, ages, fate }) {
   const p = []
   p.push('十一年後の同窓会は、雨の午後の和食店だった。掘りごたつの座敷を予約したのは、もう誰も正座ができなくなったからだ。テーブルの上には、お品書きより先に、それぞれの薬袋が並んだ。膝のサポーター、血圧の薬、目薬。話題の中心は、いつの間にか病院の待ち時間になっていた。')
 
@@ -152,6 +152,7 @@ function scene73({ state, ages, fate }) {
       : '行きたかった場所のリストだけが、手帳の後ろのページに、色褪せずに残っていた。'
     p.push(`私の膝にも、黒いサポーターが巻かれていた。七十二歳の朝、布団から起き上がろうとしたとき、身体が言うことを聞かなかったあの感覚を、まだ忘れられない。${byAge[state.pensionAge]}${memory}`)
   } else {
+    if (state.flags.abroad && !state.flags.returned) p.push(`私は、${state.flags.abroad}から一時帰国して、この座敷に座っていた。日に焼けた腕を見て、健太が「${you(profile)}がいちばん旅人だな」と笑った。`)
     p.push('私の足は、まだ自分のものだった。七十二の朝、少し怖いと思いながら階段を降り、それでも何事もなく台所に立てた。その平凡な朝がどれほど得難いものだったか、私はこの座敷で初めて知った。湯呑みの温かさが、掌にゆっくりと沁みてきた。')
   }
 
@@ -196,7 +197,10 @@ function scene82({ state, ages, fate, playerCum }) {
     care: 'ケア付きの住宅の、窓辺の椅子が今の私の定位置だ。',
     home: '家に帰れば、軋む床と、柱の古い傷が私を待っている。',
     drafty: '春になっても、冬の部屋の寒さがまだ骨の奥に残っている。',
-  }[state.flags.housing || 'home']
+    capsule: '今夜もまた、駅裏のカプセルホテルの、窓のない箱に帰る。そのことを、私は誰にも言えなかった。',
+    welfare: '住宅扶助で借りた一階の小さな部屋が、今の私の住まいだ。',
+    abroad: `この同窓会のために、私は${state.flags.abroad}から、六時間の飛行機に乗って帰ってきた。`,
+  }[state.flags.abroad && !state.flags.returned ? 'abroad' : state.flags.housing || 'home']
   const memory = state.memory >= 50
     ? 'けれど私の胸には、通帳には印字されない残高があった。'
     : state.assets + (state.invest || 0) < 0

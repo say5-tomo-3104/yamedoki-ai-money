@@ -247,6 +247,12 @@ export const CARE_COST = {
 // 犬の平均寿命（ペットフード協会 2024年 全国犬猫飼育実態調査）
 export const DOG_LIFESPAN = 14.9
 
+// 海外移住のきっかけ（友人からの誘い）が届く確率。統計ではなく、ゲーム上の「低確率のきっかけ」
+export const ABROAD_INVITE_RATE = 0.1
+// 海外移住中の生活費の倍率と民間医療保険（年・万円）。ゲーム上の目安
+export const ABROAD_LIVING_MULT = 0.7
+export const ABROAD_INSURANCE = 25
+
 // 72歳の壁の基準値（男性の全国健康寿命）
 export const WALL_BASE_HEALTHY = 72.68
 

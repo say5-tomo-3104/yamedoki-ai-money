@@ -292,6 +292,7 @@ button { font: inherit; }
 .choice:active:not(:disabled) { transform: translateY(1px); }
 .choice-label { font-weight: 500; }
 .choice-detail { font-size: 0.8rem; color: var(--ink-3); }
+.choice-tip { font-size: 0.78rem; color: var(--ink-2); background: var(--paper-2); border-radius: 4px; padding: 4px 8px; margin-top: 4px; }
 
 .choice.is-locked {
   cursor: not-allowed;

@@ -2,12 +2,12 @@
 // 状態はすべてJSONで表現できる純粋なデータとして扱い、乱数も状態内のシードから引く。
 import {
   REGIONS, JOBS, FAMILIES, HEALTHS, PENSION_TABLE, PENSION_AGES,
-  WALL_BASE_HEALTHY, BASE_RETIRE_LIVING, heartAgeFactor,
+  WALL_BASE_HEALTHY, BASE_RETIRE_LIVING, heartAgeFactor, ABROAD_LIVING_MULT, ABROAD_INSURANCE,
 } from '../data/tables.js'
 import { STEPS, EVENTS } from '../data/events.js'
 import { NPC_DATA, assignNpcAges, npcCumulative, npcHeart, npcPresent, reunionScene } from '../data/npcs.js'
 
-export const SAVE_VERSION = 4
+export const SAVE_VERSION = 5
 const ASSET_FLOOR = -300
 // NISA運用：年平均5%・標準偏差15%の値動き。暴落直後の2年は平均+12%の戻り相場
 const INVEST_MEAN = 0.05
@@ -136,7 +136,9 @@ function simulateYear(s) {
     let medical = a < 70 ? 6 : a < 75 ? 12 : 18
     if (a >= 70 && pen) medical += pen.copayExtra
     if (s.flags.mobilityLimited) medical += 24
-    const living = BASE_RETIRE_LIVING * region.price * family.livingMult + family.rent + s.extraLiving
+    let living = BASE_RETIRE_LIVING * region.price * family.livingMult + family.rent + s.extraLiving
+    // 海外移住中：生活費は安くなるが、国保・介護保険から外れるので民間の医療保険が要る
+    if (s.flags.abroad && !s.flags.returned) living = living * ABROAD_LIVING_MULT + ABROAD_INSURANCE
     s.assets -= living + medical
   }
   // 期間限定の支出（介護費など）
@@ -179,6 +181,7 @@ function simulateYear(s) {
     dHeart -= lonely
   }
   if (hardship) dHeart -= 2
+  if (s.flags.isolated && a >= 75 && !s.flags.social) dHeart -= 1
   s.heart = Math.max(0, s.heart + dHeart)
   if (hardship) s.flags.hardship = true
   // 貯蓄が尽きた後は生活保護などのセーフティネットが下支えする
