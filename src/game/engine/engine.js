@@ -7,7 +7,7 @@ import {
 import { STEPS, EVENTS } from '../data/events.js'
 import { NPC_DATA, assignNpcAges, npcCumulative, npcHeart, npcPresent, reunionScene } from '../data/npcs.js'
 
-export const SAVE_VERSION = 2
+export const SAVE_VERSION = 3
 const ASSET_FLOOR = -300
 // NISA運用：年平均5%・標準偏差15%の値動き。暴落直後の2年は平均+12%の戻り相場
 const INVEST_MEAN = 0.05
@@ -127,6 +127,8 @@ function simulateYear(s) {
     // 配偶者自身の年金（開始年齢は60歳の選択で決める）
     const spouseAge = s.spousePensionAge || 65
     if (family.spousePension && a >= spouseAge) s.assets += family.spousePension * PENSION_TABLE[spouseAge].realMult * 12
+    // 障害年金は65歳まで（65歳からは老齢年金に切り替える想定）
+    if (s.flags.disabilityPension && a < 65) s.assets += s.flags.disabilityPension * 12
     // 熟年結婚した相手の年金（すでに受給中）
     if (s.flags.partnerPension) s.assets += s.flags.partnerPension * 12
     let medical = a < 70 ? 6 : a < 75 ? 12 : 18
@@ -227,7 +229,11 @@ function applyEffect(s, effect = {}) {
   }
   if (effect.flags) Object.assign(s.flags, effect.flags)
   if (effect.work) s.work = { ...effect.work }
-  if (effect.pensionAge) s.pensionAge = effect.pensionAge
+  if (effect.pensionAge) {
+    // 同級生の割り振りは最初に決めた年齢で固定する（障害年金で繰下げを諦めても入れ替わらない）
+    if (!s.npcAges) s.npcAges = assignNpcAges(effect.pensionAge)
+    s.pensionAge = effect.pensionAge
+  }
   if (effect.spousePensionAge) s.spousePensionAge = effect.spousePensionAge
   if (effect.extraLiving) s.extraLiving += effect.extraLiving
   return d
@@ -271,7 +277,8 @@ export function choiceAvailability(state, choice) {
 function stepApplies(state, step) {
   if (step.type !== 'event') return true
   const ev = EVENTS[step.id]
-  return !ev.when || ev.when(state, eventContext(state))
+  // 確率で起きるイベントのために、状態内の乱数を引く関数も渡す
+  return !ev.when || ev.when(state, eventContext(state), () => nextRandom(state))
 }
 
 export function currentStep(state) {
@@ -330,13 +337,13 @@ export function proceed(state) {
 // ---- 同窓会・エンディング用の比較データ ----
 export function getReunion(state, age) {
   return reunionScene({
-    age, state, profile: getProfile(state), ages: assignNpcAges(state.pensionAge),
+    age, state, profile: getProfile(state), ages: state.npcAges || assignNpcAges(state.pensionAge),
     fate: state.npcFate, playerCum: Math.round(state.cumPension),
   })
 }
 
 export function compareAt(state, age) {
-  const ages = assignNpcAges(state.pensionAge)
+  const ages = state.npcAges || assignNpcAges(state.pensionAge)
   const rows = [
     {
       id: 'player', name: 'あなた', pensionAge: state.pensionAge, isPlayer: true, present: true,

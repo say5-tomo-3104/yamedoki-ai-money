@@ -312,6 +312,15 @@ button { font: inherit; }
 .pension-table thead th { color: var(--ink-3); font-weight: 500; }
 .table-note { font-size: 0.78rem; color: var(--ink-3); }
 
+/* ---- 受給開始年齢の確認 ---- */
+.confirm { margin-top: 20px; padding: 16px 18px; background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+.confirm.is-warning { border-color: var(--down); border-left-width: 4px; }
+.confirm-title { margin: 0 0 8px; font-size: 1rem; }
+.confirm.is-warning .confirm-title { color: var(--down); }
+.confirm-list { margin: 0; padding-left: 1.2em; font-size: 0.9rem; }
+.confirm-list li + li { margin-top: 4px; }
+.confirm-note { font-weight: 500; margin: 12px 0 0; }
+
 /* ---- 結果 ---- */
 .result { margin-top: 20px; }
 .result-choice { font-size: 0.82rem; color: var(--ink-3); margin: 0; }

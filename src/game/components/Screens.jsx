@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { CHAPTERS, EVENTS } from '../data/events.js'
-import { PENSION_TABLE } from '../data/tables.js'
+import { PENSION_TABLE, PENSION_CAVEATS } from '../data/tables.js'
 import { NPC_DATA } from '../data/npcs.js'
 import {
   getProfile, eventContext, choiceAvailability, compareAt, getReunion, totalAssets,
@@ -126,6 +126,9 @@ export function EventScreen({ state, step, onChoose, onNext }) {
   const pending = state.pending
   const imageId = pending?.imageId || ev.imageId
   const choices = ev.choices(state, ctx)
+  // 年金の受給開始年齢は取り消せないので、注意点を見せてから確定させる
+  const [confirming, setConfirming] = useState(null)
+  const confirmChoice = choices.find((c) => c.id === confirming)
 
   return (
     <main className="screen">
@@ -136,7 +139,16 @@ export function EventScreen({ state, step, onChoose, onNext }) {
 
       {ev.pensionChoice && !pending && <PensionTable state={state} />}
 
-      {!pending && (
+      {!pending && confirmChoice && (
+        <PensionConfirm
+          age={confirmChoice.effect.pensionAge}
+          label={confirmChoice.label}
+          onOk={() => onChoose(confirmChoice.id)}
+          onBack={() => setConfirming(null)}
+        />
+      )}
+
+      {!pending && !confirmChoice && (
         <div className="choices">
           {choices.map((c) => {
             const av = choiceAvailability(state, c)
@@ -146,7 +158,7 @@ export function EventScreen({ state, step, onChoose, onNext }) {
                 type="button"
                 className={`choice${av.ok ? '' : ' is-locked'}`}
                 disabled={!av.ok}
-                onClick={() => onChoose(c.id)}
+                onClick={() => (ev.pensionChoice ? setConfirming(c.id) : onChoose(c.id))}
               >
                 <span className="choice-label">{c.label}</span>
                 {c.detail && <span className="choice-detail">{c.detail}</span>}
@@ -169,6 +181,23 @@ export function EventScreen({ state, step, onChoose, onNext }) {
         </section>
       )}
     </main>
+  )
+}
+
+function PensionConfirm({ age, label, onOk, onBack }) {
+  const caveat = PENSION_CAVEATS[age]
+  return (
+    <section className={`confirm${age === 65 ? '' : ' is-warning'}`} aria-live="polite">
+      <h3 className="confirm-title">⚠ {caveat.title}</h3>
+      <ul className="confirm-list">
+        {caveat.items.map((item) => <li key={item}>{item}</li>)}
+      </ul>
+      <p className="confirm-note">一度請求すると取り消せません。本当に「{label}」でよいですか？</p>
+      <div className="actions">
+        <button type="button" className="btn primary" onClick={onOk}>この年齢で決める</button>
+        <button type="button" className="btn ghost" onClick={onBack}>考え直す</button>
+      </div>
+    </section>
   )
 }
 

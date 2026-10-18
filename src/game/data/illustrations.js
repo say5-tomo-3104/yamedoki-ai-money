@@ -8,6 +8,7 @@ export const ILLUSTRATIONS = {
   img_countdown_57: { caption: 'カウントダウン', sub: '五十七歳、夏', sky: ['#bfe3f0', '#f1d9a6', '#c47a4f'], icon: 'car' },
   img_pension_60: { caption: '四つの数字の窓口', sub: '六十歳、春', sky: ['#f5dfe4', '#e7b8c2', '#8c6b7f'], icon: 'counter' },
   img_nisa_60: { caption: '退職金と、新NISAの口座', sub: '六十歳、春', sky: ['#e6eef0', '#bcd3d6', '#567a82'], icon: 'graph' },
+  img_illness_63: { caption: '病院の相談室', sub: '六十三歳、冬', sky: ['#e4e8ea', '#b9c2c7', '#5f6b72'], icon: 'counter' },
   img_romance_64: { caption: '思いがけない出会い', sub: '六十四歳、秋', sky: ['#f7dcc4', '#e8a98a', '#8a5a62'], icon: 'bench' },
   img_work_60_office: { caption: '同じデスク、違う肩書き', sub: '六十歳、春の夕方', sky: ['#dfe7ea', '#a8b8c0', '#4b5a66'], icon: 'desk' },
   img_work_60_free: { caption: '平日の午前十時', sub: '六十歳、春', sky: ['#cfe8f3', '#f4ecd2', '#9fc39a'], icon: 'bench' },

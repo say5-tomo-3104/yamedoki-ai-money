@@ -1,7 +1,7 @@
 // 50歳〜85歳の年代別イベントと小説フラグメント（SPEC.md 第6章）
 // effect の単位: assets=万円 / health・heart・memory=ポイント
 // fragment は文字列、または (state, ctx) => 文字列。効果を適用した後に評価される。
-import { PENSION_TABLE } from './tables.js'
+import { PENSION_TABLE, DISABILITY_PENSION_MONTHLY } from './tables.js'
 
 const g = (ctx, male, female) => (ctx.gender === 'male' ? male : female)
 const spouse = (ctx) => g(ctx, '妻', '夫')
@@ -30,6 +30,7 @@ export const STEPS = [
   { type: 'event', id: 'e60_work', age: 60 },
   { type: 'event', id: 'e60_invest', age: 60 },
   { type: 'reunion', age: 62, act: 2, imageId: 'img_reunion_62', title: '六十二歳の同窓会', place: '駅前の居酒屋「ほたる」' },
+  { type: 'event', id: 'e63_illness', age: 63 },
   { type: 'event', id: 'e64_romance', age: 64 },
   { type: 'chapter', chapter: 4, age: 65 },
   { type: 'event', id: 'e65_atm', age: 65 },
@@ -243,6 +244,50 @@ export const EVENTS = {
           fragment: '六十歳の春、私は生活費の一年ぶんだけを手元に残し、残りのすべてをNISAに注ぎ込んだ。「時間を味方につけるんです」と、動画の中の誰かが言っていた。六十歳の私に、味方になってくれる時間がどれほど残っているのか。その計算だけは、どのアプリも教えてくれなかった。',
         },
       ]
+    },
+  },
+
+  e63_illness: {
+    chapter: 3, act: 2, imageId: 'img_illness_63',
+    // 63歳で病に倒れる確率：基本7% ＋ 健康60未満で+6% ＋ 満身創痍(D4)で+5% ＋ 飲み続けた人は+3%
+    when: (s, ctx, rand) => {
+      const p = 0.07 + (s.health < 60 ? 0.06 : 0) + (ctx.body.id === 'D4' ? 0.05 : 0) + (s.flags.drinker ? 0.03 : 0)
+      return rand() < p
+    },
+    title: '六十三歳、突然の病と「障害年金」',
+    body: (s) => [
+      '冬の朝、洗面所で倒れた。脳梗塞だった。命は助かったが、右手と右足に麻痺が残り、仕事はもう続けられない。',
+      s.pensionAge === 60
+        ? '病院の相談室で、障害年金の話が出た。けれど、あなたは60歳で年金を繰上げ受給している。繰上げたあとに初診日がある病気では、原則として障害基礎年金は請求できない。'
+        : `病院の相談室で、障害年金（2級相当）を請求できると言われた。65歳まで手取りで月${DISABILITY_PENSION_MONTHLY}万円ほど。${s.pensionAge > 65 ? 'ただし障害年金を受け取る権利があると、老齢年金の繰下げは原則としてできなくなる。' : ''}`,
+    ],
+    choices: (s) => {
+      const common = { health: -25, extraLiving: 12, work: { perYear: 0, until: 0 } }
+      if (s.pensionAge === 60) {
+        return [{
+          id: 'accept', label: '障害年金を請求できない現実を受け止める', detail: '健康-25 / 心-15 / 仕事は続けられない / 医療費+12万/年',
+          effect: { ...common, heart: -15 },
+          note: '繰上げ受給をしていたため、障害基礎年金（事後重症）は請求できなかった。',
+          fragment: '六十三歳の冬、私は朝の洗面所で倒れた。脳梗塞だった。右手に残った痺れのせいで、湯呑みを持つのにも左手を添えるようになった。病院の相談室で、ソーシャルワーカーは書類をめくり、申し訳なさそうに首を振った。「繰上げ受給をされているので、障害年金は請求できないんです」。三年前、窓口で丸をつけたあの欄の小さな注意書きを、私は読んだはずだった。読んだはずなのに、自分のこととは思っていなかった。',
+        }]
+      }
+      const deferred = s.pensionAge > 65
+      const list = [{
+        id: 'claim', label: '障害年金を請求する',
+        detail: `健康-25 / 心-10 / 65歳まで手取り月${DISABILITY_PENSION_MONTHLY}万円${deferred ? ' / 繰下げはできなくなり、老齢年金は65歳から受給に変わる' : ''}`,
+        effect: { ...common, heart: -10, flags: { disabilityPension: DISABILITY_PENSION_MONTHLY }, ...(deferred ? { pensionAge: 65 } : {}) },
+        note: deferred ? '障害年金を受け取ることにした。そのかわり、繰下げの計画は65歳受給に変わった。' : '障害年金を受け取ることになった。',
+        fragment: `六十三歳の冬、私は朝の洗面所で倒れた。脳梗塞だった。右手に残った痺れのせいで、湯呑みを持つのにも左手を添えるようになった。病院の相談室で、ソーシャルワーカーが障害年金の書類を揃えてくれた。初診日の証明、診断書、病歴の申立書。紙の束は重かったが、それは私がまだこの社会の網の目の中にいるという、確かな手応えでもあった。${deferred ? 'そのかわり、待つと決めていた年金は、六十五歳から受け取ることになった。計画は、身体の都合で静かに書き換えられた。' : ''}`,
+      }]
+      if (deferred) {
+        list.push({
+          id: 'noclaim', label: '障害年金は請求せず、繰下げの計画を守る', detail: '健康-25 / 心-15 / 障害年金なし / 繰下げによる増額は維持',
+          effect: { ...common, heart: -15 },
+          note: '障害年金を請求しなかった。繰下げの計画はそのままだが、無年金の期間が続く。',
+          fragment: '六十三歳の冬、私は朝の洗面所で倒れた。脳梗塞だった。相談室で障害年金の話を聞いたが、私は首を横に振った。受け取れば、繰下げの計画は崩れる。右手の痺れをさすりながら、私は通帳の数字と、これから先の十年を、何度も天秤にかけた。',
+        })
+      }
+      return list
     },
   },
 

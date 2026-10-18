@@ -106,6 +106,7 @@ export default function App() {
   } else if (step.type === 'event') {
     screen = (
       <EventScreen
+        key={step.id}
         state={game}
         step={step}
         onChoose={(id) => update((g) => choose(g, id))}
