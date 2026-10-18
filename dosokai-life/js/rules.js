@@ -58,6 +58,7 @@
     父の年齢: (s) => parentAge(s, '父'),
     母の年齢: (s) => parentAge(s, '母'),
     パートナーの年齢: partnerAge,
+    がんの診断からの年数: (s) => (s.flags.has('持病がん') ? s.age - s.flagAge['持病がん'] : undefined),
   };
   // 確率表の「基準」に使えるもの
   const BASES = NUMERIC;
