@@ -204,6 +204,14 @@ def main():
         'source': os.path.basename(src),
         'events': convert_events(wb),
         'reunion': convert_reunion(wb),
+        'bridges': [
+            {**b, 'priority': b['priority'] in ('○', '〇', '1'),
+             'ageFrom': b['ageFrom'] if isinstance(b['ageFrom'], (int, float)) else 18,
+             'ageTo': b['ageTo'] if isinstance(b['ageTo'], (int, float)) else 65}
+            for b in convert_simple(wb, 'つなぎ', {
+                'ID': ('id', 'text'), '年齢(から)': ('ageFrom', 'num'), '年齢(まで)': ('ageTo', 'num'),
+                '条件': ('cond', 'text'), '優先': ('priority', 'text'), '文章': ('text', 'text')})
+            if b['id'] and b['text']],
         'classmates': convert_classmates(wb),
         'careers': convert_careers(wb),
         'tables': convert_simple(wb, '確率表', {
@@ -228,7 +236,7 @@ def main():
         f.write('// tools/convert.py が events.xlsx から作ったファイルです。手で編集しないでください。\n')
         f.write('window.GAME_DATA = ' + body + ';\n')
     print(f"変換しました: イベント {len(data['events'])} 件 / くじ {len(data['rare'])} 件 / "
-          f"同窓会 {len(data['reunion'])} 件 / 同級生 {len(data['classmates'])} 人 / "
+          f"同窓会 {len(data['reunion'])} 件 / つなぎ {len(data['bridges'])} 件 / 同級生 {len(data['classmates'])} 人 / "
           f"キャリア {len(data['careers'])} 種 / 確率表 {len(data['tables'])} 行 / 統計 {len(data['stats'])} 件 / 絵 {len(data['assets'])} 枚 → {dst}")
 
 

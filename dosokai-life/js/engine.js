@@ -160,6 +160,7 @@
         jobHuntAge: null, pending: [], used: {}, firedThisYear: new Set(), jobHistory: [], lastSeen: {},
         log: [], years: [], forceQueue: [], rareHits: [], dead: false,
         companyRng: DL.makeRng(seed, 'company'),
+        bridgeRng: DL.makeRng(seed, 'bridge'), bridgesUsed: new Set(),
       };
       for (const v of [birth.place, birth.wealth]) {
         for (const op of fx(CONFIG.birthEffects[v] || '')) if (op.op === 'stat') s.stats[op.stat] = clamp(s.stats[op.stat] + op.delta, 0, 100);
@@ -572,6 +573,7 @@
     function eligible(s, ev) {
       return s.age >= ev.ageFrom && s.age <= ev.ageTo
         && !(ev.once && s.used[ev.id])
+        && !(ev.type === '一行' && (s.used[ev.id] || 0) >= ev.variantCount) // 同じ一行は、一生に一度
         && !s.firedThisYear.has(ev.id)
         && ev.condFn(s);
     }
@@ -667,6 +669,17 @@
       }
     }
 
+    // 年のはじめの「つなぎ」の一文。一生に一度ずつ使い、景気が変わった年は景気の一文（優先）を選ぶ
+    function bridge(s) {
+      const ok = C.bridges.filter((b) => !s.bridgesUsed.has(b.id) && s.age >= b.ageFrom && s.age <= b.ageTo && b.condFn(s));
+      const top = ok.filter((b) => b.priority);
+      const list = top.length ? top : ok;
+      if (!list.length) return '';
+      const b = list[s.bridgeRng.int(list.length)];
+      s.bridgesUsed.add(b.id);
+      return b.textFn(s);
+    }
+
     // 年の初めに、決まっていた運命（同級生・祖父母の訃報）とローンを進める
     function startOfYear(s) {
       for (const c of C.classmates) if (s.hidden.classmateDeath[c.name] === s.age) setFlag(s, `${c.name}の訃報直後`);
@@ -739,7 +752,7 @@
         s.currentYear = { age, economy: econ(s), items: [], career: s.career };
         s.years.push(s.currentYear);
 
-        yield { kind: 'year', age, economy: econ(s) };
+        yield { kind: 'year', age, economy: econ(s), bridge: bridge(s) };
         yield* runPending(s);
         if (CONFIG.reunionAges.includes(age)) yield* reunion(s, age);
         startOfYear(s);

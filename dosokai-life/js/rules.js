@@ -335,6 +335,9 @@
       if (!TYPES.includes(e.type)) warn(e.id, '種類', e.type);
       if (typeof e.ageFrom !== 'number' || typeof e.ageTo !== 'number') warn(e.id, '年齢', `${e.ageFrom}〜${e.ageTo}`);
       const prob = compileProb(e.prob, e.id);
+      // 本文は「〔次〕」で区切ると、2回目・3回目に起きたときに次の文章になる（使い切ったら最後の文章のまま。
+      // 一行の出来事は、使い切ったらもう起きない）
+      const variants = String(e.text || '').split('〔次〕').map((x, i) => compileText(x.trim(), e.id, i ? `本文（${i + 1}回目）` : '本文'));
       return {
         ...e,
         probFn: prob.fn,
@@ -342,7 +345,8 @@
         condFn: compileCond(e.cond, e.id, '条件'),
         effectOps: compileEffect(e.effect, e.id, '効果'),
         probMods: compileProbMod(e.probMod, e.id),
-        textFn: compileText(e.text, e.id, '本文'),
+        textFn: (s) => variants[Math.min(Math.max((s.used[e.id] || 1) - 1, 0), variants.length - 1)](s),
+        variantCount: variants.length,
         staging: compileStaging(e.staging, e.id),
         choices: e.choices.map((c, i) => ({
           ...c,
@@ -359,6 +363,12 @@
       if (ids.has(e.id)) warnings.push(`${e.id} が2回出てきます（IDは1つの行にだけ付けてください）`);
       ids.add(e.id);
     }
+    // 年のはじめの「つなぎ」の一文（一生に一度ずつ）
+    const bridges = (data.bridges || []).map((b) => ({
+      ...b,
+      condFn: compileCond(b.cond, b.id, '条件'),
+      textFn: compileText(b.text, b.id, '文章'),
+    }));
     const reunion = data.reunion.map((r) => ({
       ...r,
       condFn: compileCond(r.cond, r.id, '条件'),
@@ -401,7 +411,7 @@
     });
 
     return {
-      events, rare, reunion, careers, classmates: data.classmates, people, partnerAttrs, stats,
+      events, rare, reunion, bridges, careers, classmates: data.classmates, people, partnerAttrs, stats,
       warnings, compileEffect, compileCond, tableRate, CAREERS,
     };
   }

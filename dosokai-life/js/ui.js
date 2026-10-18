@@ -246,7 +246,7 @@
   async function showYear(scene) {
     setSeason('winter');
     oneLinerCount = 0;
-    const head = el('div', { class: 'year-head' }, el('b', { text: `${scene.age}歳` }), `1月　今年の景気：${scene.economy}`);
+    const head = el('div', { class: 'year-head' }, el('b', { text: `${scene.age}歳` }), el('span', { class: 'bridge', text: scene.bridge || '' }));
     feed().append(head);
     scrollTo(head);
     await wait(pace('step') * 0.7);
