@@ -13,6 +13,8 @@
       parent: [['若い', 0.3], ['ふつう', 0.5], ['高め', 0.2]],
       sex: [['男', 0.512], ['女', 0.488]], // 出生性比 105：100（人口動態統計）
     },
+    // 祖父母4人と、亡くなりやすさの倍率（簡易生命表の男女差：65歳以降の死亡率は男が女のおよそ2倍）
+    grandparents: [['母方の祖父', 1.45], ['母方の祖母', 0.72], ['父方の祖父', 1.45], ['父方の祖母', 0.72]],
     // キャリアシートの「女性の割合」を、新卒全体の女性の割合で割って、求人の届きやすさにする（推計：学校基本調査）
     femaleShare: 0.45,
     birthEffects: { 都市: '手応え+5', 地方: 'つながり+5', ゆとり: 'お金+15 余白+5', きびしい: 'お金-15' },
@@ -138,13 +140,16 @@
         母: { gap: motherGap, state: '健在' },
         父: { gap: motherGap + fate.int(5), state: '健在' },
       };
-      // 祖父母4人：主人公が生まれたときの年齢から寿命をくじ引きし、18歳より後に亡くなる人だけを残す
-      for (let i = 0; i < 4; i++) {
+      // 祖父母4人：主人公が生まれたときの年齢から寿命をくじ引きする（祖父は亡くなりやすく、祖母は長生き）。
+      // grandparentDeaths は18〜65歳のあいだに亡くなる年齢だけ。grandparents は4人全員（null は65歳より後まで元気）
+      hidden.grandparents = [];
+      CONFIG.grandparents.forEach(([who, mult], i) => {
         const atBirth = (i < 2 ? parents.母.gap : parents.父.gap) + 24 + fate.int(9);
-        const dies = lifespan(fate, atBirth, 110, 1);
+        const dies = lifespan(fate, atBirth, 110, mult);
         const playerAge = dies == null ? null : dies - atBirth;
+        hidden.grandparents.push({ who, age: playerAge != null && playerAge <= CONFIG.lastAge ? playerAge : null });
         if (playerAge != null && playerAge >= CONFIG.firstAge && playerAge <= CONFIG.lastAge) hidden.grandparentDeaths.push(playerAge);
-      }
+      });
 
       const stats = {};
       for (const k of DL.STATS) stats[k] = CONFIG.startStat;
@@ -665,7 +670,12 @@
     // 年の初めに、決まっていた運命（同級生・祖父母の訃報）とローンを進める
     function startOfYear(s) {
       for (const c of C.classmates) if (s.hidden.classmateDeath[c.name] === s.age) setFlag(s, `${c.name}の訃報直後`);
-      if (s.hidden.grandparentDeaths.includes(s.age)) setFlag(s, '祖父母の訃報直後');
+      const gone = s.hidden.grandparents.filter((g) => g.age === s.age && g.age >= CONFIG.firstAge);
+      if (gone.length) {
+        s.grandparentNow = gone.map((g) => g.who).join('と');
+        s.grandparentSeen = (s.grandparentSeen || 0) + gone.length;
+        setFlag(s, '祖父母の訃報直後');
+      }
       const career = C.careers[s.career]; // キャリアの毎年の変化（40歳からは1年おき）
       if (career && (s.age < CONFIG.careerHalfFrom || s.age % 2 === 0)) {
         for (const op of career.yearlyOps) if (op.op === 'stat') applyStat(s, op.stat, op.delta, null);

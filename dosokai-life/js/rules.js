@@ -24,6 +24,8 @@
   // 条件の左辺（=, != で比べるもの） → [状態から値を取り出す関数, 取りうる値（null なら自由）]
   const KEYS = {
     性別: [(s) => s.sex, ['男', '女']],
+    // その年に亡くなった祖父母（同じ年に二人なら「母方の祖父と母方の祖母」になり、どれにも当たらない）
+    亡くなった祖父母: [(s) => s.grandparentNow || '', ['母方の祖父', '母方の祖母', '父方の祖父', '父方の祖母']],
     進路: [(s) => s.path, ['大学', '就職']],
     学部: [(s) => s.faculty || '', FACULTIES],
     景気: [(s) => s.economy[s.age - 18], ECONOMY],
@@ -60,6 +62,8 @@
     母の年齢: (s) => parentAge(s, '母'),
     パートナーの年齢: partnerAge,
     // 子を産む人の年齢（主人公が女性なら主人公、男性ならパートナー）。出産の確率表の基準に使う
+    見送った祖父母の数: (s) => s.grandparentSeen || 0,
+    残っている祖父母の数: (s) => s.hidden.grandparents.filter((g) => g.age === null || g.age > s.age).length,
     産む人の年齢: (s) => (s.sex === '女' ? s.age : partnerAge(s)),
     がんの診断からの年数: (s) => (s.flags.has('持病がん') ? s.age - s.flagAge['持病がん'] : undefined),
   };
@@ -74,6 +78,7 @@
     出会いの場面: (s) => (s.partner && s.partner.meetText) || '',
     年齢: (s) => String(s.age),
     子ども数: (s) => String(s.children.length),
+    祖父母: (s) => s.grandparentNow || '祖父母の一人',
   };
   const CMP = {
     '>=': (x, v) => x >= v, '<=': (x, v) => x <= v, '>': (x, v) => x > v,
