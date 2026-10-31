@@ -1,0 +1,17 @@
+{
+  "name": "yamedoki-motion",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "やめどきAI Money 15秒モーショングラフィック（HTML seek(t) → Playwright → ffmpeg）",
+  "scripts": {
+    "audio": "python3 audio.py",
+    "render": "node render.mjs",
+    "build": "npm run audio && npm run render"
+  },
+  "devDependencies": {
+    "@fontsource/anton": "^5.0.0",
+    "@fontsource/noto-sans-jp": "^5.0.0",
+    "@fontsource/jetbrains-mono": "^5.0.0"
+  }
+}

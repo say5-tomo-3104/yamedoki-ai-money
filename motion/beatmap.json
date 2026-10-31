@@ -1,0 +1,241 @@
+{
+  "fps": 30,
+  "framesPerBeat": 14,
+  "beatSec": 0.4666666666666667,
+  "bpm": 128.571,
+  "beats": 32,
+  "durationSec": 15.0,
+  "totalFrames": 450,
+  "sampleRate": 48000,
+  "kicks": [
+    {
+      "beat": 0,
+      "grid": 0.0,
+      "measured": 0.001,
+      "devMs": 1.0
+    },
+    {
+      "beat": 1,
+      "grid": 0.4667,
+      "measured": 0.468,
+      "devMs": 1.3
+    },
+    {
+      "beat": 2,
+      "grid": 0.9333,
+      "measured": 0.934,
+      "devMs": 0.7
+    },
+    {
+      "beat": 3,
+      "grid": 1.4,
+      "measured": 1.401,
+      "devMs": 1.0
+    },
+    {
+      "beat": 4,
+      "grid": 1.8667,
+      "measured": 1.868,
+      "devMs": 1.3
+    },
+    {
+      "beat": 5,
+      "grid": 2.3333,
+      "measured": 2.334,
+      "devMs": 0.7
+    },
+    {
+      "beat": 6,
+      "grid": 2.8,
+      "measured": 2.801,
+      "devMs": 1.0
+    },
+    {
+      "beat": 7,
+      "grid": 3.2667,
+      "measured": 3.268,
+      "devMs": 1.3
+    },
+    {
+      "beat": 10,
+      "grid": 4.6667,
+      "measured": 4.668,
+      "devMs": 1.3
+    },
+    {
+      "beat": 11,
+      "grid": 5.1333,
+      "measured": 5.134,
+      "devMs": 0.7
+    },
+    {
+      "beat": 12,
+      "grid": 5.6,
+      "measured": 5.601,
+      "devMs": 1.0
+    },
+    {
+      "beat": 13,
+      "grid": 6.0667,
+      "measured": 6.067,
+      "devMs": 0.3
+    },
+    {
+      "beat": 14,
+      "grid": 6.5333,
+      "measured": 6.534,
+      "devMs": 0.7
+    },
+    {
+      "beat": 15,
+      "grid": 7.0,
+      "measured": 7.001,
+      "devMs": 1.0
+    },
+    {
+      "beat": 16,
+      "grid": 7.4667,
+      "measured": 7.468,
+      "devMs": 1.3
+    },
+    {
+      "beat": 17,
+      "grid": 7.9333,
+      "measured": 7.934,
+      "devMs": 0.7
+    },
+    {
+      "beat": 18,
+      "grid": 8.4,
+      "measured": 8.401,
+      "devMs": 1.0
+    },
+    {
+      "beat": 19,
+      "grid": 8.8667,
+      "measured": 8.868,
+      "devMs": 1.3
+    },
+    {
+      "beat": 20,
+      "grid": 9.3333,
+      "measured": 9.334,
+      "devMs": 0.7
+    },
+    {
+      "beat": 21,
+      "grid": 9.8,
+      "measured": 9.801,
+      "devMs": 1.0
+    },
+    {
+      "beat": 22,
+      "grid": 10.2667,
+      "measured": 10.268,
+      "devMs": 1.3
+    },
+    {
+      "beat": 23,
+      "grid": 10.7333,
+      "measured": 10.734,
+      "devMs": 0.7
+    },
+    {
+      "beat": 24,
+      "grid": 11.2,
+      "measured": 11.201,
+      "devMs": 1.0
+    },
+    {
+      "beat": 25,
+      "grid": 11.6667,
+      "measured": 11.667,
+      "devMs": 0.3
+    },
+    {
+      "beat": 26,
+      "grid": 12.1333,
+      "measured": 12.134,
+      "devMs": 0.7
+    },
+    {
+      "beat": 27,
+      "grid": 12.6,
+      "measured": 12.601,
+      "devMs": 1.0
+    },
+    {
+      "beat": 28,
+      "grid": 13.0667,
+      "measured": 13.067,
+      "devMs": 0.3
+    }
+  ],
+  "maxKickDevMs": 1.3,
+  "data": {
+    "items": [
+      {
+        "category": "動画配信",
+        "price": 1490,
+        "freq": "daily",
+        "score": 20
+      },
+      {
+        "category": "音楽",
+        "price": 1080,
+        "freq": "daily",
+        "score": 14
+      },
+      {
+        "category": "AI",
+        "price": 2000,
+        "freq": "weekly",
+        "score": 47
+      },
+      {
+        "category": "クラウド",
+        "price": 130,
+        "freq": "monthly",
+        "score": 32
+      },
+      {
+        "category": "動画配信",
+        "price": 600,
+        "freq": "weekly",
+        "score": 28
+      },
+      {
+        "category": "ジム",
+        "price": 9800,
+        "freq": "weekly",
+        "score": 60
+      },
+      {
+        "category": "仕事・ツール",
+        "price": 1100,
+        "freq": "weekly",
+        "score": 35
+      },
+      {
+        "category": "音楽",
+        "price": 1280,
+        "freq": "daily",
+        "score": 17
+      },
+      {
+        "category": "電子書籍",
+        "price": 980,
+        "freq": "monthly",
+        "score": 43
+      },
+      {
+        "category": "クラウド",
+        "price": 250,
+        "freq": "monthly",
+        "score": 33
+      }
+    ],
+    "monthly": 18710,
+    "yearly": 224520
+  }
+}
