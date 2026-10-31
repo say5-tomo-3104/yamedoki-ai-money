@@ -1,7 +1,8 @@
 // ページの seek(t) を 1 フレームずつ呼んで撮影し、そのまま ffmpeg に流して音と合わせた mp4 にする。
 //
 //   node render.mjs                                   → 15 秒版 out/yamedoki-15s.mp4
-//   node render.mjs --project lyric                   → 歌詞版 out/something-great.mp4
+//   node render.mjs --project lyric                   → 歌詞版 out/something-great.mp4（縦 1080×1920）
+//   node render.mjs --project lyric-wide              → 歌詞版 out/something-great-wide.mp4（横 1920×1080）
 //   node render.mjs --project lyric --frames 0,900    → work/ に確認用の静止画だけ書き出す
 //   node render.mjs --project lyric --from 1800 --to 2400   → 一部分だけ mp4 にする（確認用）
 //
@@ -21,6 +22,14 @@ const WORK = join(ROOT, 'work')
 const PROJECTS = {
   yamedoki: { page: 'index.html', map: 'beatmap.json', audio: 'audio.wav', out: 'out/yamedoki-15s.mp4' },
   lyric: { page: 'lyric/index.html', map: 'lyric/data.json', audio: 'lyric/song.wav', out: 'out/something-great.mp4' },
+  'lyric-wide': {
+    page: 'lyric/index.html?aspect=wide',
+    map: 'lyric/data.json',
+    audio: 'lyric/song.wav',
+    out: 'out/something-great-wide.mp4',
+    width: 1920,
+    height: 1080,
+  },
 }
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -64,19 +73,21 @@ const { port } = server.address()
 const map = JSON.parse(await readFile(join(ROOT, P.map), 'utf8'))
 const fps = map.fps
 const total = map.totalFrames
+const width = P.width || 1080
+const height = P.height || 1920
 const browser = await chromium.launch()
 try {
-  const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 })
+  const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 })
   page.on('console', (m) => console.log('[page]', m.text()))
   page.on('pageerror', (e) => {
     console.error('[pageerror]', e)
     process.exitCode = 1
   })
-  await page.goto(`http://127.0.0.1:${port}/${P.page}?render=1`)
+  await page.goto(`http://127.0.0.1:${port}/${P.page}${P.page.includes('?') ? '&' : '?'}render=1`)
   const info = await page.evaluate(() => window.ready)
   console.log('ready:', JSON.stringify(info))
   if (info.missing) throw new Error('fonts not loaded')
-  const clip = { x: 0, y: 0, width: 1080, height: 1920 }
+  const clip = { x: 0, y: 0, width, height }
   const shot = async (f) => {
     await page.evaluate((t) => window.seek(t), f / fps)
     return page.screenshot({ clip })

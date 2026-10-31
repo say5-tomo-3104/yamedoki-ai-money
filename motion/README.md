@@ -63,7 +63,8 @@ npm run build        # = python3 audio.py && node render.mjs
 
 # 歌詞版 — Something Great (Sky)（3分14秒）
 
-`out/something-great.mp4`（1080×1920 / 30fps / 193.97秒 / 曲の音そのまま）
+- `out/something-great.mp4`（縦 1080×1920 / 30fps / 193.9秒 / 曲の音そのまま）
+- `out/something-great-wide.mp4`（横 1920×1080 / 同じ内容）
 
 元のリリック動画（横長・青いリングの 3D 背景）を、上の 15 秒版と同じ考え方（拍で動く・語が積み上がる・スラム・ワイプ・5 色）に置き換えたもの。
 
@@ -96,8 +97,12 @@ npm run build        # = python3 audio.py && node render.mjs
 ```bash
 cd motion
 python3 lyric/analyze.py <曲の mp4 か wav>    # → lyric/song.wav, lyric/data.json
-node render.mjs --project lyric               # → out/something-great.mp4
+node render.mjs --project lyric               # → out/something-great.mp4（縦）
+node render.mjs --project lyric-wide          # → out/something-great-wide.mp4（横）
 ```
+
+横長は同じ `scene.js` を `?aspect=wide` で開いたもの。座標は `scene.js` 冒頭のレイアウト表 `L`（縦・横の 2 通り）にまとめてあり、
+横では箱を 3 列、サビを 2 行、カウントは数字を左・残り時間を右、0 は左に数字・右に ALL SET / LET'S GO に組み替えている。
 
 - 歌詞・見せ方・背景色を変えるときは `lyric/lyrics.json` を編集して上の 2 行を再実行
 - 一部分だけ確認: `node render.mjs --project lyric --from 1800 --to 2400`（フレーム番号）
