@@ -1,7 +1,7 @@
 {
  "fps": 30,
- "durationSec": 45.0,
- "totalFrames": 1350,
+ "durationSec": 45.024,
+ "totalFrames": 1351,
  "bpm": 103.8,
  "beats": [
   0.1168,
@@ -164,7 +164,7 @@
   2
  ],
  "downbeatPhase": 0,
- "countdownTo": 45.0,
+ "countdownTo": 45.024,
  "beatSource": "from Suno audio-analysis",
  "key": "Eb major",
  "title": "SUNO-TEST",
@@ -622,7 +622,7 @@
    "lines": true,
    "start": 71.5,
    "deco": "arrow",
-   "end": 77.68090882368199,
+   "end": 77.72240762194596,
    "bg": "ink"
   }
  ]
