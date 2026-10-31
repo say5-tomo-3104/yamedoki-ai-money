@@ -56,5 +56,49 @@ npm run build        # = python3 audio.py && node render.mjs
 ```
 
 - 必要なもの: Python 3 + numpy、Node.js、ffmpeg、Playwright（Chromium）
-- 確認用の静止画だけ出す: `node render.mjs --frames 0,140,252,420` → `work/still_*.png`
+- 確認用の静止画だけ出す: `node render.mjs --frames 0,140,252,420` → `work/yamedoki_*.png`
 - ブラウザでプレビュー: `python3 -m http.server` を `motion/` で起動して `index.html` を開き、クリックで再生（音と同期）
+
+---
+
+# 歌詞版 — Something Great (Sky)（3分14秒）
+
+`out/something-great.mp4`（1080×1920 / 30fps / 193.97秒 / 曲の音そのまま）
+
+元のリリック動画（横長・青いリングの 3D 背景）を、上の 15 秒版と同じ考え方（拍で動く・語が積み上がる・スラム・ワイプ・5 色）に置き換えたもの。
+
+## 曲の解析（`lyric/analyze.py`）
+
+| 手順 | 中身 |
+| --- | --- |
+| 拍の追跡 | キック帯域（35〜110Hz）の立ち上がりを 1ms 単位で計算し、動的計画法で 1 拍ずつ追う。この曲はテンポが 134〜138 BPM で揺れているので、固定グリッドではなく実測の拍（438 拍）を使う |
+| 拍の位置合わせ | 各拍をキックの山の立ち上がりに寄せ、全帯域のオンセットと区間ごとに照合して補正（実行時に `onset check` で全区間 −50ms ± 20ms ＝ 立ち上がりに一致していることを表示） |
+| 小節の頭 | 拍ごとの和音の変化量が最も大きい位相（確信度は低め。HUD の小節表示にだけ使用） |
+| 歌詞 | 元動画を ffmpeg でフレーム差分 → 表示が変わった 115 か所の静止画から読み取った歌詞と秒数を `lyric/lyrics.json` に記録。拍番号に変換して 16 分音符に寄せる |
+
+## 見せ方（`lyric/scene.js`）
+
+| テンプレート | 使う歌詞 | 動き |
+| --- | --- | --- |
+| `count` | MINUTES TO GO 3 / 2 / 1 | 巨大な数字 + 残り時間 + 拍ごとに埋まるブロック |
+| `stack` | READY TO SHINE / ON ITS WAY など | 語が積み上がり、最新の語だけアクセント色 |
+| `hero` | LIGHT / MAGIC / GREAT / SPARKLE / STEP / STAR / READY | 前置き → 主役の語をスラム（フラッシュ）→ 後置き。主役ごとに添える図形が変わる（光線・イコライザー・矢印・成長する円・階段・星） |
+| `two` | サビの READY TO SHINE / READY TO GLOW | 前半は左寄せ、後半は右寄せのアクセント色 |
+| `giant` | TAKE A BREATH… / LET YOUR DREAMS… / YOU DON'T HAVE… | 1 語ずつ画面いっぱいに。上に歌詞全体の行 |
+| `boxes` | SOMETHING WONDERFUL… / HAND IN HAND… など | 1 語ずつ箱に入って並ぶ。箱には実測の秒数 |
+| `pair` | SIDE BY SIDE | 左の SIDE と右の SIDE |
+| `countdown` → `zero` → `title` | FOUR THREE TWO ONE → 0 ALL SET LET'S GO | 1 語ごとに背景色が変わる → 最後にタイトル |
+
+8 拍以上続くフレーズでは、下段の図形が 1 拍ごとに 1 つずつ増える（どの拍にも必ず動きがある）。
+
+## 作り直し方
+
+```bash
+cd motion
+python3 lyric/analyze.py <曲の mp4 か wav>    # → lyric/song.wav, lyric/data.json
+node render.mjs --project lyric               # → out/something-great.mp4
+```
+
+- 歌詞・見せ方・背景色を変えるときは `lyric/lyrics.json` を編集して上の 2 行を再実行
+- 一部分だけ確認: `node render.mjs --project lyric --from 1800 --to 2400`（フレーム番号）
+- 曲の音（`lyric/song.wav`）はリポジトリに入れていない

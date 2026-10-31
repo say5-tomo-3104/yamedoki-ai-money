@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Something Great (Sky) — lyric motion</title>
+    <link rel="stylesheet" href="../node_modules/@fontsource/anton/400.css" />
+    <link rel="stylesheet" href="../node_modules/@fontsource/jetbrains-mono/700.css" />
+    <style>
+      html, body { margin: 0; background: #111; }
+      canvas { display: block; }
+      body.preview { display: grid; place-items: center; height: 100vh; overflow: hidden; }
+      body.preview canvas { height: 96vh; width: auto; cursor: pointer; }
+      body.preview .hint { position: fixed; bottom: 8px; color: #aaa; font: 12px monospace; }
+    </style>
+  </head>
+  <body>
+    <canvas id="c" width="1080" height="1920"></canvas>
+    <script type="module" src="scene.js"></script>
+  </body>
+</html>
