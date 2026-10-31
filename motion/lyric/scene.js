@@ -58,6 +58,16 @@ const KINDS = ['circle', 'square', 'triangle']
 let D = null
 let BEATS = []
 let PHRASES = []
+let BARPOS = [] // 1..4 for every beat
+let BARNO = [] // bar number (1-based) for every beat
+function initBars() {
+  BARPOS = BEATS.map((_, i) => (D.barPos ? D.barPos[i] : ((((i - D.downbeatPhase) % 4) + 4) % 4) + 1))
+  let n = 0
+  BARNO = BARPOS.map((bp) => {
+    if (bp === 1) n++
+    return Math.max(1, n)
+  })
+}
 
 function T(b) {
   const n = BEATS.length
@@ -486,7 +496,8 @@ function tplStack(t, p, th) {
   let size = layoutLines(lines, X1 - X0, L.stackH, L.stackMax)
   const perWord = p.words.map((w) => [w])
   const wordSize = layoutLines(perWord, X1 - X0, L.stackH, L.stackMax)
-  if (WIDE ? wordSize > size : size < 170) {
+  // p.lines: the line breaks were chosen on purpose (suno_import.py), keep them
+  if (!p.lines && (WIDE ? wordSize > size : size < 170)) {
     lines = perWord
     size = wordSize
   }
@@ -696,7 +707,7 @@ function tplCount(t, p, th) {
   ctx.textBaseline = 'alphabetic'
   ctx.fillText(num, 0, 0)
   ctx.restore()
-  const rem = Math.max(0, 180 - t)
+  const rem = Math.max(0, (D.countdownTo ?? 180) - t)
   const mm = Math.floor(rem / 60)
   const ss = String(Math.floor(rem % 60)).padStart(2, '0')
   riseWord(`T-${mm}:${ss}`, X1, WIDE ? 520 : 700, WIDE ? 170 : 150, th.fg, dt, { align: 'right' })
@@ -745,9 +756,12 @@ function tplTitle(t, p, th) {
   ;[COL.red, COL.blue, COL.ink].forEach((c, k) => {
     shape(KINDS[k], CX - 110 + k * 110, WIDE ? 200 : 520, 76, c, spring(since(t, b0 + 1 + 0.5 * k), 40, 0.66))
   })
-  riseWord('SOMETHING', CX, WIDE ? 370 : 800, WIDE ? 130 : 170, th.fg, since(t, b0), { align: 'center' })
-  slam('GREAT', CX, WIDE ? 600 : 1080, fitSize('GREAT', WIDE ? 1500 : 960, WIDE ? 380 : 560), th.accent, since(t, b0 + 0.5))
-  riseWord('IS ON ITS WAY.', CX, WIDE ? 860 : 1420, WIDE ? 80 : 96, th.fg, since(t, b0 + 2), { align: 'center' })
+  const small = p.small ?? 'SOMETHING'
+  const big = p.big ?? 'GREAT'
+  const tail = p.tail ?? 'IS ON ITS WAY.'
+  riseWord(small, CX, WIDE ? 370 : 800, Math.min(WIDE ? 130 : 170, fitSize(small, X1 - X0, 170)), th.fg, since(t, b0), { align: 'center' })
+  slam(big, CX, WIDE ? 600 : 1080, fitSize(big, WIDE ? 1500 : 960, WIDE ? 380 : 560), th.accent, since(t, b0 + 0.5))
+  riseWord(tail, CX, WIDE ? 860 : 1420, Math.min(WIDE ? 80 : 96, fitSize(tail, X1 - X0, 96)), th.fg, since(t, b0 + 2), { align: 'center' })
   ctx.save()
   ctx.globalAlpha = 0.7 * spring(since(t, b0 + 3), 30, 0.9)
   ctx.font = fnt(22, MONO, 700)
@@ -756,13 +770,33 @@ function tplTitle(t, p, th) {
   ctx.textBaseline = 'middle'
   const cy0 = WIDE ? 950 : 1700
   ctx.fillText(`MUSIC   ${D.title}`, CX, cy0)
-  ctx.fillText(`BEATS   ${BEATS.length} tracked from the audio · ~${D.bpm} BPM`, CX, cy0 + (WIDE ? 35 : 40))
+  ctx.fillText(`BEATS   ${BEATS.length} ${D.beatSource ?? 'tracked from the audio'} · ~${D.bpm} BPM`, CX, cy0 + (WIDE ? 35 : 40))
   ctx.fillText('MOTION  html seek(t) → playwright → ffmpeg', CX, cy0 + (WIDE ? 70 : 80))
   ctx.restore()
   return th
 }
 
+const INST_BG = ['blue', 'yellow', 'red', 'ink', 'cream']
+function tplInst(t, p, th0) {
+  const beat = Math.max(0, Math.min(BEATS.length - 1, Math.floor(beatAt(t) + 1e-6)))
+  const pos = BARPOS[beat]
+  const th = THEME[INST_BG[(BARNO[beat] + p.idx) % INST_BG.length]] || th0
+  const first = beat - (pos - 1)
+  flashBg(t, th, [p.start, first])
+  rings(t, th)
+  hop(t, p, th, WIDE
+    ? { x0: X1 - 260, x1: X1 - 60, y0: L.top + 20, y1: L.top + 100, rMin: 30, rMax: 70 }
+    : { y0: 1300, y1: 1450, rMin: 40, rMax: 120 })
+  riseWord(p.label || 'INSTRUMENTAL', X0, WIDE ? L.top + 50 : 360, WIDE ? 64 : 72, th.fg, since(t, p.start))
+  const dt = since(t, beat)
+  slam(String(pos), CX, WIDE ? 520 : 980, WIDE ? 620 : 900, pos === 1 ? th.accent : th.fg, dt, { s0: 1.35, center: WIDE })
+  tag(`bar ${BARNO[beat]} · beat ${pos} = ${BEATS[beat].toFixed(3)} s`, X0, WIDE ? 770 : 1360, th, { dt })
+  blocks(t, [first, first + 1, first + 2, first + 3], 4, th, WIDE ? { y: 830, h: 80 } : { y: 1540, h: 110 })
+  return th
+}
+
 const TPL = {
+  inst: tplInst,
   stack: tplStack,
   hero: tplHero,
   giant: tplGiant,
@@ -783,8 +817,8 @@ function hud(t, th, p) {
   if (p.s) tag(p.s, 56, 50, th, { size: 24 })
   const bt = beatAt(t)
   const beat = Math.max(0, Math.min(BEATS.length - 1, Math.floor(bt + 1e-6)))
-  const inBar = (((beat - D.downbeatPhase) % 4) + 4) % 4
-  const bar = Math.floor((beat - D.downbeatPhase) / 4) + 1
+  const inBar = BARPOS[beat] - 1
+  const bar = BARNO[beat]
   for (let k = 0; k < 4; k++) {
     ctx.fillStyle = k === inBar ? th.accent : th.fg
     ctx.beginPath()
@@ -797,7 +831,7 @@ function hud(t, th, p) {
   ctx.textBaseline = 'middle'
   ctx.fillText(`${Math.max(1, bar)}.${inBar + 1}`, W - 54, 72)
   tag(`beat ${String(beat + 1).padStart(3, '0')} → ${BEATS[beat].toFixed(3)} s`, 56, H - 104, th, { size: 22 })
-  const rem = Math.max(0, 180 - t)
+  const rem = Math.max(0, (D.countdownTo ?? 180) - t)
   tag(`T-${Math.floor(rem / 60)}:${String(Math.floor(rem % 60)).padStart(2, '0')}`, W - 56, H - 104, th, {
     size: 22,
     align: 'right',
@@ -861,16 +895,19 @@ function prepare(p, idx) {
       step = Math.min(1, (next - g.beat) / n)
       step = Math.max(0.25, Math.floor(step * 4) / 4)
     }
-    g.words.forEach((s, k) => words.push({ s, k, gi, beat: g.beat + k * step, role: g.role || 'line', br: k === 0 && !!g.br }))
+    g.words.forEach((s, k) =>
+      words.push({ s, k, gi, beat: g.wordBeats ? g.wordBeats[k] : g.beat + k * step, role: g.role || 'line', br: k === 0 && !!g.br }),
+    )
   })
   p.words = words
   p.idx = idx
 }
 
 window.ready = (async () => {
-  D = await (await fetch('data.json')).json()
+  D = await (await fetch(params.get('data') || 'data.json')).json()
   BEATS = D.beats
   PHRASES = D.phrases
+  initBars()
   PHRASES.forEach(prepare)
   RECORD = true
   for (let f = 0; f < D.totalFrames; f += 2) seek(f / D.fps)
@@ -888,9 +925,9 @@ if (!params.has('render')) {
   document.body.classList.add('preview')
   const hint = document.createElement('div')
   hint.className = 'hint'
-  hint.textContent = 'click to play / pause (needs song.wav next to this file)'
+  hint.textContent = 'click to play / pause (?data=…/data.json&audio=…/song.mp3 for other songs)'
   document.body.append(hint)
-  const audio = new Audio('song.wav')
+  const audio = new Audio(params.get('audio') || 'song.wav')
   const loop = () => {
     seek(audio.currentTime)
     if (!audio.paused) requestAnimationFrame(loop)

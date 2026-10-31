@@ -1,3 +1,5 @@
 work/
 audio.wav
 lyric/song.wav
+songs/*/song.wav
+songs/*/song.mp3

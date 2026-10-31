@@ -107,3 +107,37 @@ node render.mjs --project lyric-wide          # → out/something-great-wide.mp4
 - 歌詞・見せ方・背景色を変えるときは `lyric/lyrics.json` を編集して上の 2 行を再実行
 - 一部分だけ確認: `node render.mjs --project lyric --from 1800 --to 2400`（フレーム番号）
 - 曲の音（`lyric/song.wav`）はリポジトリに入れていない
+
+---
+
+# Suno MCP の曲から自動で作る（`lyric/suno_import.py`）
+
+Claude Code に Suno MCP をつなぐと、**Claude Code 経由で作った曲**について次の 2 つが取れる（suno.com のサイトで作った曲は 2026-11 時点のベータでは `not_found`）。
+
+| ツール | 中身 | 使い道 |
+| --- | --- | --- |
+| `audio-analysis` | すべての拍の時刻と `bar_position`（1 = 小節の頭）、BPM、拍子、キー、構成 | 拍のグリッド（推定不要） |
+| `audio-lyrics-alignment` | 単語ごとの歌われる時刻（`[Verse]` などの見出しと改行つき） | 歌詞を出すタイミング（元動画からの読み取り不要） |
+
+## 手順
+
+1. PC の Claude Code で曲を作る（`audio-create` → `audio-wait`）。`audio-analysis` と `audio-lyrics-alignment` を `status` が `complete` になるまで呼び、結果を加工せずに保存。`audio-download` で mp3 を保存（ダウンロードクレジットを使う場合あり）
+2. `songs/<名前>/` に置く: `audio_analysis.json`、`lyrics_alignment.json`、`song.mp3`（任意で `meta.json` = 最後のタイトル画面の文字）
+3. 変換して書き出す
+
+```bash
+python3 lyric/suno_import.py songs/<名前>     # → songs/<名前>/data.json（場面の一覧を表示）
+node render.mjs --song <名前>                  # → out/<名前>.mp4（縦）
+node render.mjs --song <名前> --wide           # → out/<名前>-wide.mp4（横）
+```
+
+## 自動で決めること
+
+- 歌詞は 1 行 = 1 場面。単語は lyrics-alignment の実測時刻で出す（16 分音符には寄せない）
+- 行の長さと言葉から見せ方を選ぶ: サビの頭は `two`（句読点の位置で 2 つに分ける）+ フラッシュ、3 語以下は `stack`、それ以外は `hero` / `boxes` / `stack` / `giant` を順に（同じものが続かないように）
+- `hero` は一番長い語が主役。LIGHT・STAR・STEP・SING・GROW・WAY などの語には対応する図形を添える
+- `stack` の改行は句読点を優先し、1 行 3 語までに均等に分ける
+- 歌のない 2 小節以上には `inst`（拍の番号 1〜4 が毎拍着地し、背景は小節ごとに変わる）。最後に余白があればタイトル画面
+- 背景色は 5 色を順に、区切りの頭はワイプ
+
+`songs/suno-test/` は動作確認用に 45 秒で作ったテスト曲のデータ（音声は未取得）。

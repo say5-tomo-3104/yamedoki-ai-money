@@ -5,9 +5,11 @@
 //   node render.mjs --project lyric-wide              → 歌詞版 out/something-great-wide.mp4（横 1920×1080）
 //   node render.mjs --project lyric --frames 0,900    → work/ に確認用の静止画だけ書き出す
 //   node render.mjs --project lyric --from 1800 --to 2400   → 一部分だけ mp4 にする（確認用）
+//   node render.mjs --song suno-test [--wide]          → Suno MCP の曲 songs/suno-test/ → out/suno-test(-wide).mp4
 //
 // Playwright と Chromium が必要（この環境ではグローバルに入っているものを使う）。
 import { createServer } from 'node:http'
+import { existsSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { dirname, extname, join, resolve, sep } from 'node:path'
@@ -45,8 +47,22 @@ const arg = (name) => {
   const i = process.argv.indexOf(name)
   return i > 0 ? process.argv[i + 1] : null
 }
-const projectName = arg('--project') || 'yamedoki'
-const P = PROJECTS[projectName]
+// --song <dir>: a song made with Suno MCP, prepared by lyric/suno_import.py in songs/<dir>/
+const song = arg('--song')
+const wide = process.argv.includes('--wide')
+if (song) {
+  const dir = `songs/${song}`
+  const audioFile = ['song.wav', 'song.mp3'].map((f) => `${dir}/${f}`).find((f) => existsSync(join(ROOT, f)))
+  PROJECTS[song] = {
+    page: `lyric/index.html?data=../${dir}/data.json${wide ? '&aspect=wide' : ''}`,
+    map: `${dir}/data.json`,
+    audio: audioFile,
+    out: `out/${song}${wide ? '-wide' : ''}.mp4`,
+    ...(wide ? { width: 1920, height: 1080 } : {}),
+  }
+}
+const projectName = song ? `${song}${wide ? '-wide' : ''}` : arg('--project') || 'yamedoki'
+const P = PROJECTS[song || projectName]
 if (!P) throw new Error(`unknown project ${projectName}`)
 const stills = arg('--frames')?.split(',').map(Number)
 
@@ -103,6 +119,7 @@ try {
   } else {
     const from = Number(arg('--from') || 0)
     const to = Math.min(total, Number(arg('--to') || total))
+    if (!P.audio) throw new Error('audio file not found (put song.wav or song.mp3 next to data.json)')
     const out = join(ROOT, arg('--out') || (from > 0 || to < total ? `work/${projectName}_${from}-${to}.mp4` : P.out))
     await mkdir(dirname(out), { recursive: true })
     const ff = spawn(
