@@ -98,6 +98,7 @@ function spring(dt, w = 42, z = 0.74) {
 }
 const clamp01 = (x) => Math.max(0, Math.min(1, x))
 const easeOutExpo = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : 1 - Math.pow(2, -10 * x))
+const easeOutCubic = (x) => 1 - Math.pow(1 - clamp01(x), 3)
 const lerp = (a, b, p) => a + (b - a) * p
 const rand = (seed) => {
   const x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453
@@ -776,6 +777,422 @@ function tplTitle(t, p, th) {
   return th
 }
 
+// ---------------------------------------------------------------------------
+// motions after the "Opus 5.5 Motion Graphics" sheet (numbers as on the sheet)
+// ---------------------------------------------------------------------------
+
+function linesOf(p) {
+  const lines = []
+  p.words.forEach((w) => {
+    if (!lines.length || w.k === 0) lines.push([])
+    lines[lines.length - 1].push(w)
+  })
+  return lines
+}
+
+// lead words on top, as in the hero layout; returns the size used
+function leadLine(t, p, th, lead) {
+  if (!lead.length) return 0
+  const size = Math.min(L.leadMax, layoutLines([lead], X1 - X0, 400, L.leadMax))
+  drawLines(t, [lead], th, { size, top: L.top, colorOf: () => th.fg })
+  return size
+}
+
+// 09 masked type: the outline rises through a mask line, then fills from the bottom up
+function tplMask(t, p, th) {
+  flashBg(t, th, p.enter === 'flash' ? [p.start] : [])
+  rings(t, th)
+  const lines = linesOf(p)
+  const size = layoutLines(lines, X1 - X0, L.stackH, L.stackMax)
+  const ch = capH(size)
+  const space = size * 0.24
+  const pad = size * 0.08
+  const newest = p.words[newestIdx(t, p.words)]
+  const ruleP = easeOutExpo(since(t, p.start) / 0.6)
+  lines.forEach((ws, li) => {
+    const base = L.top + ch + li * ch * 1.22
+    ctx.save()
+    ctx.globalAlpha = 0.5
+    ctx.fillStyle = th.fg
+    ctx.fillRect(X0, base + pad, (X1 - X0) * ruleP, 3)
+    ctx.restore()
+    let x = X0
+    ws.forEach((w) => {
+      const ww = textW(w.s, size)
+      const dt = since(t, w.beat)
+      if (dt >= 0) {
+        const y = base + (1 - spring(dt, 40, 0.8)) * (ch + pad * 2)
+        const fillP = easeOutExpo((dt - 0.14) / 0.4)
+        ctx.save()
+        ctx.beginPath()
+        ctx.rect(x - 10, base - ch - pad * 2, ww + 20, ch + pad * 3)
+        ctx.clip()
+        ctx.font = fnt(size)
+        ctx.textBaseline = 'alphabetic'
+        ctx.lineWidth = Math.max(2, size * 0.022)
+        ctx.strokeStyle = th.fg
+        ctx.strokeText(w.s, x, y)
+        if (fillP > 0) {
+          const hh = (ch + pad * 3) * fillP
+          ctx.beginPath()
+          ctx.rect(x - 10, base + pad - hh, ww + 20, hh)
+          ctx.clip()
+          ctx.fillStyle = w === newest ? th.accent : th.fg
+          ctx.fillText(w.s, x, y)
+        }
+        ctx.restore()
+      }
+      x += ww + space
+    })
+  })
+  const bottom = L.top + lines.length * ch * 1.22
+  tag('rising through the mask', X0, Math.min(bottom + 40, WIDE ? 830 : 1500), th, { dt: since(t, p.start) })
+  if (p.end - p.start >= 8) pulseRow(t, p, th)
+  return th
+}
+
+// 10 elastic type: the held word stretches while it is sung and springs back when it ends
+function tplElastic(t, p, th) {
+  const hero = p.words.find((w) => w.role === 'hero')
+  flashBg(t, th, p.enter === 'flash' ? [p.start] : [])
+  rings(t, th)
+  const lead = p.words.filter((w) => w.role === 'lead')
+  const tail = p.words.filter((w) => w.role === 'tail')
+  const leadSize = leadLine(t, p, th, lead)
+  if (!hero) return th
+  const t0 = T(hero.beat)
+  const t1 = Math.max(T(hero.end), t0 + 0.3)
+  const MAX = 0.6
+  const sx =
+    t < t0 ? 1 : t < t1 ? 1 + MAX * easeOutCubic((t - t0) / (t1 - t0)) : Math.max(0.75, 1 + MAX * (1 - spring(t - t1, 26, 0.32)))
+  const letters = [...hero.s]
+  const top = (lead.length ? L.top + capH(leadSize) : L.top - 60) + 60
+  const bottom = tail.length ? (WIDE ? 790 : 1400) : WIDE ? 870 : 1500
+  const size = Math.min(fitSize(hero.s, (X1 - X0) / (1 + MAX * 1.35), WIDE ? 480 : 600), ((bottom - top) * 100) / capH(100))
+  const ch = capH(size)
+  const base = (top + bottom) / 2 + ch / 2
+  const spacing = (sx - 1) * size * 0.32
+  const ws = letters.map((c) => textW(c, size))
+  const total = ws.reduce((a, b) => a + b * sx, 0) + spacing * (letters.length - 1)
+  const dt = since(t, hero.beat)
+  if (dt >= 0) {
+    // baseline guide
+    ctx.save()
+    ctx.globalAlpha = 0.45
+    ctx.fillStyle = th.fg
+    ctx.fillRect(X0, base + 6, X1 - X0, 3)
+    ctx.restore()
+    const rise = spring(dt, 44, 0.8)
+    ctx.save()
+    ctx.beginPath()
+    ctx.rect(0, base - ch * 1.3, W, ch * 1.3 + 8)
+    ctx.clip()
+    ctx.font = fnt(size)
+    ctx.textBaseline = 'alphabetic'
+    ctx.fillStyle = t >= t0 && t < t1 ? th.accent : th.fg
+    let x = CX - total / 2
+    letters.forEach((c, k) => {
+      ctx.save()
+      ctx.translate(x, base + (1 - rise) * ch * 1.2)
+      ctx.scale(sx, 1 - (sx - 1) * 0.06)
+      ctx.fillText(c, 0, 0)
+      ctx.restore()
+      x += ws[k] * sx + spacing
+    })
+    ctx.restore()
+    ctx.save()
+    ctx.font = fnt(24, MONO, 700)
+    ctx.fillStyle = th.fg
+    ctx.textBaseline = 'alphabetic'
+    ctx.textAlign = 'right'
+    ctx.fillText(`wdth ${Math.round(sx * 100)}  wght 400`, X1, base - ch - 24)
+    ctx.textAlign = 'left'
+    ctx.fillText(t < t1 ? 'baseline · held' : 'baseline · at rest', X0, base + 44)
+    ctx.restore()
+  }
+  if (tail.length) {
+    const size2 = Math.min(L.tailMax, layoutLines([tail], X1 - X0, 300, L.tailMax))
+    drawLines(t, [tail], th, { size: size2, top: base + 90, newest: p.words[newestIdx(t, p.words)] })
+  }
+  tag(`"${hero.s}" held ${(t1 - t0).toFixed(2)} s`, X1, WIDE ? 890 : 1600, th, { dt, align: 'right' })
+  return th
+}
+
+// 11 text → layout: the line arrives as one sentence, then re-sets itself around its key word
+function tplRelayout(t, p, th) {
+  flashBg(t, th, p.enter === 'flash' ? [p.start] : [])
+  rings(t, th)
+  const ws = p.words
+  const key = ws.find((w) => w.role === 'hero') || ws.reduce((a, b) => (b.s.length >= a.s.length ? b : a))
+  const ki = ws.indexOf(key)
+  const last = Math.max(...ws.map((w) => w.beat))
+  const tB = Math.max(last + 0.25, Math.min(last + 1, p.end - 1.5))
+  // layout A: one centred sentence
+  const sA = Math.min(WIDE ? 100 : 86, fitSize(ws.map((w) => w.s).join(' '), X1 - X0, 100))
+  const spA = sA * 0.26
+  const wA = ws.map((w) => textW(w.s, sA))
+  let xa = CX - (wA.reduce((a, b) => a + b, 0) + spA * (ws.length - 1)) / 2
+  const A = ws.map((w, k) => {
+    const r = { x: xa, y: L.cy + capH(sA) / 2, s: sA }
+    xa += wA[k] + spA
+    return r
+  })
+  // layout B: key word big in the middle, the words before it above (left), after it below (right)
+  const before = ws.slice(0, ki)
+  const after = ws.slice(ki + 1)
+  const sKey = fitSize(key.s, X1 - X0, WIDE ? 380 : 440)
+  const keyBase = L.cy + capH(sKey) / 2
+  const small = (list) => (list.length ? Math.min(WIDE ? 96 : 90, fitSize(list.map((w) => w.s).join(' '), X1 - X0, 96)) : 0)
+  const sBf = small(before)
+  const sAf = small(after)
+  const B = []
+  let xb = X0
+  before.forEach((w) => {
+    B.push({ x: xb, y: keyBase - capH(sKey) - 50, s: sBf })
+    xb += textW(w.s, sBf) + sBf * 0.26
+  })
+  B.push({ x: CX - textW(key.s, sKey) / 2, y: keyBase, s: sKey })
+  const afterW = after.reduce((a, w) => a + textW(w.s, sAf), 0) + sAf * 0.26 * Math.max(0, after.length - 1)
+  xb = X1 - afterW
+  after.forEach((w) => {
+    B.push({ x: xb, y: keyBase + capH(sAf) + 60, s: sAf })
+    xb += textW(w.s, sAf) + sAf * 0.26
+  })
+  const newest = ws[newestIdx(t, ws)]
+  ws.forEach((w, k) => {
+    const dt = since(t, w.beat)
+    if (dt < 0) return
+    const q = spring(since(t, tB) - k * 0.035, 26, 0.72)
+    const size = lerp(A[k].s, B[k].s, q)
+    const x = lerp(A[k].x, B[k].x, q)
+    const y = lerp(A[k].y, B[k].y, q) + (1 - spring(dt, 46, 0.8)) * capH(size) * 0.9
+    ctx.save()
+    ctx.globalAlpha = clamp01(dt / 0.08)
+    ctx.font = fnt(size)
+    ctx.textBaseline = 'alphabetic'
+    ctx.fillStyle = q > 0.5 ? (w === key ? th.accent : th.fg) : w === newest ? th.accent : th.fg
+    ctx.fillText(w.s, x, y)
+    ctx.restore()
+  })
+  tag(`text → layout @ ${secs(tB)}`, X0, WIDE ? 890 : 1600, th, { dt: since(t, tB) })
+  return th
+}
+
+// 14 glass focus: the whole section stays on screen, only the line being sung is sharp
+const FPAD = 24
+const BCACHE = new Map()
+function lineBitmap(words, size, colours) {
+  const key = `${words.join(' ')}|${Math.round(size)}|${colours.map((c) => c.join(':')).join(',')}`
+  if (BCACHE.has(key)) return BCACHE.get(key)
+  const ch = capH(size)
+  ctx.font = fnt(size)
+  const width = words.reduce((a, w) => a + ctx.measureText(w).width, 0) + size * 0.26 * (words.length - 1)
+  const c = document.createElement('canvas')
+  c.width = Math.ceil(width + FPAD * 2)
+  c.height = Math.ceil(ch + size * 0.3 + FPAD * 2)
+  const o = c.getContext('2d')
+  o.font = fnt(size)
+  o.textBaseline = 'alphabetic'
+  let x = FPAD
+  words.forEach((w, k) => {
+    o.globalAlpha = colours[k][1]
+    o.fillStyle = colours[k][0]
+    o.fillText(w, x, FPAD + ch)
+    x += o.measureText(w).width + size * 0.26
+  })
+  if (BCACHE.size > 400) BCACHE.clear()
+  BCACHE.set(key, c)
+  return c
+}
+function tplFocus(t, p, th) {
+  flashBg(t, th, p.enter === 'flash' ? [p.start] : [])
+  rings(t, th)
+  const lines = p.context || [{ words: p.words.map((w) => w.s), beats: p.words.map((w) => w.beat) }]
+  const ci = p.ctxIndex || 0
+  const inner = X1 - X0 - 96
+  const maxSize = WIDE ? 110 : 104
+  // each line is one row, or two rows when one row would make the type too small (portrait)
+  const rowsOf = (ln) => {
+    const idx = ln.words.map((_, k) => k)
+    if (fitSize(ln.words.join(' '), inner, maxSize) >= maxSize * 0.8 || ln.words.length < 2) return [idx]
+    const total = textW(ln.words.join(' '), 100)
+    let best = 1
+    let bestD = Infinity
+    for (let k = 1; k < ln.words.length; k++) {
+      const d = Math.abs(textW(ln.words.slice(0, k).join(' '), 100) - total / 2)
+      if (d < bestD) {
+        bestD = d
+        best = k
+      }
+    }
+    return [idx.slice(0, best), idx.slice(best)]
+  }
+  const rows = lines.map(rowsOf)
+  const size = Math.min(maxSize, ...lines.flatMap((ln, li) => rows[li].map((r) => fitSize(r.map((k) => ln.words[k]).join(' '), inner, maxSize))))
+  const ch = capH(size)
+  const rowH = ch * 1.32
+  const gap = ch * 1.0
+  const heights = rows.map((r) => r.length * rowH)
+  const centres = []
+  let acc = 0
+  heights.forEach((h) => {
+    centres.push(acc + h / 2)
+    acc += h + gap
+  })
+  const q = spring(since(t, p.start), 22, 0.85)
+  const prev = ci > 0 ? ci - 1 : ci
+  const offset = L.cy - lerp(centres[prev], centres[ci], q)
+  // glass bar fixed in the middle; the list scrolls through it
+  const barH = lerp(heights[prev], heights[ci], q) + ch * 0.9
+  ctx.save()
+  ctx.beginPath()
+  ctx.roundRect(X0, L.cy - barH / 2, X1 - X0, barH, 26)
+  ctx.globalAlpha = 0.1
+  ctx.fillStyle = th.fg
+  ctx.fill()
+  ctx.globalAlpha = 0.65
+  ctx.lineWidth = 3
+  ctx.strokeStyle = th.fg
+  ctx.stroke()
+  ctx.globalAlpha = 1
+  ctx.fillStyle = th.accent
+  ctx.beginPath()
+  ctx.arc(X1 - 34, L.cy, 9, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.restore()
+  const bt = beatAt(t)
+  lines.forEach((ln, li) => {
+    const top = offset + centres[li] - heights[li] / 2
+    if (top > H + ch || top + heights[li] < -ch) return
+    let blur = 9
+    let alpha = 0.3
+    if (li === ci) {
+      blur = 9 * (1 - q)
+      alpha = lerp(0.3, 1, q)
+    } else if (li === ci - 1) {
+      blur = 9 * q
+      alpha = lerp(1, 0.3, q)
+    }
+    // per-word colours: only the sung line is coloured word by word (karaoke)
+    const colours = ln.words.map((_, k) => {
+      if (li !== ci) return [th.fg, 1]
+      const b0 = ln.beats[k]
+      const b1 = ln.ends ? ln.ends[k] : b0 + 1
+      if (bt < b0) return [th.fg, 0.4]
+      if (bt < Math.max(b1, b0 + 0.5)) return [th.accent, 1]
+      return [th.fg, 1]
+    })
+    rows[li].forEach((r, ri) => {
+      const yb = top + ri * rowH + (rowH + ch) / 2
+      const words = r.map((k) => ln.words[k])
+      const cols = r.map((k) => colours[k])
+      if (blur <= 0.3) {
+        ctx.save()
+        ctx.font = fnt(size)
+        ctx.textBaseline = 'alphabetic'
+        let x = X0 + 40
+        words.forEach((w, k) => {
+          ctx.globalAlpha = alpha * cols[k][1]
+          ctx.fillStyle = cols[k][0]
+          ctx.fillText(w, x, yb)
+          x += ctx.measureText(w).width + size * 0.26
+        })
+        ctx.restore()
+      } else {
+        // blur a row-sized bitmap instead of the whole canvas (much cheaper)
+        const bmp = lineBitmap(words, size, cols)
+        ctx.save()
+        ctx.globalAlpha = alpha
+        ctx.filter = `blur(${blur.toFixed(1)}px)`
+        ctx.drawImage(bmp, X0 + 40 - FPAD, yb - ch - FPAD)
+        ctx.restore()
+      }
+    })
+  })
+  tag(`line ${ci + 1}/${lines.length} = ${secs(p.start)}`, X0, WIDE ? 890 : 1600, th, { dt: since(t, p.start) })
+  return th
+}
+
+// 16 particle logo: scattered dots fly in and assemble the key word
+const PCACHE = new Map()
+function particleTargets(str, size, cx, base) {
+  const key = `${str}|${Math.round(size)}|${Math.round(cx)}|${Math.round(base)}`
+  if (PCACHE.has(key)) return PCACHE.get(key)
+  const oc = document.createElement('canvas')
+  oc.width = W
+  oc.height = H
+  const o = oc.getContext('2d', { willReadFrequently: true })
+  o.font = fnt(size)
+  o.textAlign = 'center'
+  o.textBaseline = 'alphabetic'
+  o.fillStyle = '#000'
+  o.fillText(str, cx, base)
+  const data = o.getImageData(0, 0, W, H).data
+  let step = Math.max(6, Math.round(size / 45))
+  let pts
+  do {
+    pts = []
+    for (let y = 0; y < H; y += step) for (let x = 0; x < W; x += step) if (data[(y * W + x) * 4 + 3] > 128) pts.push([x, y])
+    step++
+  } while (pts.length > 1600)
+  PCACHE.set(key, pts)
+  return pts
+}
+function tplParticle(t, p, th) {
+  const hero = p.words.find((w) => w.role === 'hero')
+  flashBg(t, th, p.enter === 'flash' ? [p.start] : [])
+  rings(t, th)
+  const lead = p.words.filter((w) => w.role === 'lead')
+  const tail = p.words.filter((w) => w.role === 'tail')
+  const leadSize = leadLine(t, p, th, lead)
+  if (!hero) return th
+  const top = (lead.length ? L.top + capH(leadSize) : L.top - 60) + 60
+  const bottom = tail.length ? (WIDE ? 790 : 1400) : WIDE ? 880 : 1520
+  const size = Math.min(fitSize(hero.s, X1 - X0, WIDE ? 520 : 640), ((bottom - top) * 100) / capH(100))
+  const ch = capH(size)
+  const base = (top + bottom) / 2 + ch / 2
+  const pts = particleTargets(hero.s, size, CX, base)
+  const th0 = T(hero.beat)
+  const solid = clamp01((t - th0 - 0.75) / 0.3)
+  const cols = [th.fg, th.accent, th.sub]
+  ctx.save()
+  pts.forEach(([tx, ty], i) => {
+    const s0 = p.idx * 7919 + i
+    const sx = rand(s0) * W
+    const sy = rand(s0 + 0.37) * H
+    const ix = sx + Math.sin(t * 1.3 + i) * 18
+    const iy = sy + Math.cos(t * 1.1 + i * 0.7) * 18
+    const q = spring(t - th0 - rand(s0 + 0.71) * 0.4, 14, 0.86)
+    const bend = Math.sin(Math.PI * clamp01(q)) * 60
+    const x = lerp(ix, tx, q) + bend * (rand(s0 + 0.13) - 0.5)
+    const y = lerp(iy, ty, q) + bend * (rand(s0 + 0.29) - 0.5)
+    ctx.globalAlpha = (q > 0 ? 0.95 : 0.55) * (1 - solid * 0.9)
+    ctx.fillStyle = cols[i % 3]
+    const r = 3 + rand(s0 + 0.53) * 3
+    ctx.fillRect(x - r / 2, y - r / 2, r, r)
+  })
+  ctx.restore()
+  if (solid > 0) {
+    ctx.save()
+    ctx.globalAlpha = solid
+    ctx.font = fnt(size)
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'alphabetic'
+    ctx.fillStyle = th.fg
+    ctx.fillText(hero.s, CX, base)
+    ctx.restore()
+  }
+  if (tail.length) {
+    const size2 = Math.min(L.tailMax, layoutLines([tail], X1 - X0, 300, L.tailMax))
+    drawLines(t, [tail], th, { size: size2, top: base + 80, newest: p.words[newestIdx(t, p.words)] })
+  }
+  tag(t < th0 + 0.75 ? 'assembling' : `particles = ${pts.length}`, X1, WIDE ? 890 : 1600, th, {
+    dt: since(t, p.start),
+    align: 'right',
+  })
+  return th
+}
+
 const INST_BG = ['blue', 'yellow', 'red', 'ink', 'cream']
 function tplInst(t, p, th0) {
   const beat = Math.max(0, Math.min(BEATS.length - 1, Math.floor(beatAt(t) + 1e-6)))
@@ -797,6 +1214,11 @@ function tplInst(t, p, th0) {
 
 const TPL = {
   inst: tplInst,
+  mask: tplMask, // 09
+  elastic: tplElastic, // 10
+  relayout: tplRelayout, // 11
+  focus: tplFocus, // 14
+  particle: tplParticle, // 16
   stack: tplStack,
   hero: tplHero,
   giant: tplGiant,
@@ -896,7 +1318,15 @@ function prepare(p, idx) {
       step = Math.max(0.25, Math.floor(step * 4) / 4)
     }
     g.words.forEach((s, k) =>
-      words.push({ s, k, gi, beat: g.wordBeats ? g.wordBeats[k] : g.beat + k * step, role: g.role || 'line', br: k === 0 && !!g.br }),
+      words.push({
+        s,
+        k,
+        gi,
+        beat: g.wordBeats ? g.wordBeats[k] : g.beat + k * step,
+        end: g.wordEnds ? g.wordEnds[k] : (g.wordBeats ? g.wordBeats[k] : g.beat + k * step) + 1,
+        role: g.role || 'line',
+        br: k === 0 && !!g.br,
+      }),
     )
   })
   p.words = words
@@ -914,6 +1344,8 @@ window.ready = (async () => {
   RECORD = false
   await Promise.all([...USED].map(([font, set]) => document.fonts.load(font, [...set].join(''))))
   await document.fonts.ready
+  PCACHE.clear() // particle targets / line bitmaps made before the webfont loaded have the wrong shape
+  BCACHE.clear()
   const missing = [...USED].filter(([font, set]) => !document.fonts.check(font, [...set].join('')))
   if (missing.length) console.warn('fonts not ready:', missing.map(([f]) => f))
   seek(Number(params.get('t') || 0))

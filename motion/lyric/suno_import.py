@@ -7,6 +7,13 @@
     lyrics_alignment.json  … audio-lyrics-alignment の結果（単語ごとの歌われる時刻）
     song.mp3 か song.wav   … audio-download で保存した曲（書き出しに使う。data.json 作成には不要）
     meta.json（任意）      … {"title": "...", "small": "...", "big": "...", "tail": "..."} 最後のタイトル画面の文字
+                             "motions": {"verse": [9, 11], "chorus": [14], "outro": [16]} 区間ごとに動きを番号で指定
+                             （その区間の行に順番に割り当てる）、"lineMotions": {"HEY LOOK AT US": 11} 行ごとの指定
+
+動きの番号（「Opus 5.5 Motion Graphics」の一覧の番号）:
+    09 mask（輪郭がせり上がって塗られる）  10 elastic（伸ばして歌う語が伸び縮み）
+    11 relayout（1 行の文がキーワード中心に組み変わる）  14 focus（区間の歌詞を並べ、歌っている行だけくっきり）
+    16 particle（粒が集まってキーワードになる）
 
 やること:
 - 拍と小節の頭は audio-analysis をそのまま使う（推定しない）
@@ -28,6 +35,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from analyze import to_beat  # noqa: E402  (same beat/second conversion as the hand-made version)
 
 FPS = 30
+MOTION = {9: "mask", 10: "elastic", 11: "relayout", 14: "focus", 16: "particle"}
 PALETTE = ["blue", "yellow", "red", "cream", "ink"]
 DECO = {
     "LIGHT": "light", "SHINE": "light", "BRIGHT": "light", "SUN": "light",
@@ -84,7 +92,9 @@ def lyric_lines(alignment):
             if not w:
                 continue
             pause = bool(re.search(r"[,;:.!?…—-]$", m.group()))  # punctuation = a natural place to break the line
-            a, b = base + m.start(), base + m.end() - 1
+            # times come from the letters only: punctuation can sit in the next token (", look")
+            letters = [base + m.start() + k for k, c in enumerate(m.group()) if c.isalnum() or c in "'’"]
+            a, b = letters[0], letters[-1]
             words.append((w, word_start(a, b), chars[b][2], pause))
         if words:
             lines.append({"section": section, "words": words})
@@ -160,6 +170,7 @@ def group(ws, beats, role=None, br=False):
         "sec": round(ws[0][1], 3),
         "beat": round(to_beat(ws[0][1], beats), 4),
         "wordBeats": [round(to_beat(w[1], beats), 4) for w in ws],
+        "wordEnds": [round(to_beat(w[2], beats), 4) for w in ws],
     }
     if role:
         g["role"] = role
@@ -168,7 +179,26 @@ def group(ws, beats, role=None, br=False):
     return g
 
 
+def lead_hero_tail(ws, beats, hi):
+    gs = []
+    if hi > 0:
+        gs.append(group(ws[:hi], beats, role="lead"))
+    gs.append(group(ws[hi:hi + 1], beats, role="hero"))
+    if hi + 1 < len(ws):
+        gs.append(group(ws[hi + 1:], beats, role="tail"))
+    return gs
+
+
 def build_groups(tpl, ws, beats):
+    if tpl in ("elastic", "particle"):
+        # the word that is held longest (later one on ties); single letters only if nothing else
+        hi = max(range(len(ws)), key=lambda k: (len(ws[k][0]) > 1, ws[k][2] - ws[k][1], k))
+        return lead_hero_tail(ws, beats, hi), None
+    if tpl == "relayout":
+        hi = max(range(len(ws)), key=lambda k: (len(ws[k][0]), k))
+        return lead_hero_tail(ws, beats, hi), None
+    if tpl == "mask":
+        return [group(c, beats) for c in chunk(ws)], None
     if tpl == "two":
         h = split_point(ws)
         return [group(ws[:h], beats), group(ws[h:], beats, br=True)], None
@@ -221,6 +251,7 @@ def main():
     seen = {}
     prev_tpl = None
     prev_section = None
+    used_in_kind = {}
     for i, ln in enumerate(lines):
         ws = ln["words"]
         name = ln["section"]
@@ -229,7 +260,16 @@ def main():
         if first:
             seen[kind] = seen.get(kind, 0) + 1
         prev_section = name
-        tpl = choose_template(ws, i, first, kind, prev_tpl)
+        text = " ".join(w[0] for w in ws)
+        wanted = meta.get("lineMotions", {}).get(text)
+        if wanted is None and kind in meta.get("motions", {}):
+            nums = meta["motions"][kind]
+            wanted = nums[used_in_kind.get(kind, 0) % len(nums)] if nums else None
+        used_in_kind[kind] = used_in_kind.get(kind, 0) + 1
+        tpl = MOTION.get(int(wanted)) if wanted is not None else None
+        if wanted is not None and tpl is None:
+            sys.exit(f"unknown motion number {wanted} (available: {sorted(MOTION)})")
+        tpl = tpl or choose_template(ws, i, first, kind, prev_tpl)
         prev_tpl = tpl
         groups, deco = build_groups(tpl, ws, beats)
         start = groups[0]["beat"]
@@ -237,12 +277,33 @@ def main():
             "s": f"{kind} {seen[kind]}",
             "tpl": tpl,
             "groups": groups,
-            **({"lines": True} if tpl == "stack" else {}),
+            **({"lines": True} if tpl in ("stack", "mask") else {}),
             "start": start,
             "lastWordEnd": round(to_beat(ws[-1][2], beats), 4),
             **({"deco": deco} if deco else {}),
             **({"enter": "flash" if kind == "chorus" else "wipe"} if first and i > 0 else {}),
         })
+
+    k = 0
+    while k < len(phrases):
+        if phrases[k]["tpl"] != "focus":
+            k += 1
+            continue
+        j = k
+        while j + 1 < len(phrases) and phrases[j + 1]["tpl"] == "focus" and phrases[j + 1]["s"] == phrases[k]["s"]:
+            j += 1
+        run = phrases[k:j + 1]
+        context = [{
+            "words": [w for g in p["groups"] for w in g["words"]],
+            "beats": [b for g in p["groups"] for b in g["wordBeats"]],
+            "ends": [b for g in p["groups"] for b in g["wordEnds"]],
+        } for p in run]
+        for n, p in enumerate(run):
+            p["context"] = context
+            p["ctxIndex"] = n
+            if n:
+                p.pop("enter", None)
+        k = j + 1
 
     # the background cuts a little before the first word, on the eighth-note grid
     for k, p in enumerate(phrases):
@@ -281,6 +342,8 @@ def main():
         bg = PALETTE[k % len(PALETTE)]
         if bg == used:
             bg = PALETTE[(k + 1) % len(PALETTE)]
+        if p["tpl"] == "focus" and p.get("ctxIndex"):
+            bg = used
         p["bg"] = "cream" if p["tpl"] == "title" else bg
         used = p["bg"]
         if p["tpl"] == "inst":
